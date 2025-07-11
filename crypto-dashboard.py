@@ -60,30 +60,37 @@ tabs = st.tabs([
 # =============================
 with tabs[0]:
     st.header("📊 Live Portfolio via OKX API")
-    data = get_okx_balances()
+    st.subheader("📦 API Response Debug (ruwe JSON output)")
+data = get_okx_balances()
+st.json(data)
 
-    st.subheader("📦 API Response Debug (alleen zichtbaar voor jou)")
-    st.json(data)
+# Probeer pas verder als structuur klopt
+if not isinstance(data, dict) or 'data' not in data:
+    st.error("❌ Ongeldige API-response. Check of je API keys correct zijn en of je account assets bevat.")
+    st.stop()
 
-    try:
-        if 'data' in data and len(data['data']) > 0 and 'details' in data['data'][0]:
-            coins = data['data'][0]['details']
-            df = pd.DataFrame(coins)
-            df['availBal'] = df['availBal'].astype(float)
-            df = df[df['availBal'] > 0].sort_values('availBal', ascending=False)
+if not data['data']:
+    st.warning("⚠️ Je hebt geen balans op dit account of subaccount.")
+    st.stop()
 
-            st.success("✅ Data succesvol opgehaald!")
-            st.dataframe(df[['ccy', 'availBal']], use_container_width=True)
+first_entry = data['data'][0]
+if 'details' not in first_entry:
+    st.error("🔒 API-response bevat geen 'details'. Mogelijk gebruik je het verkeerde wallettype (bv. Funding vs Trading).")
+    st.stop()
 
-            fig = px.pie(df, names='ccy', values='availBal', title='Portfolio Allocatie')
-            st.plotly_chart(fig, use_container_width=True)
+# Verwerking van coins
+coins = first_entry['details']
+df = pd.DataFrame(coins)
+df['availBal'] = df['availBal'].astype(float)
+df = df[df['availBal'] > 0].sort_values('availBal', ascending=False)
 
-            st.metric(label="📦 Totale Portfolio Waarde (units)", value=f"{df['availBal'].sum():.2f}")
-        else:
-            st.error("❌ Geen geldige OKX API-response. Check of je account een balans heeft, of probeer het opnieuw.")
-    except Exception as e:
-        st.exception(f"🚨 Fout bij verwerken API-response: {e}")
+st.success("✅ Data succesvol opgehaald!")
+st.dataframe(df[['ccy', 'availBal']], use_container_width=True)
 
+fig = px.pie(df, names='ccy', values='availBal', title='Portfolio Allocatie')
+st.plotly_chart(fig, use_container_width=True)
+
+st.metric(label="📦 Totale Portfolio Waarde (units)", value=f"{df['availBal'].sum():.2f}")
 # =============================
 # Placeholder Tabs
 # =============================
