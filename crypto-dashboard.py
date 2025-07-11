@@ -111,6 +111,7 @@ tabs = st.tabs([
 ])
 
 # ========== TAB 1: Portfolio ==========
+
 with tabs[0]:
     st.header("📊 Portfolio Live Waarde")
 
@@ -118,17 +119,31 @@ with tabs[0]:
         st.warning("⚠️ Voeg eerst je holdings toe in het tabblad '✍️ Handmatige Invoer'")
     else:
         df = st.session_state.holdings.copy()
+
+        # Zet komma-getallen correct om naar floats
+        df["Aantal"] = (
+            df["Aantal"]
+            .astype(str)
+            .str.replace(".", "", regex=False)  # verwijder duizendtallen
+            .str.replace(",", ".", regex=False)  # vervang komma door punt voor decimalen
+        )
+        df["Aantal"] = pd.to_numeric(df["Aantal"], errors="coerce")
+
+        if df["Aantal"].isnull().any():
+            st.warning("⚠️ Eén of meer invoervelden konden niet worden geconverteerd naar een getal. Controleer je 'Aantal'-invoer.")
+
+        # Haal prijzen op en bereken waardes
         coins = df["Coin"].tolist()
         prices = get_prices(coins)
         df["Huidige_Prijs_EUR"] = df["Coin"].map(prices)
-        df["Aantal"] = df["Aantal"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
-        df["Aantal"] = pd.to_numeric(df["Aantal"], errors="coerce")
         df["Totale_Waarde"] = df["Aantal"] * df["Huidige_Prijs_EUR"]
 
+        # Berekeningen
         total_value = df["Totale_Waarde"].sum() + st.session_state.cash
         total_invested = st.session_state.total_invested
         total_profit = total_value - total_invested
 
+        # UI output
         st.metric("Totale Inleg (EUR)", f"€{total_invested:,.2f}")
         st.metric("Totale Waarde (EUR)", f"€{total_value:,.2f}")
         st.metric("Totale Winst/Verlies", f"€{total_profit:,.2f}")
@@ -138,6 +153,7 @@ with tabs[0]:
 
         fig = px.pie(df, names="Coin", values="Totale_Waarde", title="Portfolio Allocatie")
         st.plotly_chart(fig, use_container_width=True)
+
 
 # ========== TAB 2: Handmatige Invoer ==========
 with tabs[1]:
