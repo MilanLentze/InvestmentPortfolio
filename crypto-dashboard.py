@@ -9,9 +9,11 @@ st.title("📈 Crypto Portfolio & Strategie Dashboard")
 
 # ========== SESSION STATE INITIALIZATION ==========
 if "holdings" not in st.session_state:
-    st.session_state.holdings = pd.DataFrame(columns=["Coin", "Aantal", "Inleg_EUR"])
+    st.session_state.holdings = pd.DataFrame(columns=["Coin", "Aantal"])
 if "cash" not in st.session_state:
     st.session_state.cash = 0.0
+if "total_invested" not in st.session_state:
+    st.session_state.total_invested = 0.0
 
 # ========== HELPER: GET COIN PRICES ==========
 @st.cache_data(ttl=60)
@@ -60,10 +62,9 @@ with tabs[0]:
         prices = get_prices(coins)
         df["Huidige_Prijs_EUR"] = df["Coin"].map(prices)
         df["Totale_Waarde"] = df["Aantal"] * df["Huidige_Prijs_EUR"]
-        df["Winst/Verlies"] = df["Totale_Waarde"] - df["Inleg_EUR"]
 
         total_value = df["Totale_Waarde"].sum() + st.session_state.cash
-        total_invested = df["Inleg_EUR"].sum() + st.session_state.cash
+        total_invested = st.session_state.total_invested
         total_profit = total_value - total_invested
 
         st.metric("Totale Inleg (EUR)", f"€{total_invested:,.2f}")
@@ -91,10 +92,14 @@ with tabs[1]:
     st.subheader("💶 Contant Geld (EUR)")
     cash_input = st.number_input("Voer je cash in EUR in:", value=float(st.session_state.cash), step=10.0)
 
+    st.subheader("💰 Totale Inleg (alle coins + cash)")
+    invested_input = st.number_input("Voer je totale inlegbedrag in EUR in:", value=float(st.session_state.total_invested), step=10.0)
+
     if st.button("✅ Opslaan"):
         st.session_state.holdings = edited_df
         st.session_state.cash = cash_input
-        st.success("Holdings en cash opgeslagen!")
+        st.session_state.total_invested = invested_input
+        st.success("Holdings, cash en inleg opgeslagen!")
 
     st.download_button(
         label="📥 Download holdings als CSV",
