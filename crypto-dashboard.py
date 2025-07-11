@@ -29,7 +29,7 @@ def get_signature(timestamp, method, request_path, body=''):
     return base64.b64encode(mac.digest()).decode()
 
 def get_okx_balances():
-    url = "url = "https://www.okx.com/api/v5/asset/balances"
+    url = "https://www.okx.com/api/v5/asset/balances"
     timestamp = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
     headers = {
         'OK-ACCESS-KEY': API_KEY,
