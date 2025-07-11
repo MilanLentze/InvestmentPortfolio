@@ -77,10 +77,7 @@ tabs = st.tabs([
     "✍️ Handmatige Invoer",
     "📤 Winststrategie",
     "🔁 Re-entry Plan",
-    "🧠 Narratieven",
-    "📅 Event Kalender",
-    "📦 Watchlist",
-    "🧮 Scenario Analyse",
+    "🧮 Narratieven",
     "🧠 Reflectie"
 ])
 
@@ -252,3 +249,43 @@ with tabs[4]:
                 }
                 narratief = narratieven.get(selected_coin, "Nog geen narratief beschikbaar voor deze coin.")
                 st.success(f"**{selected_coin}**: {narratief}")
+
+# ========== TAB 6: Reflectie ==========
+with tabs[5]:
+    st.header("🧠 Reflectie Notitieboek")
+
+    if "reflectie_notes" not in st.session_state:
+        st.session_state.reflectie_notes = []
+
+    st.subheader("➕ Nieuwe notitie")
+    with st.form("reflectie_form", clear_on_submit=True):
+        new_note = st.text_area("Wat wil je reflecteren of onthouden?", height=150)
+        submitted = st.form_submit_button("➕ Voeg toe")
+        if submitted and new_note.strip():
+            st.session_state.reflectie_notes.insert(0, {"text": new_note.strip(), "editing": False})
+            st.success("Notitie toegevoegd ✅")
+
+    if st.session_state.reflectie_notes:
+        st.subheader("📚 Je notities")
+
+        for i, note in enumerate(st.session_state.reflectie_notes):
+            col1, col2, col3 = st.columns([6, 1, 1])
+
+            if note.get("editing"):
+                edited_text = col1.text_area(f"✏️ Bewerken (notitie {i+1})", value=note["text"], key=f"edit_{i}")
+                if col2.button("💾", key=f"save_{i}"):
+                    st.session_state.reflectie_notes[i]["text"] = edited_text.strip()
+                    st.session_state.reflectie_notes[i]["editing"] = False
+                    st.success("Notitie bijgewerkt ✅")
+                if col3.button("❌", key=f"cancel_{i}"):
+                    st.session_state.reflectie_notes[i]["editing"] = False
+            else:
+                col1.markdown(f"**{i+1}.** {note['text']}")
+                if col2.button("✏️", key=f"editbtn_{i}"):
+                    st.session_state.reflectie_notes[i]["editing"] = True
+                if col3.button("🗑️", key=f"delbtn_{i}"):
+                    st.session_state.reflectie_notes.pop(i)
+                    st.success("Notitie verwijderd 🗑️")
+                    st.experimental_rerun()  # Herlaad om indexproblemen te voorkomen
+    else:
+        st.info("Je hebt nog geen reflecties opgeslagen.")
