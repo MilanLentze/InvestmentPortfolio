@@ -223,3 +223,32 @@ with tabs[3]:
 
         reentry_df = pd.DataFrame(reentry_data)
         st.dataframe(reentry_df, use_container_width=True)
+        
+with tabs[4]:
+    st.header("🧠 Narratieven per Coin")
+
+    holdings = st.session_state.holdings.copy()
+    coins = holdings["Coin"].tolist() if not holdings.empty else []
+
+    if not coins:
+        st.warning("⚠️ Voeg eerst je holdings toe.")
+    else:
+        st.markdown("### 🤖 Automatische Narratief Generator")
+
+        selected_coin = st.selectbox("Kies een coin", coins)
+        if st.button("🔍 Genereer Narratief", key="gen_narratief"):
+            with st.spinner("Narratief wordt opgehaald..."):
+                # Simuleer AI-respons (hier zou de echte OpenAI-call komen)
+                narratieven = {
+                    "WIF": "Dogwifhat (WIF) is een meme coin op Solana, bekend om zijn community en virale karakter. Potentie bij sterke meme-cycles.",
+                    "ZK": "ZKSync is een Layer 2-oplossing gebaseerd op zero-knowledge proofs. Belangrijk binnen het schaalbaarheidsnarratief van Ethereum.",
+                    "RNDR": "Render biedt GPU rendering via een gedecentraliseerd netwerk, essentieel voor AI en metaverse toepassingen.",
+                    "SUI": "Sui is een high-performance Layer 1 blockchain gericht op snellere UX en schaalbaarheid, gebouwd door ex-Meta developers.",
+                    "LINK": "Chainlink is de toonaangevende oracle provider voor smart contracts en cruciaal voor Web3-infra.",
+                    "STRK": "Starknet is een ZK-rollup Layer 2 netwerk met sterke backing en unieke developer tooling.",
+                    "FET": "Fetch.ai richt zich op AI-agenten die autonoom opereren in gedecentraliseerde omgevingen.",
+                    "INJ": "Injective is een gedecentraliseerd trading-ecosysteem met sterke interoperabiliteit en focus op DeFi-innovatie.",
+                    "JUP": "Jupiter is een DEX-aggregator op Solana en speelt een centrale rol in de Solana DeFi-infrastructuur."
+                }
+                narratief = narratieven.get(selected_coin, "Nog geen narratief beschikbaar voor deze coin.")
+                st.success(f"**{selected_coin}**: {narratief}")
