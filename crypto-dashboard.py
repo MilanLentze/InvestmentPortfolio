@@ -73,9 +73,17 @@ def get_prices(coins):
     prices = {}
     for coin in coins:
         if coin in ids:
-            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids[coin]}&vs_currencies=eur"
-            r = requests.get(url)
-            prices[coin] = r.json()[ids[coin]]["eur"]
+            try:
+                url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids[coin]}&vs_currencies=eur"
+                r = requests.get(url)
+                if r.status_code == 200:
+                    prices[coin] = r.json().get(ids[coin], {}).get("eur", None)
+                else:
+                    prices[coin] = None
+            except:
+                prices[coin] = None
+        else:
+            prices[coin] = None
     return prices
 
 # ===RSI Tickers===
@@ -113,6 +121,7 @@ with tabs[0]:
         coins = df["Coin"].tolist()
         prices = get_prices(coins)
         df["Huidige_Prijs_EUR"] = df["Coin"].map(prices)
+        df["Aantal"] = df["Aantal"].astype(str).str.replace(",", ".").astype(float)
         df["Totale_Waarde"] = df["Aantal"] * df["Huidige_Prijs_EUR"]
 
         total_value = df["Totale_Waarde"].sum() + st.session_state.cash
