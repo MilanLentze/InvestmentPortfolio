@@ -1,51 +1,42 @@
 import streamlit as st
-import requests
-import hmac
-import hashlib
-import base64
 import pandas as pd
+import requests
 import plotly.express as px
-from datetime import datetime, timezone
 
-# =============================
-# Streamlit Config
-# =============================
-st.set_page_config(page_title="Crypto Dashboard", layout="wide")
+# ========== PAGE CONFIG ==========
+st.set_page_config(page_title="📈 Crypto Portfolio Tracker", layout="wide")
 st.title("📈 Crypto Portfolio & Strategie Dashboard")
 
-# =============================
-# API Keys from Streamlit Secrets
-# =============================
-API_KEY = st.secrets["OKX_API_KEY"]
-SECRET_KEY = st.secrets["OKX_SECRET_KEY"]
-PASSPHRASE = st.secrets["OKX_PASSPHRASE"]
+# ========== SESSION STATE INITIALIZATION ==========
+if "holdings" not in st.session_state:
+    st.session_state.holdings = pd.DataFrame(columns=["Coin", "Aantal", "Inleg_EUR"])
 
-# =============================
-# OKX API Helpers
-# =============================
-def get_signature(timestamp, method, request_path, body=''):
-    message = f'{timestamp}{method}{request_path}{body}'
-    mac = hmac.new(SECRET_KEY.encode(), message.encode(), hashlib.sha256)
-    return base64.b64encode(mac.digest()).decode()
-
-def get_okx_balances():
-    url = "https://www.okx.com/api/v5/asset/balances"
-    timestamp = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
-    headers = {
-        'OK-ACCESS-KEY': API_KEY,
-        'OK-ACCESS-SIGN': get_signature(timestamp, 'GET', '/api/v5/account/balance'),
-        'OK-ACCESS-TIMESTAMP': timestamp,
-        'OK-ACCESS-PASSPHRASE': PASSPHRASE,
-        'Content-Type': 'application/json'
+# ========== HELPER: GET COIN PRICES ==========
+@st.cache_data(ttl=60)
+def get_prices(coins):
+    ids = {
+        "WIF": "dogwifcoin",
+        "ZK": "zksync",
+        "RNDR": "render-token",
+        "SUI": "sui",
+        "LINK": "chainlink",
+        "STRK": "starknet",
+        "FET": "fetch-ai",
+        "INJ": "injective-protocol",
+        "JUP": "jupiter-exchange"
     }
-    res = requests.get(url, headers=headers)
-    return res.json()
+    prices = {}
+    for coin in coins:
+        if coin in ids:
+            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids[coin]}&vs_currencies=eur"
+            r = requests.get(url)
+            prices[coin] = r.json()[ids[coin]]['eur']
+    return prices
 
-# =============================
-# Tabs voor alle onderdelen
-# =============================
+# ========== TABS ==========
 tabs = st.tabs([
     "📊 Portfolio",
+    "✍️ Handmatige Invoer",
     "📤 Winststrategie",
     "🔁 Re-entry Plan",
     "🧠 Narratieven",
@@ -55,47 +46,57 @@ tabs = st.tabs([
     "🧠 Reflectie"
 ])
 
-# =============================
-# Tab 1: Portfolio
-# =============================
+# ========== TAB 1: Portfolio ==========
 with tabs[0]:
-    st.header("📊 Live Portfolio via OKX API")
-    data = get_okx_balances()
+    st.header("📊 Portfolio Live Waarde")
 
-    st.subheader("📦 API Response Debug (ruwe JSON output)")
-    st.json(data)
+    if st.session_state.holdings.empty:
+        st.warning("⚠️ Voeg eerst je holdings toe in het tabblad '✍️ Handmatige Invoer'")
+    else:
+        df = st.session_state.holdings.copy()
+        coins = df["Coin"].tolist()
+        prices = get_prices(coins)
+        df["Huidige_Prijs_EUR"] = df["Coin"].map(prices)
+        df["Totale_Waarde"] = df["Aantal"] * df["Huidige_Prijs_EUR"]
+        df["Winst/Verlies"] = df["Totale_Waarde"] - df["Inleg_EUR"]
 
-    # Verwerking met controles
-    if not isinstance(data, dict) or 'data' not in data:
-        st.error("❌ Ongeldige API-response. Check of je API keys correct zijn en of je account assets bevat.")
-        st.stop()
+        total_value = df["Totale_Waarde"].sum()
+        total_invested = df["Inleg_EUR"].sum()
+        total_profit = total_value - total_invested
 
-    if not data['data']:
-        st.warning("⚠️ Je hebt geen balans op dit account of subaccount.")
-        st.stop()
+        st.metric("Totale Inleg (EUR)", f"€{total_invested:,.2f}")
+        st.metric("Totale Waarde (EUR)", f"€{total_value:,.2f}")
+        st.metric("Totale Winst/Verlies", f"€{total_profit:,.2f}")
 
-    first_entry = data['data'][0]
-    if 'details' not in first_entry:
-        st.error("🔒 API-response bevat geen 'details'. Mogelijk gebruik je het verkeerde wallettype (bv. Funding vs Trading).")
-        st.stop()
+        st.dataframe(df, use_container_width=True)
 
-    coins = first_entry['details']
-    df = pd.DataFrame(coins)
-    df['availBal'] = df['availBal'].astype(float)
-    df = df[df['availBal'] > 0].sort_values('availBal', ascending=False)
+        fig = px.pie(df, names="Coin", values="Totale_Waarde", title="Portfolio Allocatie")
+        st.plotly_chart(fig, use_container_width=True)
 
-    st.success("✅ Data succesvol opgehaald!")
-    st.dataframe(df[['ccy', 'availBal']], use_container_width=True)
+# ========== TAB 2: Handmatige Invoer ==========
+with tabs[1]:
+    st.header("✍️ Handmatige Invoer van Holdings")
 
-    fig = px.pie(df, names='ccy', values='availBal', title='Portfolio Allocatie')
-    st.plotly_chart(fig, use_container_width=True)
+    edited_df = st.data_editor(
+        st.session_state.holdings,
+        num_rows="dynamic",
+        use_container_width=True,
+        key="editor"
+    )
 
-    st.metric(label="📦 Totale Portfolio Waarde (units)", value=f"{df['availBal'].sum():.2f}")
+    if st.button("✅ Opslaan"):
+        st.session_state.holdings = edited_df
+        st.success("Holdings opgeslagen!")
 
-# =============================
-# Placeholder Tabs
-# =============================
-placeholders = [
+    st.download_button(
+        label="📥 Download holdings als CSV",
+        data=edited_df.to_csv(index=False),
+        file_name="holdings.csv",
+        mime="text/csv"
+    )
+
+# ========== Placeholder Tabs ==========
+for i, name in enumerate([
     "Winststrategie",
     "Re-entry Plan",
     "Narratieven",
@@ -103,9 +104,7 @@ placeholders = [
     "Watchlist",
     "Scenario Analyse",
     "Reflectie"
-]
-
-for i, name in enumerate(placeholders, start=1):
+], start=2):
     with tabs[i]:
         st.header(f"🔧 {name}")
         uploaded = st.file_uploader(f"Upload {name} CSV", type="csv", key=name)
