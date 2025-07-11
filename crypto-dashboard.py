@@ -109,12 +109,17 @@ with tabs[1]:
 # ========== TAB 3: Winststrategie ==========
 with tabs[2]:
     st.header("📤 Winststrategie per Coin")
-    winst_df = st.data_editor(
-        st.session_state.strategie,
-        num_rows="dynamic",
-        use_container_width=True,
-        key="strategie"
-    )
+    strategie_edit = st.data_editor(
+    st.session_state.strategie,
+    num_rows="dynamic",
+    use_container_width=True,
+    key="strategie_editor"
+)
+
+if st.button("✅ Strategie opslaan"):
+    st.session_state.strategie = strategie_edit
+    st.success("Strategie opgeslagen!")
+
     if st.button("💾 Opslaan Strategie"):
         st.session_state.strategie = winst_df
         st.success("Strategie opgeslagen!")
