@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import requests
 import plotly.express as px
+import yfinance as yf
+import numpy as np
+
 
 # ========== PAGE CONFIG ==========
 st.set_page_config(page_title="📈 Crypto Portfolio Tracker", layout="wide")
@@ -15,9 +18,26 @@ if "cash" not in st.session_state:
 if "total_invested" not in st.session_state:
     st.session_state.total_invested = 0.0
 
+# ====Calculate RSI=====
+def calculate_rsi(ticker, period=14):
+    try:
+        data = yf.download(tickers=ticker, period="1mo", interval="1d", progress=False)
+        close = data["Close"]
+        delta = close.diff().dropna()
+        gain = delta.where(delta > 0, 0.0)
+        loss = -delta.where(delta < 0, 0.0)
+        avg_gain = gain.rolling(window=period).mean()
+        avg_loss = loss.rolling(window=period).mean()
+        rs = avg_gain / avg_loss
+        rsi = 100.0 - (100.0 / (1.0 + rs))
+        return round(rsi.dropna().iloc[-1], 2)
+    except Exception as e:
+        return None
+
+
 # ========== HELPER: GET COIN PRICES ==========
-@st.cache_data(ttl=60)
-def get_prices(coins):
+@st.cache_data(ttl=3600)
+def get_ath_prices(coins):
     ids = {
         "WIF": "dogwifcoin",
         "ZK": "zksync",
@@ -29,13 +49,27 @@ def get_prices(coins):
         "INJ": "injective-protocol",
         "JUP": "jupiter-exchange"
     }
-    prices = {}
+    aths = {}
     for coin in coins:
         if coin in ids:
-            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids[coin]}&vs_currencies=eur"
+            url = f"https://api.coingecko.com/api/v3/coins/{ids[coin]}"
             r = requests.get(url)
-            prices[coin] = r.json()[ids[coin]]['eur']
-    return prices
+            aths[coin] = r.json()["market_data"]["ath"]["eur"]
+    return aths
+
+# ===RSI Tickers===
+yf_tickers = {
+    "WIF": "WIF-USD",
+    "ZK": "ZK-USD",
+    "RNDR": "RNDR-USD",
+    "SUI": "SUI1-USD",
+    "LINK": "LINK-USD",
+    "STRK": "STRK-USD",
+    "FET": "FET-USD",
+    "INJ": "INJ-USD",
+    "JUP": "JUP-USD"
+}
+
 
 # ========== TABS ==========
 tabs = st.tabs([
@@ -108,21 +142,84 @@ with tabs[1]:
         mime="text/csv"
     )
 
-# ========== Placeholder Tabs ==========
-for i, name in enumerate([
-    "Winststrategie",
-    "Re-entry Plan",
-    "Narratieven",
-    "Event Kalender",
-    "Watchlist",
-    "Scenario Analyse",
-    "Reflectie"
-], start=2):
-    with tabs[i]:
-        st.header(f"🔧 {name}")
-        uploaded = st.file_uploader(f"Upload {name} CSV", type="csv", key=name)
-        if uploaded:
-            df = pd.read_csv(uploaded)
-            st.dataframe(df, use_container_width=True)
-        else:
-            st.info(f"Je kunt hier je {name.lower()} uploaden als CSV.")
+# ========== Tabs ==========
+with tabs[2]:
+    st.header("📤 Winststrategie")
+
+    # Vooringevulde strategieën per coin
+    strategie = {
+        "WIF": [(2, 30), (3.5, 40), (5, 20), ("moonbag", 10)],
+        "ZK": [(3, 20), (5, 30), (8, 30), ("moonbag", 20)],
+        "RNDR": [(3, 20), (5, 30), (7, 30), ("moonbag", 20)],
+        "SUI": [(2.5, 25), (4, 30), (6, 25), ("moonbag", 20)],
+        "LINK": [(2, 25), (4, 35), (6, 20), ("moonbag", 20)],
+        "STRK": [(2.5, 25), (4.5, 30), (7, 25), ("moonbag", 20)],
+        "FET": [(3, 20), (5, 30), (8, 30), ("moonbag", 20)],
+        "INJ": [(2.5, 25), (4, 30), (6.5, 25), ("moonbag", 20)],
+        "JUP": [(2, 30), (3.5, 30), (5, 30), ("moonbag", 10)],
+    }
+
+    holdings = st.session_state.holdings.copy()
+    if holdings.empty:
+        st.warning("⚠️ Voeg eerst je holdings toe in '✍️ Handmatige Invoer'")
+    else:
+        st.subheader("📊 Winststrategie per Coin")
+
+        for _, row in holdings.iterrows():
+            coin = row["Coin"]
+            aantal = row["Aantal"]
+            if coin in strategie:
+                st.markdown(f"#### 💰 {coin}")
+                plan = strategie[coin]
+                verkoopplan = []
+                for stap in plan:
+                    multiplier, percentage = stap
+                    if multiplier == "moonbag":
+                        coins = aantal * percentage / 100
+                        st.write(f"Hou {percentage}% over als **moonbag**: {coins:.2f} {coin}")
+                    else:
+                        coins = aantal * percentage / 100
+                        st.write(f"Verkoop {percentage}% ({coins:.2f} {coin}) bij {multiplier}x winst")
+
+with tabs[3]:
+    st.header("🔁 Re-entry Plan (op basis van ATH + RSI)")
+
+    if st.session_state.holdings.empty:
+        st.warning("⚠️ Voeg eerst je holdings toe.")
+    else:
+        df = st.session_state.holdings.copy()
+        coins = df["Coin"].tolist()
+        prices = get_prices(coins)
+        aths = get_ath_prices(coins)
+
+        reentry_data = []
+
+        for coin in coins:
+            prijs = prices.get(coin)
+            ath = aths.get(coin)
+            if not prijs or not ath:
+                continue
+
+            drawdown = round((1 - prijs / ath) * 100, 2)
+            yf_symbol = yf_tickers.get(coin)
+            rsi = calculate_rsi(yf_symbol) if yf_symbol else None
+
+            advies = "⏳ Nog wachten"
+            if drawdown >= 60 and rsi is not None and rsi <= 40:
+                advies = "✅ Re-entry zone (drawdown + RSI)"
+            elif drawdown >= 60:
+                advies = "⚠️ Drawdown ok, RSI hoog"
+            elif rsi is not None and rsi <= 40:
+                advies = "⚠️ RSI laag, maar drawdown beperkt"
+
+            reentry_data.append({
+                "Coin": coin,
+                "Huidige Prijs (€)": prijs,
+                "ATH (€)": ath,
+                "% Onder ATH": f"{drawdown}%",
+                "RSI (14d)": rsi if rsi is not None else "n.v.t.",
+                "Advies": advies
+            })
+
+        reentry_df = pd.DataFrame(reentry_data)
+        st.dataframe(reentry_df, use_container_width=True)
