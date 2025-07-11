@@ -49,12 +49,21 @@ def get_ath_prices(coins):
         "INJ": "injective-protocol",
         "JUP": "jupiter-exchange"
     }
+
     aths = {}
     for coin in coins:
         if coin in ids:
-            url = f"https://api.coingecko.com/api/v3/coins/{ids[coin]}"
-            r = requests.get(url)
-            aths[coin] = r.json()["market_data"]["ath"]["eur"]
+            try:
+                url = f"https://api.coingecko.com/api/v3/coins/{ids[coin]}"
+                response = requests.get(url)
+                response.raise_for_status()
+                data = response.json()
+                aths[coin] = data.get("market_data", {}).get("ath", {}).get("eur", None)
+            except Exception as e:
+                st.error(f"❌ Fout bij ophalen ATH voor {coin}: {e}")
+                aths[coin] = None
+        else:
+            aths[coin] = None
     return aths
 
 @st.cache_data(ttl=3600)
@@ -70,20 +79,26 @@ def get_prices(coins):
         "INJ": "injective-protocol",
         "JUP": "jupiter-exchange"
     }
-    prices = {}
-    for coin in coins:
-        if coin in ids:
-            try:
-                url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids[coin]}&vs_currencies=eur"
-                r = requests.get(url)
-                if r.status_code == 200:
-                    prices[coin] = r.json().get(ids[coin], {}).get("eur", None)
-                else:
-                    prices[coin] = None
-            except:
-                prices[coin] = None
-        else:
-            prices[coin] = None
+
+    # Filter alleen coins die bekend zijn in het mapping
+    mapped_ids = {coin: ids[coin] for coin in coins if coin in ids}
+    coingecko_ids = ",".join(mapped_ids.values())
+
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coingecko_ids}&vs_currencies=eur"
+    headers = {"accept": "application/json"}
+
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        prices = {
+            coin: data.get(mapped_ids[coin], {}).get("eur", None)
+            for coin in mapped_ids
+        }
+    except Exception as e:
+        st.error(f"❌ Fout bij ophalen prijzen: {e}")
+        prices = {coin: None for coin in coins}
+
     return prices
 
 # ===RSI Tickers===
