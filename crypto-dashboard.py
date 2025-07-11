@@ -57,6 +57,27 @@ def get_ath_prices(coins):
             aths[coin] = r.json()["market_data"]["ath"]["eur"]
     return aths
 
+@st.cache_data(ttl=3600)
+def get_prices(coins):
+    ids = {
+        "WIF": "dogwifcoin",
+        "ZK": "zksync",
+        "RNDR": "render-token",
+        "SUI": "sui",
+        "LINK": "chainlink",
+        "STRK": "starknet",
+        "FET": "fetch-ai",
+        "INJ": "injective-protocol",
+        "JUP": "jupiter-exchange"
+    }
+    prices = {}
+    for coin in coins:
+        if coin in ids:
+            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids[coin]}&vs_currencies=eur"
+            r = requests.get(url)
+            prices[coin] = r.json()[ids[coin]]["eur"]
+    return prices
+
 # ===RSI Tickers===
 yf_tickers = {
     "WIF": "WIF-USD",
