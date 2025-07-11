@@ -121,7 +121,8 @@ with tabs[0]:
         coins = df["Coin"].tolist()
         prices = get_prices(coins)
         df["Huidige_Prijs_EUR"] = df["Coin"].map(prices)
-        df["Aantal"] = df["Aantal"].astype(str).str.replace(",", ".").astype(float)
+        df["Aantal"] = df["Aantal"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
+        df["Aantal"] = pd.to_numeric(df["Aantal"], errors="coerce")
         df["Totale_Waarde"] = df["Aantal"] * df["Huidige_Prijs_EUR"]
 
         total_value = df["Totale_Waarde"].sum() + st.session_state.cash
