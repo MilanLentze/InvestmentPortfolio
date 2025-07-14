@@ -103,7 +103,7 @@ ALTCOIN_PHASES = {
     "RNDR": "Fase 2-3 – Mid Caps & Narratieven",
     "SUI": "Fase 2 – Mid Caps & Narratieven",
     "LINK": "Fase 1 – Blue Chips & Infra",
-    "STRK": "Fase 1-2 – Blue C & Infra/Mid Caps",
+    "STRK": "Fase 1-2 – Blue Chips & Mid C",
     "FET": "Fase 2 – Mid Caps & Narratieven",
     "INJ": "Fase 2 – Mid Caps & Narratieven",
     "JUP": "Fase 3 – Hypefase / Narratiefpiek"
