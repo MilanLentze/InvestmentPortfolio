@@ -1,12 +1,16 @@
 import streamlit as st
 import requests
-import time
+from streamlit_autorefresh import st_autorefresh
 
-# ===== Streamlit Config =====
-st.set_page_config(page_title="📈 Live Altcoin Prices", layout="wide")
-st.title("📈 Live Prijzen van Altcoins (CoinGecko)")
+# ========== CONFIGURATIE ==========
+st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
+st.title("📊 Live Altcoin Prices")
+st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 10 seconden")
 
-# ===== CoinGecko coin IDs =====
+# ===== AUTOVERVERSING (elke 10 sec) =====
+st_autorefresh(interval=10_000, key="refresh")
+
+# ===== COINGECKO IDs =====
 COINS = {
     "WIF": "dogwifcoin",
     "ZK": "zksync",
@@ -19,31 +23,5 @@ COINS = {
     "JUP": "jupiter"
 }
 
-# ===== API Call Function =====
-@st.cache_data(ttl=60)  # cache data for 60 sec
-def get_prices():
-    ids = ",".join(COINS.values())
-    url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids}&vs_currencies=eur"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        st.error("Fout bij ophalen van prijzen.")
-        return {}
-
-# ===== Price Display =====
-def display_prices(prices):
-    cols = st.columns(3)
-    for i, (symbol, coingecko_id) in enumerate(COINS.items()):
-        price = prices.get(coingecko_id, {}).get("eur", "N/A")
-        with cols[i % 3]:
-            st.metric(label=symbol, value=f"€ {price}")
-
-# ===== Live Update =====
-placeholder = st.empty()
-
-while True:
-    with placeholder.container():
-        prices = get_prices()
-        display_prices(prices)
-    time.sleep(10)  # update elke 10 seconden
+# ===== FUNCTIE: Prijzen ophalen =====
+@st.cache_data(ttl=8)_
