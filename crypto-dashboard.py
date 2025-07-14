@@ -148,6 +148,9 @@ elif sort_option == "Verandering 7d":
     coin_data = sorted(coin_data, key=lambda x: x["change_7d"], reverse=True)
 elif sort_option == "Verandering 30d":
     coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
+elif sort_option == "Altseason Piek Fase":
+    coin_data = sorted(coin_data, key=lambda x: x["altseason_phase"], reverse=True)
+    
     
 # ===== RENDER DE TABEL =====
 st.markdown("---")
