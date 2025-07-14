@@ -162,27 +162,26 @@ for coin in coin_data:
             </div>
         """, unsafe_allow_html=True)
 
-        # === Mini-grafiek toevoegen
+               # === Mini-grafiek toevoegen
         with st.spinner("📈 Grafiek laden..."):
             dates, values = get_chart_data(COINS[coin['symbol']]['id'])
-                if dates:
-                    fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=dates, y=values, mode='lines', line=dict(width=2)))
-                    fig.update_layout(
-                        height=200,
-                        margin=dict(l=10, r=10, t=20, b=20),
-                        template="plotly_dark",
-                        showlegend=False,
-                        plot_bgcolor='#000000',
-                        paper_bgcolor='#000000',
-                        font=dict(color='#FFFFFF'),
-                        xaxis=dict(showgrid=False),
-                        yaxis=dict(showgrid=False)
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
-                else:
-                    st.info("Geen grafiekdata beschikbaar.")
-
+            if dates:
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines', line=dict(width=2)))
+                fig.update_layout(
+                    height=200,
+                    margin=dict(l=10, r=10, t=20, b=20),
+                    template="plotly_dark",
+                    showlegend=False,
+                    plot_bgcolor='#000000',
+                    paper_bgcolor='#000000',
+                    font=dict(color='#FFFFFF'),
+                    xaxis=dict(showgrid=False),
+                    yaxis=dict(showgrid=False)
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Geen grafiekdata beschikbaar.")
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
