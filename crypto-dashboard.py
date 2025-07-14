@@ -76,7 +76,7 @@ with tab2:
             """)
             st.caption("Bron: CoinMarketCap")
 
-        elif macro == "ETH/BTC Ratio":
+     elif macro == "ETH/BTC Ratio":
         st.markdown("### 📉 ETH/BTC Ratio – Laatste 90 dagen")
 
         def get_eth_btc_chart():
@@ -103,8 +103,7 @@ with tab2:
             - **ETH/BTC stijgt** → Altcoins winnen kracht → kans op mid-cap rotatie
             - Breakouts in ETH/BTC leiden vaak tot altseason-momentum
             """)
-
-        elif macro == "Fear & Greed Index":
+     elif macro == "Fear & Greed Index":
         st.markdown("### 😨😎 Fear & Greed Index – Crypto Sentiment")
 
         def get_fear_greed_index():
@@ -131,6 +130,7 @@ with tab2:
             > **Actuele status:** *{classification}*
             """)
             st.caption("Bron: alternative.me – Fear & Greed API")
+       
    
     # 2. Kapitaalrotatie
     st.subheader("🔄 Kapitaalrotatie")
