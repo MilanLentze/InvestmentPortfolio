@@ -607,4 +607,4 @@ st.markdown("---")
 st.markdown("---")
 st.markdown("---")
 st.markdown("---")
-st.caption("Dashboard ontwikkeld door Milan
+st.caption("Dashboard ontwikkeld door Milan")
