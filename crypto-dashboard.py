@@ -6,8 +6,7 @@ from streamlit_autorefresh import st_autorefresh
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 st.title("📊 Live Altcoin Prices")
-st.caption("Gegevens via CoinGecko & Jupiter · Prijzen in euro · Automatisch ververst elke 30 seconden")
-
+st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
 st.markdown("""
     <style>
     body {
@@ -34,32 +33,19 @@ COINS = {
     "STRK": "starknet",
     "FET": "fetch-ai",
     "INJ": "injective-protocol",
-    "JUP": "jupiter"  # JUP behandelen we apart via Jupiter API
+    "JUP": "jupiter"
 }
 
-# ===== JUP via Jupiter Aggregator API =====
-def get_jup_price_from_jupiter():
-    url = "https://quote-api.jup.ag/v6/price?ids=JUP"
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-        jup_data = data.get("data", {}).get("JUP", {})
-        return jup_data.get("price")
-    except Exception as e:
-        st.warning(f"Jupiter API fout: {e}")
-        return None
-
-# ===== PRIJZEN OPHALEN COINGECKO =====
+# ===== PRIJZEN OPHALEN FUNCTIE =====
 @st.cache_data(ttl=25)
 def get_live_prices():
-    ids = ",".join([v for k, v in COINS.items() if k != "JUP"])
+    ids = ",".join(COINS.values())
     url = (
         f"https://api.coingecko.com/api/v3/simple/price"
         f"?ids={ids}&vs_currencies=eur&include_24hr_change=true"
     )
     try:
-        time.sleep(1)
+        time.sleep(1)  # om CoinGecko-spikes te vermijden
         response = requests.get(url, timeout=10)
         if response.status_code == 429:
             raise Exception("📉 API-limiet bereikt (429 Too Many Requests)")
@@ -74,13 +60,9 @@ prices = get_live_prices()
 
 st.markdown("---")
 for symbol, coingecko_id in COINS.items():
-    if symbol == "JUP":
-        price = get_jup_price_from_jupiter()
-        change = None  # Geen 24u-change beschikbaar via Jupiter
-    else:
-        data = prices.get(coingecko_id, {})
-        price = data.get("eur", None)
-        change = data.get("eur_24h_change", None)
+    data = prices.get(coingecko_id, {})
+    price = data.get("eur", None)
+    change = data.get("eur_24h_change", None)
 
     if price is not None:
         change_str = ""
@@ -103,4 +85,4 @@ for symbol, coingecko_id in COINS.items():
         st.warning(f"{symbol}: prijs niet gevonden")
 
 st.markdown("---")
-st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit, CoinGecko & Jupiter")
+st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
