@@ -4,6 +4,7 @@ import time
 from streamlit_autorefresh import st_autorefresh
 import plotly.graph_objects as go
 from datetime import datetime
+import json
 
 
 # ========== CONFIGURATIE ==========
@@ -41,11 +42,9 @@ with tab2:
     # 1. Macro Indicatoren
     st.subheader("📈 Macro Indicatoren")
     macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
-    st.info(f"Inzicht: {macro}")
-    # --- 1.1 BTC Dominance Live Chart ---
 
-    import plotly.express as px
-    
+    import plotly.express as px  # mag eventueel ook bovenaan je script
+
     def get_btc_dominance():
         url = "https://api.coingecko.com/api/v3/global"
         try:
@@ -57,14 +56,72 @@ with tab2:
             st.error(f"Fout bij ophalen BTC Dominance: {e}")
             return None
 
-# Selectie van macro
-st.subheader("📈 Macro Indicatoren")
-macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
+    if macro == "BTC Dominance":
+        btc_dom = get_btc_dominance()
+        if btc_dom is not None:
+            st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
+            st.markdown(f"""
+            - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
+            - **⬆️ Stijgende dominance** = kapitaal stroomt naar BTC → vaak vroege fase van cycle  
+            - **⬇️ Dalende dominance** = altcoins outperformen → kans op altseason
+            """)
+            st.caption("Bron: CoinGecko")
 
-if macro == "BTC Dominance":
-    btc_dom = get_btc_dominance()
-    if btc_dom is not None:
-        st.metric(label)
+    elif macro == "ETH/BTC Ratio":
+    st.markdown("### 📉 ETH/BTC Ratio – Laatste 90 dagen")
+
+    def get_eth_btc_chart():
+        try:
+            data = yf.download("ETH-BTC", period="90d", interval="1d", progress=False)
+            return data
+        except Exception as e:
+            st.error(f"Fout bij ophalen ETH/BTC ratio: {e}")
+            return None
+
+    eth_btc_data = get_eth_btc_chart()
+    if eth_btc_data is not None and not eth_btc_data.empty:
+        fig = px.line(
+            eth_btc_data,
+            x=eth_btc_data.index,
+            y="Close",
+            title="ETH/BTC Ratio",
+            labels={"Close": "Ratio", "index": "Datum"},
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("""
+        - **ETH/BTC daalt** → Bitcoin sterker → vroege fase
+        - **ETH/BTC stijgt** → Altcoins krijgen kracht → vaak midden altseason
+        - Een breakout in ETH/BTC ratio is vaak een signaal voor een rotatie naar grotere altcoins
+        """)
+
+    elif macro == "Fear & Greed Index":
+    st.markdown("### 😨😎 Fear & Greed Index – Crypto Sentiment")
+
+    def get_fear_greed_index():
+        url = "https://api.alternative.me/fng/?limit=1"
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            return int(data["data"][0]["value"]), data["data"][0]["value_classification"]
+        except Exception as e:
+            st.error(f"Fout bij ophalen Fear & Greed Index: {e}")
+            return None, None
+
+    index_value, classification = get_fear_greed_index()
+    if index_value is not None:
+        st.metric(label="Huidige index", value=f"{index_value}/100", delta=classification)
+        st.markdown(f"""
+        **Interpretatie:**
+        - 0–24: 😱 Extreme Fear → Capitulatie → potentiële instapkans
+        - 25–49: 😟 Fear → Risico-aversie overheerst
+        - 50–74: 🙂 Greed → Positief sentiment, opletten op euforie
+        - 75–100: 🤪 Extreme Greed → Markt is mogelijk oververhit
+
+        > Huidige stand: **{classification}**
+        """)
+
 
 
     # 2. Kapitaalrotatie
