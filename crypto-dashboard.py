@@ -7,6 +7,18 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 st.title("📊 Live Altcoin Prices")
 st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
+st.markdown("""
+    <style>
+    body {
+        background-color: #000000;
+        color: #FFFFFF;
+    }
+    .stApp {
+        background-color: #000000;
+        color: #FFFFFF;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # ===== AUTOVERVERSING (elke 30 sec) =====
 st_autorefresh(interval=30_000, key="refresh")
@@ -61,9 +73,9 @@ for symbol, coingecko_id in COINS.items():
 
         st.markdown(
             f"""
-            <div style='padding: 10px 12px; border-bottom: 1px solid #eee;'>
-                <strong style='font-size: 1.2rem;'>{symbol}</strong><br>
-                <span style='font-size: 1.8rem; color: #10A37F;'>€ {price:,.4f}</span>
+            <div style='padding: 10px 12px; border-bottom: 1px solid #333;'>
+                <strong style='font-size: 1.0rem; color: white;'>{symbol}</strong><br>
+                <span style='font-size: 1.4rem; color: #10A37F;'>€ {price:,.4f}</span>
                 &nbsp;&nbsp;{change_str}
             </div>
             """,
