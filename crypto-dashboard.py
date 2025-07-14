@@ -156,54 +156,30 @@ with tab2:
             st.caption("Bron: alternative.me – Fear & Greed API")
 
     # 2. Kapitaalrotatie
-st.subheader("🔄 Kapitaalrotatie")
-rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
+st.subheader("🔄 Top 50 Altcoin Performance (90 dagen) – Live data")
 
-# Segmentfilters
-segments = {
-    "Blue Chips": ["ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "ADA-USD"],
-    "Narratief Coins": ["FET-USD", "RNDR-USD", "GRT-USD"],
-    "Meme Coins": ["DOGE-USD", "PEPE-USD"]
-}
+# URL van de Blockchain Center Altcoin Season Index
+url = "https://www.blockchaincenter.net/en/altcoin-season-index/"
 
-# Voeg BTC toe voor vergelijking
-selected_tickers = ["BTC-USD"] + segments[rotation]
+try:
+    # Haal alle tabellen op van de pagina
+    tables = pd.read_html(url)
 
-# Download per coin en sla alleen werkende tickers op
-valid_tickers = []
-dfs = []
+    # De juiste tabel zit meestal op index 1 (kan veranderen)
+    top50_df = tables[1]
 
-for ticker in selected_tickers:
-    try:
-        data = yf.download(ticker, period="8d", interval="1d")["Adj Close"]
-        dfs.append(data.rename(ticker))
-        valid_tickers.append(ticker)
-    except Exception:
-        st.warning(f"⚠️ Ticker mislukt: {ticker}")
+    # Optioneel: hernoem kolommen voor duidelijkheid
+    top50_df.columns = ["#", "Coin", "Performance (90d)"]
 
-# Combineer alle werkende tickers
-if dfs:
-    df = pd.concat(dfs, axis=1).dropna()
-
-    # Bereken 7d % groei
-    returns = df.pct_change().sum().iloc[1:] * 100
-    btc_return = returns["BTC-USD"]
-
-    # Filter coins die BTC outperformen
-    outperformers = returns[returns > btc_return].drop("BTC-USD", errors="ignore")
-
-    # Bouw dataframe
-    df_out = pd.DataFrame({
-        "7d % Groei": outperformers,
-        "Verschil t.o.v. BTC": outperformers - btc_return
-    }).round(2).sort_values("Verschil t.o.v. BTC", ascending=False)
+    # Sorteer op performance
+    top50_df = top50_df.sort_values("Performance (90d)", ascending=False).reset_index(drop=True)
 
     # Toon in dashboard
-    st.markdown(f"**BTC 7d Groei:** `{btc_return:.2f}%`")
-    st.dataframe(df_out)
-else:
-    st.error("❌ Geen geldige tickers gevonden. Probeer een ander segment.")
+    st.dataframe(top50_df)
 
+except Exception as e:
+    st.error("❌ Kan live data niet laden. Mogelijk is de structuur van de website gewijzigd.")
+    st.exception(e)
 
     # 3. Narratief Activiteit
     st.subheader("🔥 Narratief Activiteit")
