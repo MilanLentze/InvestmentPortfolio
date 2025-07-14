@@ -149,24 +149,6 @@ elif sort_option == "Verandering 7d":
 elif sort_option == "Verandering 30d":
     coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
     
-# ===== TABEL HTML AANMAKEN =====
-table_html = """
-
-for coin in coin_data:
-    table_html += f"""
-        <tr>
-            <td style='padding: 6px;'>{coin['symbol']}</td>
-            <td>€ {coin['price']:.4f}</td>
-            <td>{format_change(coin['change_24h'])}</td>
-            <td>{format_change(coin['change_7d'])}</td>
-            <td>{format_change(coin['change_30d'])}</td>
-            <td>{coin['narrative']}</td>
-            <td>{coin['altseason_phase']}</td>
-        </tr>
-    """
-
-table_html += "</tbody></table></div>"
-
 # ===== RENDER DE TABEL =====
 st.markdown("---")
 st.markdown(table_html, unsafe_allow_html=True)
