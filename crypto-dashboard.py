@@ -149,28 +149,34 @@ st.markdown("""
 """, unsafe_allow_html=True)
       
 for coin in coin_data:
-    st.markdown(f"""
-        <div style='padding: 10px 12px; border-bottom: 1px solid #333;
-        display: grid; grid-template-columns: 80px 120px 120px 100px 100px auto; align-items: center;'>
-            <span style='color: white;'>{coin['symbol']}</span>
-            <span style='color: #10A37F; font-family: monospace;'>€ {coin['price']:.4f}</span>
-            <span>{format_change(coin['change_24h'])}</span>
-            <span>{format_change(coin['change_7d'])}</span>
-            <span>{format_change(coin['change_30d'])}</span>
-            <span style='color: #AAAAAA;'>{coin['narrative']}</span>
-        </div>
-    """, unsafe_allow_html=True)
+    key = f"show_{coin['symbol']}"
+    if key not in st.session_state:
+        st.session_state[key] = False
 
-    with st.expander("📈 Bekijk 7-daagse prijsontwikkeling"):
+    col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 2, 2, 2, 2, 2, 1])
+    with col1:
+        st.markdown(f"**{coin['symbol']}**")
+    with col2:
+        st.markdown(f"€ {coin['price']:.4f}")
+    with col3:
+        st.markdown(format_change(coin['change_24h']), unsafe_allow_html=True)
+    with col4:
+        st.markdown(format_change(coin['change_7d']), unsafe_allow_html=True)
+    with col5:
+        st.markdown(format_change(coin['change_30d']), unsafe_allow_html=True)
+    with col6:
+        st.markdown(f"{coin['narrative']}")
+    with col7:
+        st.toggle("📈", key=key, label_visibility="collapsed")
+
+    # Grafiek tonen indien knop is geactiveerd
+    if st.session_state[key]:
         with st.spinner("Grafiek laden..."):
             dates, values = get_chart_data(COINS[coin['symbol']]['id'])
             if dates:
                 fig = go.Figure()
-                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines', line=dict(width=2)))
-                fig.update_layout(
-                    height=200, margin=dict(l=10, r=10, t=20, b=20),
-                    template="plotly_dark", showlegend=False
-                )
+                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines'))
+                fig.update_layout(height=200, template="plotly_dark", margin=dict(t=10, b=10))
                 st.plotly_chart(fig, use_container_width=True)
             else:
                 st.info("Geen grafiekdata beschikbaar.")
