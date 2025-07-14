@@ -87,15 +87,16 @@ with tab2:
             except Exception as e:
                 st.error(f"Fout bij ophalen ETH/BTC ratio: {e}")
                 return None
-
+        
         eth_btc_data = get_eth_btc_chart()
         if eth_btc_data is not None and not eth_btc_data.empty:
+            eth_btc_data["Date"] = eth_btc_data.index  # <-- pas hier toevoegen
             fig = px.line(
                 eth_btc_data,
-                x=eth_btc_data.index,
+                x="Date",
                 y="Close",
                 title="ETH/BTC Ratio (90 dagen)",
-                labels={"Close": "Ratio", "index": "Datum"}
+                labels={"Close": "Ratio", "Date": "Datum"}
             )
             st.plotly_chart(fig, use_container_width=True)
 
