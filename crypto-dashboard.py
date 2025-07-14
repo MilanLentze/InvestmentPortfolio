@@ -512,7 +512,7 @@ with tab3:
     **Exitstrategie**  
     - Verkoop 30% bij 3x  
     - Verkoop 40% bij 5x  
-    - Verkoop 30% bij 7–10x of breakdown  
+    - Verkoop 30% bij 6–7x of breakdown  
     
     **Uitleg**  
     L1’s stijgen vaak stabiel – blow-off rond 5x.  
