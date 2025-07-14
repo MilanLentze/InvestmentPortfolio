@@ -11,6 +11,8 @@ import yfinance as yf
 import pandas as pd
 import streamlit as st
 
+# API-key opslaan
+CMC_API_KEY = "9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb"
 
 def get_btc_dominance_cmc(api_key):
     url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
