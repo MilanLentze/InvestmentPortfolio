@@ -7,6 +7,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 st.title("📊 Live Altcoin Prices")
 st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
+
 st.markdown("""
     <style>
     body {
@@ -45,7 +46,7 @@ def get_live_prices():
         f"?ids={ids}&vs_currencies=eur&include_24hr_change=true"
     )
     try:
-        time.sleep(1)  # om CoinGecko-spikes te vermijden
+        time.sleep(1)
         response = requests.get(url, timeout=10)
         if response.status_code == 429:
             raise Exception("📉 API-limiet bereikt (429 Too Many Requests)")
@@ -55,34 +56,67 @@ def get_live_prices():
         st.error(f"Kon prijzen niet ophalen: {e}")
         return {}
 
+# ===== USER FILTERS & CONTROLS =====
+sort_option = st.selectbox("🔃 Sorteer op", ["Coin", "Prijs", "Verandering 24u"])
+filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=True)
+
 # ===== PRIJZEN TONEN MET VERANDERING =====
 prices = get_live_prices()
 
-st.markdown("---")
+# Voorverwerken
+coin_data = []
 for symbol, coingecko_id in COINS.items():
     data = prices.get(coingecko_id, {})
     price = data.get("eur", None)
     change = data.get("eur_24h_change", None)
+    if price is not None and change is not None:
+        coin_data.append({"symbol": symbol, "price": price, "change": change})
 
-    if price is not None:
-        change_str = ""
-        if change is not None:
-            change_icon = "🔼" if change >= 0 else "🔽"
-            color = "#10A37F" if change >= 0 else "#FF4B4B"
-            change_str = f"{change_icon} <span style='color: {color};'>{change:.2f}%</span>"
+# Filteren
+if filter_enabled:
+    coin_data = [c for c in coin_data if c["change"] > 5]
 
-        st.markdown(
-            f"""
-            <div style='padding: 10px 12px; border-bottom: 1px solid #333; display: grid; grid-template-columns: 80px 120px auto; align-items: center;'>
-                <span style='font-size: 0.95rem; color: white;'>{symbol}</span>
-                <span style='font-size: 0.95rem; color: #10A37F; font-family: monospace;'>€ {price:,.4f}</span>
-                <span style='font-size: 0.95rem;'>{change_str}</span>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    else:
-        st.warning(f"{symbol}: prijs niet gevonden")
+# Sorteren
+if sort_option == "Coin":
+    coin_data = sorted(coin_data, key=lambda x: x["symbol"])
+elif sort_option == "Prijs":
+    coin_data = sorted(coin_data, key=lambda x: x["price"], reverse=True)
+elif sort_option == "Verandering 24u":
+    coin_data = sorted(coin_data, key=lambda x: x["change"], reverse=True)
 
+# ===== HEADER + TABEL RENDEREN =====
+st.markdown("---")
+st.markdown(
+    """
+    <div style='padding: 10px 12px; border-bottom: 2px solid #666; display: grid; grid-template-columns: 80px 120px auto; font-weight: bold;'>
+        <span>Coin</span>
+        <span>Prijs</span>
+        <span>Verandering 24u</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+for coin in coin_data:
+    change_icon = "🔼" if coin["change"] >= 0 else "🔽"
+    color = "#10A37F" if coin["change"] >= 0 else "#FF4B4B"
+    change_str = f"{change_icon} <span style='color: {color};'>{coin['change']:.2f}%</span>"
+
+    st.markdown(
+        f"""
+        <div style='padding: 10px 12px; border-bottom: 1px solid #333; display: grid; grid-template-columns: 80px 120px auto; align-items: center;'>
+            <span style='font-size: 0.95rem; color: white;'>{coin['symbol']}</span>
+            <span style='font-size: 0.95rem; color: #10A37F; font-family: monospace;'>€ {coin['price']:.4f}</span>
+            <span style='font-size: 0.95rem;'>{change_str}</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.markdown("---")
+st.markdown("---")
+st.markdown("---")
+st.markdown("---")
+st.markdown("---")
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
