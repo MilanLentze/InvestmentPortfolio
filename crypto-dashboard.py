@@ -151,7 +151,6 @@ elif sort_option == "Verandering 30d":
     
 # ===== RENDER DE TABEL =====
 st.markdown("---")
-st.markdown(table_html, unsafe_allow_html=True)
 
 # ===== EXPANDERS MET MINI-GRAFIEKJES =====
 for coin in coin_data:
