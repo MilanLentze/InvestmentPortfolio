@@ -18,7 +18,12 @@ st.markdown("""
         background-color: #000000;
         color: #FFFFFF;
     }
-    label, .stSelectbox label, .stCheckbox > div {
+    label, .stSelectbox label {
+        color: #AAAAAA !important;
+        font-weight: normal;
+    }
+    /* Specifiek voor checkbox label */
+    .css-16huue1 > label, .stCheckbox > div > label {
         color: #AAAAAA !important;
         font-weight: normal;
     }
