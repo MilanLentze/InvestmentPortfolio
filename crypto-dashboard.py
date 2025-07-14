@@ -58,10 +58,11 @@ def format_change(value):
 def get_live_prices():
     ids = ",".join([info["id"] for info in COINS.values()])
     url = (
-        f"https://api.coingecko.com/api/v3/simple/price"
-        f"?ids={ids}&vs_currencies=eur"
-        f"&include_24hr_change=true&include_7d_change=true&include_30d_change=true"
+        f"https://api.coingecko.com/api/v3/coins/markets"
+        f"?vs_currency=eur&ids={ids}"
+        f"&price_change_percentage=24h,7d,30d"
     )
+
     try:
         time.sleep(1)
         response = requests.get(url, timeout=10)
@@ -83,10 +84,10 @@ prices = get_live_prices()
 coin_data = []
 for symbol, info in COINS.items():
     data = prices.get(info["id"], {})
-    price = data.get("eur", None)
-    change_24h = data.get("eur_24h_change", None)
-    change_7d = data.get("eur_7d_change", None)
-    change_30d = data.get("eur_30d_change", None)
+    price = data.get("current_price")
+    change_24h = data.get("price_change_percentage_24h_in_currency")
+    change_7d = data.get("price_change_percentage_7d_in_currency")
+    change_30d = data.get("price_change_percentage_30d_in_currency")
     if price is not None and change_24h is not None:
         coin_data.append({
             "symbol": symbol,
