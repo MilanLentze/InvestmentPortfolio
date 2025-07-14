@@ -63,12 +63,12 @@ with tab2:
             st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
             st.markdown(f"""
             - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
-            - **>65%	Bitcoinfase
-            - **60–65%	Pre-Altseason / Rotatievoorfase
-            - **55–60%	Opbouwfase (L1 grote caps stijgen fors)
-            - **50–55%	Start Altseason (mid & Low caps breken uit)
-            - **45–50%	Volledige Altseason / Piek (begin winst nemen)
-            - **<45%	Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
+            - **>65%**	Bitcoinfase
+            - **60–65%**	Pre-Altseason / Rotatievoorfase
+            - **55–60%**	Opbouwfase (L1 grote caps stijgen fors)
+            - **50–55%**	Start Altseason (mid & Low caps breken uit)
+            - **45–50%**	Volledige Altseason / Piek (begin winst nemen)
+            - **<45%**	Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
             """)
             st.caption("Bron: CoinGecko")
 
