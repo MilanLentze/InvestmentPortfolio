@@ -431,6 +431,88 @@ with tab2:
         st.error(f"Fout bij ophalen data: {response.status_code}")
 
 
+#============= Tab 3 =============
+with tab3:
+    st.title("📅 Investeringsplan Juli & Augustus")
+
+    # Juli-allocatie
+    st.subheader("📊 Allocatie – Juli")
+    july_data = {
+        "Coin": ["FET", "STRK", "SUI", "ZK", "RNDR", "WIF", "INJ", "JUP"],
+        "Allocatie %": ["20%", "20%", "15%", "15%", "10%", "10%", "5%", "5%"]
+    }
+    st.dataframe(pd.DataFrame(july_data), use_container_width=True)
+
+    # Augustus-allocatie
+    st.subheader("📊 Allocatie – Augustus")
+    aug_data = {
+        "Coin": ["LINK", "INJ", "JUP", "ZK", "RNDR", "Cash buffer"],
+        "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
+    }
+    st.dataframe(pd.DataFrame(aug_data), use_container_width=True)
+
+    # Exitstrategieën
+    st.subheader("🚪 Exitstrategieën per Coin")
+
+    exit_data = {
+        "Coin": [
+            "FET", "FET", "FET",
+            "STRK", "STRK", "STRK",
+            "SUI", "SUI", "SUI",
+            "ZK", "ZK", "ZK", "ZK",
+            "RNDR", "RNDR", "RNDR",
+            "WIF", "WIF", "WIF", "WIF",
+            "INJ", "INJ", "INJ", "INJ",
+            "JUP", "JUP", "JUP",
+            "LINK", "LINK", "LINK"
+        ],
+        "Exitstrategie": [
+            "Verkoop 25% bij 3x", "Verkoop 35% bij 5x", "Verkoop 40% bij 8x of trailing stop",
+            "Verkoop 30% bij 3x", "Verkoop 40% bij 5x", "Verkoop 30% via trailing vanaf 6x",
+            "Verkoop 30% bij 3x", "Verkoop 40% bij 5x", "Verkoop 30% bij 7–10x of breakdown",
+            "Verkoop 25% bij 3x", "Verkoop 35% bij 5x", "Verkoop 20% bij 8x", "Verkoop 20% via trailing stop",
+            "Verkoop 25% bij 2.5x", "Verkoop 35% bij 4x", "Verkoop 40% via trailing vanaf 5x",
+            "Verkoop 40% bij 2x", "Verkoop 30% bij 3.5x", "Verkoop 20% bij 5x", "Laat 10% als moonbag of exit op hype top",
+            "Verkoop 20% bij 3x", "Verkoop 30% bij 5x", "Verkoop 30% bij 7x", "Verkoop 20% via trailing",
+            "Verkoop 30% bij 2x", "Verkoop 40% bij 4x", "Verkoop 30% via trailing of news-based exit",
+            "Verkoop 25% bij 2x", "Verkoop 35% bij 4x", "Verkoop 40% bij 6x"
+        ],
+        "Uitleg": [
+            "AI-coins pieken vaak vroeg. Bij 3x is winstneming verstandig.",
+            "FET kan in fase 4 nog fors doorstijgen.",
+            "Laatste deel laten meelopen op AI-euforie of bij breakdown verkopen.",
+            "ZK hype kan plots opkomen – neem winst vroeg.",
+            "Piek meestal in één golf.",
+            "Laatste deel volgen met trailing stop voor piekmaximalisatie.",
+            "L1’s kunnen relatief stabiel stijgen – exit begint hier.",
+            "Typische blow-off move.",
+            "Exit volledig zodra hype over is.",
+            "Accumuleert vaak langer – kleine winst vroeg.",
+            "ZK-fase begint dan door te breken.",
+            "Grote hypepiek – kans op rotatie.",
+            "Maximaliseer piek met stop (bv. -15% vanaf ATH).",
+            "RNDR volgt AI-leiders, maar is iets trager.",
+            "AI tweede golf of hype push.",
+            "Laat laatste deel meelopen, maar stop-loss goed zetten.",
+            "Meme-coins stijgen snel en corrigeren hard.",
+            "Meestal mid-phase parabool.",
+            "Laatste winsten veiligstellen.",
+            "Meeliften op euforie, of alles verkopen als hype zichtbaar piekt.",
+            "Undervalued asset, piekt vaak laat.",
+            "Start van FOMO-fase voor underdogs.",
+            "Laatste piek in altseason voor dit type coin.",
+            "Laat meeliften als narratief oppakt.",
+            "Solana-infra coins kunnen snel pieken.",
+            "Momentum coin, gevoelig voor hype.",
+            "Volg hypecycli op X / Solana ecosysteem.",
+            "Late mover, breakout komt laat maar vaak krachtig.",
+            "Infra-plays pieken vaak als laatste.",
+            "Na breakout is het meestal snel over – dus afbouwen."
+        ]
+    }
+
+    st.dataframe(pd.DataFrame(exit_data), use_container_width=True)
+
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
