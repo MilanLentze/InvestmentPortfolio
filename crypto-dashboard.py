@@ -168,7 +168,7 @@ for symbol, info in COINS.items():
             "change_7d": change_7d,
             "change_30d": change_30d,
             "narrative": info["narrative"],
-            "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend")
+            "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
             "expected_x": calculate_expected_x(
                 current_price=price,
                 ath_price=ath,
