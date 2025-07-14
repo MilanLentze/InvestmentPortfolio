@@ -16,7 +16,7 @@ COINS = {
     "STRK": "starknet",
     "FET": "fetch-ai",
     "INJ": "injective-protocol",
-    "JUP": "jupiter-exchange"
+    "JUP": "jupiter"
 }
 
 # ===== API Call Function =====
