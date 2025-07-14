@@ -92,8 +92,22 @@ def get_chart_data(coin_id):
         return [], []
 
 # ===== USER FILTERS & CONTROLS =====
-sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Verandering 24u"])
+sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs"])
 filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=True)
+
+#====== ALTCOIN FASES =========
+
+ALTCOIN_PHASES = {
+    "WIF": "Fase 3: Hype & Memecoins",
+    "ZK": "Fase 2: Infra Alt Boost",
+    "RNDR": "Fase 1: Ethereum Rotation",
+    "SUI": "Fase 1: Ethereum Rotation",
+    "LINK": "Fase 2: Infra Alt Boost",
+    "STRK": "Fase 2: Infra Alt Boost",
+    "FET": "Fase 1: Ethereum Rotation",
+    "INJ": "Fase 2: Infra Alt Boost",
+    "JUP": "Fase 3: Hype & Memecoins"
+}
 
 # ===== PRIJZEN TONEN MET VERANDERING =====
 prices = get_live_prices()
@@ -115,7 +129,8 @@ for symbol, info in COINS.items():
             "change_24h": change_24h,
             "change_7d": change_7d,
             "change_30d": change_30d,
-            "narrative": info["narrative"]
+            "narrative": info["narrative"],
+            "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend")
         })
 
 # Filteren
@@ -145,6 +160,7 @@ st.markdown("""
         <span>7d</span>
         <span>30d</span>
         <span>Narratief</span>
+        <span>Altseason Fase</span>
     </div>
 """, unsafe_allow_html=True)
       
@@ -168,18 +184,6 @@ for coin in coin_data:
         st.markdown(f"{coin['narrative']}")
     with col7:
         st.toggle("📈", key=key, label_visibility="collapsed")
-
-    # Grafiek tonen indien knop is geactiveerd
-    if st.session_state[key]:
-        with st.spinner("Grafiek laden..."):
-            dates, values = get_chart_data(COINS[coin['symbol']]['id'])
-            if dates:
-                fig = go.Figure()
-                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines'))
-                fig.update_layout(height=200, template="plotly_dark", margin=dict(t=10, b=10))
-                st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("Geen grafiekdata beschikbaar.")
 
                # === Mini-grafiek toevoegen
         with st.spinner("📈 Grafiek laden..."):
