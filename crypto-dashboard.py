@@ -161,18 +161,30 @@ with tab2:
     rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
     
     # Segmentfilters
-    segments = {
+   segments = {
         "Blue Chips": ["ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "ADA-USD"],
-        "Narratief Coins": ["FET-USD", "RNDR-USD", "AGIX-USD", "GRT-USD", "TAO-USD"],
-        "Meme Coins": ["WIF-USD", "PEPE-USD", "DOGE-USD", "FLOKI-USD"]
+        "Narratief Coins": ["FET-USD", "RNDR-USD", "GRT-USD"],  # AGIX en TAO werken vaak niet
+        "Meme Coins": ["DOGE-USD", "PEPE-USD"]  # WIF en FLOKI werken vaak niet of onregelmatig
     }
+
     
     # Voeg BTC altijd toe voor vergelijking
     selected_tickers = ["BTC-USD"] + segments[rotation]
+
+    # Download per coin en sla alleen werkende tickers op
+    valid_tickers = []
+    dfs = []
     
-    # Download slotkoersen (8 dagen = nodig voor 7d groei)
-    raw_df = yf.download(selected_tickers, period="8d", interval="1d", group_by='ticker')
-    df = pd.DataFrame({ticker: raw_df[ticker]["Adj Close"] for ticker in selected_tickers}).dropna()
+    for ticker in selected_tickers:
+        try:
+            data = yf.download(ticker, period="8d", interval="1d")["Adj Close"]
+            dfs.append(data.rename(ticker))
+            valid_tickers.append(ticker)
+        except Exception:
+            st.warning(f"⚠️ Ticker mislukt: {ticker}")
+
+    # Combineer alle werkende tickers
+    df = pd.concat(dfs, axis=1).dropna()
 
     
     # Bereken 7d % groei
