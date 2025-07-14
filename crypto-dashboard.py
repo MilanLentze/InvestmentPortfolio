@@ -43,7 +43,14 @@ st.markdown("---")
 for symbol, coingecko_id in COINS.items():
     price = prices.get(coingecko_id, {}).get("eur", None)
     if price is not None:
-        st.markdown(f"""
-        <div style='padding: 10px 0; border-bottom: 1px solid #eee;'>
-            <strong style='font-size: 1.2rem;'>{symbol}</strong><br>
-            <span style='font-size: 1.
+        st.markdown(
+            f"""
+            <div style='padding: 10px 0; border-bottom: 1px solid #eee;'>
+                <strong style='font-size: 1.2rem;'>{symbol}</strong><br>
+                <span style='font-size: 1.8rem; color: #10A37F;'>€ {price:,.4f}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.warning(f"{symbol}: prijs niet gevonden")
