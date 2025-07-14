@@ -109,6 +109,42 @@ ALTCOIN_PHASES = {
     "JUP": "Fase 3 – Hypefase / Narratiefpiek"
 }
 
+#======= Rendement X =======
+def calculate_expected_x(current_price, ath_price, current_marketcap, narrative, price_change_30d):
+    if current_price <= 0 or current_marketcap <= 0:
+        return 0.0
+
+    ath_factor = ath_price / current_price
+
+    narrative_multipliers = {
+        "AI": 1.3,
+        "ZK / L2": 1.25,
+        "L1": 1.2,
+        "DeFi": 1.1,
+        "Oracles": 1.1,
+        "Solana DEX": 1.15,
+        "Meme": 1.4,
+        "AI / GPU": 1.35
+    }
+    narrative_multiplier = narrative_multipliers.get(narrative, 1.0)
+
+    estimated_max_cap = 5_000_000_000  # 5 miljard euro plafond
+    marketcap_multiplier = estimated_max_cap / current_marketcap
+
+    if price_change_30d > 50:
+        momentum_factor = 0.8
+    elif price_change_30d > 20:
+        momentum_factor = 0.95
+    elif price_change_30d > 0:
+        momentum_factor = 1.0
+    elif price_change_30d > -20:
+        momentum_factor = 1.1
+    else:
+        momentum_factor = 1.25
+
+    expected_x = ath_factor * narrative_multiplier * marketcap_multiplier * momentum_factor
+    return round(min(expected_x, 25), 1)
+
 # ===== PRIJZEN TONEN MET VERANDERING =====
 prices = get_live_prices()
 
@@ -118,6 +154,8 @@ for symbol, info in COINS.items():
     if not match:
         continue
     price = match.get("current_price")
+    ath = match.get("ath")  # <-- voeg toe
+    market_cap = match.get("market_cap")  # <-- voeg toe
     change_24h = match.get("price_change_percentage_24h_in_currency")
     change_7d = match.get("price_change_percentage_7d_in_currency")
     change_30d = match.get("price_change_percentage_30d_in_currency")
@@ -131,6 +169,13 @@ for symbol, info in COINS.items():
             "change_30d": change_30d,
             "narrative": info["narrative"],
             "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend")
+            "expected_x": calculate_expected_x(
+                current_price=price,
+                ath_price=ath,
+                current_marketcap=market_cap,
+                narrative=info["narrative"],
+                price_change_30d=change_30d
+            )
         })
 
 # Filteren
@@ -158,7 +203,7 @@ st.markdown("---")
 # ===== TABEL WEERGAVE MET STREAMLIT KOLLOMEN =====
 st.markdown("---")
 st.markdown("""<h4 style='color:#fff;'>📊 Coin Tabel</h4>""", unsafe_allow_html=True)
-header = st.columns([1, 2, 2, 2, 2, 2, 2])
+header = st.columns([1, 2, 2, 2, 2, 2, 2, 2])
 header[0].markdown("**Coin**")
 header[1].markdown("**Prijs**")
 header[2].markdown("**24u**")
@@ -166,9 +211,10 @@ header[3].markdown("**7d**")
 header[4].markdown("**30d**")
 header[5].markdown("**Narratief**")
 header[6].markdown("**Altseason Piek Fase**")
+header[7].markdown("**Verwacht X**")
 
 for coin in coin_data:
-    row = st.columns([1, 2, 2, 2, 2, 2, 2])
+    row = st.columns([1, 2, 2, 2, 2, 2, 2, 2])
     row[0].markdown(f"**{coin['symbol']}**")
     row[1].markdown(f"€ {coin['price']:.4f}")
     row[2].markdown(format_change(coin['change_24h']), unsafe_allow_html=True)
@@ -176,6 +222,7 @@ for coin in coin_data:
     row[4].markdown(format_change(coin['change_30d']), unsafe_allow_html=True)
     row[5].markdown(coin['narrative'])
     row[6].markdown(coin['altseason_phase'])
+    row[7].markdown(f"{coin['expected_x']}x")
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
