@@ -193,10 +193,6 @@ for symbol, info in COINS.items():
             )
         })
 
-# Filteren
-if filter_enabled:
-    coin_data = [c for c in coin_data if c["change_24h"] > 5]
-
 # Sorteren
 if sort_option == "Coin":
     coin_data = sorted(coin_data, key=lambda x: x["symbol"])
