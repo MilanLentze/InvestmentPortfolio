@@ -90,7 +90,7 @@ with tab2:
         
         eth_btc_data = get_eth_btc_chart()
         if eth_btc_data is not None and not eth_btc_data.empty:
-            eth_btc_data["Date"] = eth_btc_data.index  # <-- pas hier toevoegen
+            eth_btc_data = eth_btc_data.reset_index()  # <-- Zet de datumindex om naar kolom 'Date'
             fig = px.line(
                 eth_btc_data,
                 x="Date",
@@ -99,7 +99,7 @@ with tab2:
                 labels={"Close": "Ratio", "Date": "Datum"}
             )
             st.plotly_chart(fig, use_container_width=True)
-
+        
             st.markdown("""
             - **ETH/BTC daalt** → Bitcoin sterker → vaak vroege cyclusfase  
             - **ETH/BTC stijgt** → Altcoins winnen kracht → kans op mid-cap rotatie  
