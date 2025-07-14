@@ -2,6 +2,9 @@ import streamlit as st
 import requests
 import time
 from streamlit_autorefresh import st_autorefresh
+import plotly.graph_objects as go
+from datetime import datetime
+
 
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
@@ -73,6 +76,21 @@ def get_live_prices():
         st.error(f"Kon prijzen niet ophalen: {e}")
         return []
 
+# ===== HISTORISCHE GRAFIEKDATA OPHALEN =====
+@st.cache_data(ttl=1800)
+def get_chart_data(coin_id):
+    url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=eur&days=7"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        prices = response.json().get("prices", [])
+        # Timestamps naar datumstrings + prijs
+        dates = [datetime.fromtimestamp(p[0]/1000).strftime('%d %b') for p in prices]
+        values = [p[1] for p in prices]
+        return dates, values
+    except:
+        return [], []
+
 # ===== USER FILTERS & CONTROLS =====
 sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Verandering 24u"])
 filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=True)
@@ -111,7 +129,11 @@ elif sort_option == "Prijs":
     coin_data = sorted(coin_data, key=lambda x: x["price"], reverse=True)
 elif sort_option == "Verandering 24u":
     coin_data = sorted(coin_data, key=lambda x: x["change_24h"], reverse=True)
-
+elif sort_option == "Verandering 7d":
+    coin_data = sorted(coin_data, key=lambda x: x["change_7d"], reverse=True)
+elif sort_option == "Verandering 30d":
+    coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
+    
 # ===== TABEL RENDEREN =====
 st.markdown("---")
 st.markdown("""
@@ -125,19 +147,34 @@ st.markdown("""
         <span>Narratief</span>
     </div>
 """, unsafe_allow_html=True)
-
+      
 for coin in coin_data:
-    st.markdown(f"""
-        <div style='padding: 10px 12px; border-bottom: 1px solid #333;
-        display: grid; grid-template-columns: 80px 120px 120px 100px 100px auto; align-items: center;'>
-            <span style='color: white;'>{coin['symbol']}</span>
-            <span style='color: #10A37F; font-family: monospace;'>€ {coin['price']:.4f}</span>
-            <span>{format_change(coin['change_24h'])}</span>
-            <span>{format_change(coin['change_7d'])}</span>
-            <span>{format_change(coin['change_30d'])}</span>
-            <span style='color: #AAAAAA;'>{coin['narrative']}</span>
-        </div>
-    """, unsafe_allow_html=True)
+    with st.expander(f"{coin['symbol']} • €{coin['price']:.4f}"):
+        st.markdown(f"""
+            <div style='padding: 4px 0; display: grid;
+            grid-template-columns: 80px 120px 120px 100px 100px auto; align-items: center;'>
+                <span style='color: white; font-weight:bold;'>{coin['symbol']}</span>
+                <span style='color: #10A37F; font-family: monospace;'>€ {coin['price']:.4f}</span>
+                <span>{format_change(coin['change_24h'])}</span>
+                <span>{format_change(coin['change_7d'])}</span>
+                <span>{format_change(coin['change_30d'])}</span>
+                <span style='color: #AAAAAA;'>{coin['narrative']}</span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # === Mini-grafiek toevoegen
+        with st.spinner("📈 Grafiek laden..."):
+            dates, values = get_chart_data(COINS[coin['symbol']]['id'])
+            if dates:
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines', line=dict(width=2)))
+                fig.update_layout(
+                    height=200, margin=dict(l=10, r=10, t=20, b=20),
+                    template="plotly_dark", showlegend=False
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Geen grafiekdata beschikbaar.")
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
