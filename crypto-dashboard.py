@@ -62,17 +62,16 @@ def get_live_prices():
         f"?vs_currency=eur&ids={ids}"
         f"&price_change_percentage=24h,7d,30d"
     )
-
     try:
         time.sleep(1)
         response = requests.get(url, timeout=10)
         if response.status_code == 429:
             raise Exception("📉 API-limiet bereikt (429 Too Many Requests)")
         response.raise_for_status()
-        return response.json()
+        return response.json()  # Lijst van coin dicts
     except Exception as e:
         st.error(f"Kon prijzen niet ophalen: {e}")
-        return {}
+        return []
 
 # ===== USER FILTERS & CONTROLS =====
 sort_option = st.selectbox("🔃 Sorteer op", ["Coin", "Prijs", "Verandering 24u"])
@@ -83,11 +82,14 @@ prices = get_live_prices()
 
 coin_data = []
 for symbol, info in COINS.items():
-    data = prices.get(info["id"], {})
-    price = data.get("current_price")
-    change_24h = data.get("price_change_percentage_24h_in_currency")
-    change_7d = data.get("price_change_percentage_7d_in_currency")
-    change_30d = data.get("price_change_percentage_30d_in_currency")
+    match = next((coin for coin in prices if coin["id"] == info["id"]), None)
+    if not match:
+        continue
+    price = match.get("current_price")
+    change_24h = match.get("price_change_percentage_24h_in_currency")
+    change_7d = match.get("price_change_percentage_7d_in_currency")
+    change_30d = match.get("price_change_percentage_30d_in_currency")
+
     if price is not None and change_24h is not None:
         coin_data.append({
             "symbol": symbol,
