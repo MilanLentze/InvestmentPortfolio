@@ -5,6 +5,23 @@ from streamlit_autorefresh import st_autorefresh
 import plotly.graph_objects as go
 from datetime import datetime
 import json
+import plotly.express as px  # mag ook bovenaan je script
+import requests  # als je dit nog niet hebt bovenin
+
+def get_btc_dominance_cmc(api_key):
+    url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
+    headers = {
+        "Accepts": "application/json",
+        "X-CMC_PRO_API_KEY": api_key
+    }
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return data["data"]["btc_dominance"]
+    except Exception as e:
+        st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
+        return None
 
 
 # ========== CONFIGURATIE ==========
@@ -44,33 +61,20 @@ with tab2:
     st.subheader("📈 Macro Indicatoren")
     macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
 
-    import plotly.express as px  # mag ook bovenaan je script
 
-    if macro == "BTC Dominance":
-        def get_btc_dominance():
-            url = "https://api.coingecko.com/api/v3/global"
-            try:
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-                data = response.json()
-                return data["data"]["market_cap_percentage"]["btc"]
-            except Exception as e:
-                st.error(f"Fout bij ophalen BTC Dominance: {e}")
-                return None
+btc_dom = get_btc_dominance_cmc("9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb")
 
-        btc_dom = get_btc_dominance()
-        if btc_dom is not None:
-            st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
-            st.markdown(f"""
-            - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
-            - **>65%**	Bitcoinfase
-            - **60–65%**	Pre-Altseason / Rotatievoorfase
-            - **55–60%**	Opbouwfase (L1 grote caps stijgen fors)
-            - **50–55%**	Start Altseason (mid & Low caps breken uit)
-            - **45–50%**	Volledige Altseason / Piek (begin winst nemen)
-            - **<45%**	Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
-            """)
-            st.caption("Bron: CoinGecko")
+if btc_dom is not None:
+    st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
+    st.markdown(f"""
+    - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
+    - **>65%**	Bitcoinfase  
+    - **60–65%**	Pre-Altseason / Rotatievoorfase  
+    - **55–60%**	Opbouwfase (L1 grote caps stijgen fors)  
+    - **50–55%**	Start Altseason (mid & Low caps breken uit)  
+    - **45–50%**	Volledige Altseason / Piek (begin winst nemen)  
+    - **<45%**	Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
+    """)
 
     elif macro == "ETH/BTC Ratio":
         st.markdown("### 📉 ETH/BTC Ratio – Laatste 90 dagen")
