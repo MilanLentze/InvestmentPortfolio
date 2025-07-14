@@ -481,64 +481,127 @@ with tab3:
     # Exitstrategieën
     st.subheader("🚪 Exitstrategieën per Coin")
 
-    exit_data = {
-        "Coin": [
-            "FET", " ", " ",
-            "STRK", " ", " ",
-            "SUI", " ", " ",
-            "ZK", " ", " ", " ",
-            "RNDR", " ", " ",
-            "WIF", " ", " ", " ",
-            "INJ", " ", " ", " ",
-            "JUP", " ", " ",
-            "LINK", " ", " "
-        ],
-        "Exitstrategie": [
-            "Verkoop 25% bij 3x", "Verkoop 35% bij 5x", "Verkoop 40% bij 8x of trailing stop",
-            "Verkoop 30% bij 3x", "Verkoop 40% bij 5x", "Verkoop 30% via trailing vanaf 6x",
-            "Verkoop 30% bij 3x", "Verkoop 40% bij 5x", "Verkoop 30% bij 7–10x of breakdown",
-            "Verkoop 25% bij 3x", "Verkoop 35% bij 5x", "Verkoop 20% bij 8x", "Verkoop 20% via trailing stop",
-            "Verkoop 25% bij 2.5x", "Verkoop 35% bij 4x", "Verkoop 40% via trailing vanaf 5x",
-            "Verkoop 40% bij 2x", "Verkoop 30% bij 3.5x", "Verkoop 20% bij 5x", "Laat 10% als moonbag of exit op hype top",
-            "Verkoop 20% bij 3x", "Verkoop 30% bij 5x", "Verkoop 30% bij 7x", "Verkoop 20% via trailing",
-            "Verkoop 30% bij 2x", "Verkoop 40% bij 4x", "Verkoop 30% via trailing of news-based exit",
-            "Verkoop 25% bij 2x", "Verkoop 35% bij 4x", "Verkoop 40% bij 6x"
-        ],
-        "Uitleg": [
-            "AI-coins pieken vaak vroeg. Bij 3x is winstneming verstandig.",
-            "FET kan in fase 4 nog fors doorstijgen.",
-            "Laatste deel laten meelopen op AI-euforie of bij breakdown verkopen.",
-            "ZK hype kan plots opkomen – neem winst vroeg.",
-            "Piek meestal in één golf.",
-            "Laatste deel volgen met trailing stop voor piekmaximalisatie.",
-            "L1’s kunnen relatief stabiel stijgen – exit begint hier.",
-            "Typische blow-off move.",
-            "Exit volledig zodra hype over is.",
-            "Accumuleert vaak langer – kleine winst vroeg.",
-            "ZK-fase begint dan door te breken.",
-            "Grote hypepiek – kans op rotatie.",
-            "Maximaliseer piek met stop (bv. -15% vanaf ATH).",
-            "RNDR volgt AI-leiders, maar is iets trager.",
-            "AI tweede golf of hype push.",
-            "Laat laatste deel meelopen, maar stop-loss goed zetten.",
-            "Meme-coins stijgen snel en corrigeren hard.",
-            "Meestal mid-phase parabool.",
-            "Laatste winsten veiligstellen.",
-            "Meeliften op euforie, of alles verkopen als hype zichtbaar piekt.",
-            "Undervalued asset, piekt vaak laat.",
-            "Start van FOMO-fase voor underdogs.",
-            "Laatste piek in altseason voor dit type coin.",
-            "Laat meeliften als narratief oppakt.",
-            "Solana-infra coins kunnen snel pieken.",
-            "Momentum coin, gevoelig voor hype.",
-            "Volg hypecycli op X / Solana ecosysteem.",
-            "Late mover, breakout komt laat maar vaak krachtig.",
-            "Infra-plays pieken vaak als laatste.",
-            "Na breakout is het meestal snel over – dus afbouwen."
-        ]
-    }
-
-    st.table(pd.DataFrame(exit_data))
+    st.markdown("### 🪙 FET")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 25% bij 3x  
+    - Verkoop 35% bij 5x  
+    - Verkoop 40% bij 8x of trailing stop  
+    
+    **Uitleg**  
+    AI-coins pieken vaak vroeg. 3x is verstandig.  
+    FET kan in fase 4 nog fors doorstijgen.  
+    Laatste deel meelopen op AI-euforie of bij breakdown verkopen.
+    """)
+    
+    st.markdown("### 🪙 STRK")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 30% bij 3x  
+    - Verkoop 40% bij 5x  
+    - Verkoop 30% via trailing vanaf 6x  
+    
+    **Uitleg**  
+    ZK hype kan plots opkomen – winst vroeg nemen.  
+    Piek meestal in één golf.  
+    Laatste deel volgen met trailing stop voor piekmaximalisatie.
+    """)
+    
+    st.markdown("### 🪙 SUI")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 30% bij 3x  
+    - Verkoop 40% bij 5x  
+    - Verkoop 30% bij 7–10x of breakdown  
+    
+    **Uitleg**  
+    L1’s stijgen vaak stabiel – blow-off rond 5x.  
+    Daarna volledig uitstappen zodra hype over is.
+    """)
+    
+    st.markdown("### 🪙 ZK")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 25% bij 3x  
+    - Verkoop 35% bij 5x  
+    - Verkoop 20% bij 8x  
+    - Verkoop 20% via trailing stop  
+    
+    **Uitleg**  
+    Accumuleert vaak langer – kleine winst vroeg.  
+    ZK-fase begint dan door te breken.  
+    Grote hypepiek – kans op rotatie.  
+    Maximaliseer piek met stop (bv. -15% vanaf ATH).
+    """)
+    
+    st.markdown("### 🪙 RNDR")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 25% bij 2.5x  
+    - Verkoop 35% bij 4x  
+    - Verkoop 40% via trailing vanaf 5x  
+    
+    **Uitleg**  
+    RNDR volgt AI-leiders, maar is iets trager.  
+    AI tweede golf of hype push.  
+    Laat laatste deel meelopen, maar stop-loss goed zetten.
+    """)
+    
+    st.markdown("### 🪙 WIF")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 40% bij 2x  
+    - Verkoop 30% bij 3.5x  
+    - Verkoop 20% bij 5x  
+    - Laat 10% als moonbag of exit op hype top  
+    
+    **Uitleg**  
+    Meme-coins stijgen snel en corrigeren hard.  
+    Meestal mid-phase parabool.  
+    Laatste winsten veiligstellen.  
+    Meeliften op euforie of alles verkopen als hype piekt.
+    """)
+    
+    st.markdown("### 🪙 INJ")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 20% bij 3x  
+    - Verkoop 30% bij 5x  
+    - Verkoop 30% bij 7x  
+    - Verkoop 20% via trailing  
+    
+    **Uitleg**  
+    Undervalued asset, piekt vaak laat.  
+    Start van FOMO-fase voor underdogs.  
+    Laatste piek in altseason voor dit type coin.  
+    Laat meeliften als narratief oppakt.
+    """)
+    
+    st.markdown("### 🪙 JUP")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 30% bij 2x  
+    - Verkoop 40% bij 4x  
+    - Verkoop 30% via trailing of news-based exit  
+    
+    **Uitleg**  
+    Solana-infra coins kunnen snel pieken.  
+    Momentum coin, gevoelig voor hype.  
+    Volg hypecycli op X / Solana ecosysteem.
+    """)
+    
+    st.markdown("### 🪙 LINK")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 25% bij 2x  
+    - Verkoop 35% bij 4x  
+    - Verkoop 40% bij 6x  
+    
+    **Uitleg**  
+    Late mover, breakout komt laat maar vaak krachtig.  
+    Infra-plays pieken vaak als laatste.  
+    Na breakout is het meestal snel over – dus afbouwen.
+    """)
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
