@@ -23,5 +23,27 @@ COINS = {
     "JUP": "jupiter"
 }
 
-# ===== FUNCTIE: Prijzen ophalen =====
-@st.cache(ttl=8)
+# ===== PRIJZEN OPHALEN FUNCTIE =====
+@st.cache_data(ttl=8)
+def get_live_prices():
+    ids = ",".join(COINS.values())
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids}&vs_currencies=eur"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        st.error(f"Kon prijzen niet ophalen: {e}")
+        return {}
+
+# ===== PRIJZEN TONEN =====
+prices = get_live_prices()
+
+st.markdown("---")
+for symbol, coingecko_id in COINS.items():
+    price = prices.get(coingecko_id, {}).get("eur", None)
+    if price is not None:
+        st.markdown(f"""
+        <div style='padding: 10px 0; border-bottom: 1px solid #eee;'>
+            <strong style='font-size: 1.2rem;'>{symbol}</strong><br>
+            <span style='font-size: 1.
