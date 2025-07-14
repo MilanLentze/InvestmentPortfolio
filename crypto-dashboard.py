@@ -67,7 +67,7 @@ def get_live_prices():
         return {}
 
 # ===== USER FILTERS & CONTROLS =====
-sort_option = st.selectbox("🔃 Sorteer op", ["Coin", "Prijs", "Verandering 24u"])
+sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Prijs", "Coin"])
 filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=True)
 
 # ===== PRIJZEN TONEN MET VERANDERING =====
