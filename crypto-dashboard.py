@@ -42,6 +42,30 @@ with tab2:
     st.subheader("📈 Macro Indicatoren")
     macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
     st.info(f"Inzicht: {macro}")
+    # --- 1.1 BTC Dominance Live Chart ---
+
+    import plotly.express as px
+    
+    def get_btc_dominance():
+        url = "https://api.coingecko.com/api/v3/global"
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            return data["data"]["market_cap_percentage"]["btc"]
+        except Exception as e:
+            st.error(f"Fout bij ophalen BTC Dominance: {e}")
+            return None
+
+# Selectie van macro
+st.subheader("📈 Macro Indicatoren")
+macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
+
+if macro == "BTC Dominance":
+    btc_dom = get_btc_dominance()
+    if btc_dom is not None:
+        st.metric(label
+
 
     # 2. Kapitaalrotatie
     st.subheader("🔄 Kapitaalrotatie")
