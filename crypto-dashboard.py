@@ -151,21 +151,6 @@ elif sort_option == "Verandering 30d":
     
 # ===== TABEL HTML AANMAKEN =====
 table_html = """
-<div style='overflow-x: auto;'>
-<table style='width: 100%; border-collapse: collapse; color: white;'>
-    <thead>
-        <tr style='background-color: #222;'>
-            <th style='padding: 8px;'>Coin</th>
-            <th>Prijs</th>
-            <th>24u</th>
-            <th>7d</th>
-            <th>30d</th>
-            <th>Narratief</th>
-            <th>Altseason Fase</th>
-        </tr>
-    </thead>
-    <tbody>
-"""
 
 for coin in coin_data:
     table_html += f"""
@@ -211,5 +196,3 @@ for coin in coin_data:
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
-
-
