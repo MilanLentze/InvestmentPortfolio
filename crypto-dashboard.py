@@ -45,6 +45,14 @@ COINS = {
     "JUP": {"id": "jupiter", "narrative": "Solana DEX"}
 }
 
+# ===== FORMAT FUNCTIE VOOR PERCENTAGES =====
+def format_change(value):
+    if value is None:
+        return "<span style='color: #666;'>–</span>"
+    icon = "🔼" if value >= 0 else "🔽"
+    color = "#10A37F" if value >= 0 else "#FF4B4B"
+    return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
+
 # ===== PRIJZEN OPHALEN FUNCTIE =====
 @st.cache_data(ttl=25)
 def get_live_prices():
@@ -116,11 +124,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 for coin in coin_data:
-    def format_change(value):
-        icon = "🔼" if value >= 0 else "🔽"
-        color = "#10A37F" if value >= 0 else "#FF4B4B"
-        return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
-
     st.markdown(f"""
         <div style='padding: 10px 12px; border-bottom: 1px solid #333;
         display: grid; grid-template-columns: 80px 120px 120px 100px 100px auto; align-items: center;'>
