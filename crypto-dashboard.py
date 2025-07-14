@@ -8,6 +8,8 @@ import json
 import plotly.express as px  # mag ook bovenaan je script
 import requests  # als je dit nog niet hebt bovenin
 import yfinance as yf
+import pandas as pd
+
 
 def get_btc_dominance_cmc(api_key):
     url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
