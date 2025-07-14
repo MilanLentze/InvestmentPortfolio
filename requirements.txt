@@ -4,3 +4,4 @@ plotly
 streamlit-autorefresh
 yfinance
 lxml
+html5lib
