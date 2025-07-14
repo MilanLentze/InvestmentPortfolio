@@ -37,7 +37,7 @@ tab1, tab2 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights"])
 with tab1:
     st.title("📊 Live Altcoin Prices")
     st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
-    
+    st_autorefresh(interval=30_000, key="refresh")
     st.markdown("""
         <style>
         body {
@@ -58,8 +58,7 @@ with tab1:
         }
         </style>
     """, unsafe_allow_html=True)
-    # ===== AUTOVERVERSING (elke 30 sec) =====
-st_autorefresh(interval=30_000, key="refresh")
+   
 
     # ===== COINGECKO IDs & Narratieven =====
     COINS = {
