@@ -156,9 +156,39 @@ with tab2:
 
 
     # 2. Kapitaalrotatie
-    st.subheader("🔄 Kapitaalrotatie")
-    rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
-    st.info(f"Segment gekozen: {rotation}")
+st.subheader("🔄 Kapitaalrotatie")
+rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
+
+# Segmentfilters
+segments = {
+    "Blue Chips": ["ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "ADA-USD"],
+    "Narratief Coins": ["FET-USD", "RNDR-USD", "AGIX-USD", "GRT-USD", "TAO-USD"],
+    "Meme Coins": ["WIF-USD", "PEPE-USD", "DOGE-USD", "FLOKI-USD"]
+}
+
+# Voeg BTC altijd toe voor vergelijking
+selected_tickers = ["BTC-USD"] + segments[rotation]
+
+# Download slotkoersen (8 dagen = nodig voor 7d groei)
+df = yf.download(selected_tickers, period="8d", interval="1d")["Adj Close"].dropna()
+
+# Bereken 7d % groei
+returns = df.pct_change().sum().iloc[1:] * 100
+btc_return = returns["BTC-USD"]
+
+# Filter coins die BTC outperformen
+outperformers = returns[returns > btc_return].drop("BTC-USD")
+
+# Bouw dataframe
+df_out = pd.DataFrame({
+    "7d % Groei": outperformers,
+    "Verschil t.o.v. BTC": outperformers - btc_return
+}).round(2).sort_values("Verschil t.o.v. BTC", ascending=False)
+
+# Toon in dashboard
+st.markdown(f"**BTC 7d Groei:** `{btc_return:.2f}%`")
+st.dataframe(df_out)
+
 
     # 3. Narratief Activiteit
     st.subheader("🔥 Narratief Activiteit")
