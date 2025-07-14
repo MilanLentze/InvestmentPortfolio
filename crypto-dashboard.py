@@ -64,7 +64,7 @@ macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", 
 if macro == "BTC Dominance":
     btc_dom = get_btc_dominance()
     if btc_dom is not None:
-        st.metric(label
+        st.metric(label)
 
 
     # 2. Kapitaalrotatie
