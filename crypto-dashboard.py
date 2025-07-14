@@ -155,54 +155,54 @@ with tab2:
             """)
             st.caption("Bron: alternative.me – Fear & Greed API")
 
-
     # 2. Kapitaalrotatie
-    st.subheader("🔄 Kapitaalrotatie")
-    rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
-    
-    # Segmentfilters
-   segments = {
-        "Blue Chips": ["ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "ADA-USD"],
-        "Narratief Coins": ["FET-USD", "RNDR-USD", "GRT-USD"],  # AGIX en TAO werken vaak niet
-        "Meme Coins": ["DOGE-USD", "PEPE-USD"]  # WIF en FLOKI werken vaak niet of onregelmatig
-    }
+st.subheader("🔄 Kapitaalrotatie")
+rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
 
-    
-    # Voeg BTC altijd toe voor vergelijking
-    selected_tickers = ["BTC-USD"] + segments[rotation]
+# Segmentfilters
+segments = {
+    "Blue Chips": ["ETH-USD", "SOL-USD", "AVAX-USD", "LINK-USD", "ADA-USD"],
+    "Narratief Coins": ["FET-USD", "RNDR-USD", "GRT-USD"],
+    "Meme Coins": ["DOGE-USD", "PEPE-USD"]
+}
 
-    # Download per coin en sla alleen werkende tickers op
-    valid_tickers = []
-    dfs = []
-    
-    for ticker in selected_tickers:
-        try:
-            data = yf.download(ticker, period="8d", interval="1d")["Adj Close"]
-            dfs.append(data.rename(ticker))
-            valid_tickers.append(ticker)
-        except Exception:
-            st.warning(f"⚠️ Ticker mislukt: {ticker}")
+# Voeg BTC toe voor vergelijking
+selected_tickers = ["BTC-USD"] + segments[rotation]
 
-    # Combineer alle werkende tickers
+# Download per coin en sla alleen werkende tickers op
+valid_tickers = []
+dfs = []
+
+for ticker in selected_tickers:
+    try:
+        data = yf.download(ticker, period="8d", interval="1d")["Adj Close"]
+        dfs.append(data.rename(ticker))
+        valid_tickers.append(ticker)
+    except Exception:
+        st.warning(f"⚠️ Ticker mislukt: {ticker}")
+
+# Combineer alle werkende tickers
+if dfs:
     df = pd.concat(dfs, axis=1).dropna()
 
-    
     # Bereken 7d % groei
     returns = df.pct_change().sum().iloc[1:] * 100
     btc_return = returns["BTC-USD"]
-    
+
     # Filter coins die BTC outperformen
-    outperformers = returns[returns > btc_return].drop("BTC-USD")
-    
+    outperformers = returns[returns > btc_return].drop("BTC-USD", errors="ignore")
+
     # Bouw dataframe
     df_out = pd.DataFrame({
         "7d % Groei": outperformers,
         "Verschil t.o.v. BTC": outperformers - btc_return
     }).round(2).sort_values("Verschil t.o.v. BTC", ascending=False)
-    
+
     # Toon in dashboard
     st.markdown(f"**BTC 7d Groei:** `{btc_return:.2f}%`")
     st.dataframe(df_out)
+else:
+    st.error("❌ Geen geldige tickers gevonden. Probeer een ander segment.")
 
 
     # 3. Narratief Activiteit
