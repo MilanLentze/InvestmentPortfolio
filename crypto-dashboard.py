@@ -24,4 +24,4 @@ COINS = {
 }
 
 # ===== FUNCTIE: Prijzen ophalen =====
-@st.cache_data(ttl=8)_
+@st.cache_data(ttl=8)
