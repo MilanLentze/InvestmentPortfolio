@@ -182,13 +182,19 @@ narrative_sets = {
 selected_narrative = st.selectbox("Selecteer narratief", list(narrative_sets.keys()))
 selected_coins = narrative_sets[selected_narrative]
 
+# Voeg BTC toe om te vergelijken
+if "BTC" not in selected_coins:
+    selected_coins_with_btc = selected_coins + ["BTC"]
+else:
+    selected_coins_with_btc = selected_coins
+
 headers = {
     "Accepts": "application/json",
     "X-CMC_PRO_API_KEY": CMC_API_KEY,
 }
 
 params = {
-    "symbol": ",".join(selected_coins),
+    "symbol": ",".join(selected_coins_with_btc),
     "convert": "USD"
 }
 
@@ -197,26 +203,31 @@ response = requests.get(url, headers=headers, params=params)
 
 if response.status_code == 200:
     data = response.json()
+    btc_7d = data["data"]["BTC"]["quote"]["USD"]["percent_change_7d"]
+
     rows = []
     for symbol in selected_coins:
         try:
             coin = data["data"][symbol]
             price = coin["quote"]["USD"]["price"]
             change_7d = coin["quote"]["USD"]["percent_change_7d"]
+            verschil_btc = round(change_7d - btc_7d, 2)
             rows.append({
                 "Coin": symbol,
                 "Prijs (USD)": round(price, 3),
-                "7d %": round(change_7d, 2)
+                "7d %": round(change_7d, 2),
+                "T.o.v. BTC": verschil_btc
             })
         except KeyError:
             st.warning(f"{symbol} niet gevonden in CMC-data.")
-    
-    df = pd.DataFrame(rows).sort_values("7d %", ascending=False)
+
+    df = pd.DataFrame(rows).sort_values("T.o.v. BTC", ascending=False)
+
+    st.markdown(f"📉 **BTC 7d groei**: `{btc_7d:.2f}%`")
     st.dataframe(df)
 else:
     st.error(f"Fout bij ophalen data: {response.status_code}")
 
-    
     # 4. Momentum & Signalering
     st.subheader("⚡ Momentum & Signalering")
     momentum = st.selectbox("Kies signaal", ["Coins >30% (7d)", "Nieuwe ATHs", "Top 3 stijgers per week"])
