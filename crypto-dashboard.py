@@ -92,7 +92,7 @@ def get_chart_data(coin_id):
         return [], []
 
 # ===== USER FILTERS & CONTROLS =====
-sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs"])
+sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase"])
 filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=True)
 
 #====== ALTCOIN FASES =========
@@ -149,7 +149,7 @@ elif sort_option == "Verandering 7d":
 elif sort_option == "Verandering 30d":
     coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
 elif sort_option == "Altseason Piek Fase":
-    coin_data = sorted(coin_data, key=lambda x: x["ALTCOIN_PHASES.get(symbol, "Onbekend")"], reverse=True)
+    coin_data = sorted(coin_data, key=lambda x: x["altseason_phase"], reverse=True)
     
     
 # ===== RENDER DE TABEL =====
