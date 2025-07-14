@@ -149,44 +149,47 @@ elif sort_option == "Verandering 7d":
 elif sort_option == "Verandering 30d":
     coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
     
-# ===== TABEL RENDEREN =====
-st.markdown("---")
-st.markdown("""
-    <div style='padding: 10px 12px; border-bottom: 2px solid #666; display: grid;
-    grid-template-columns: 80px 120px 120px 100px 100px auto; font-weight: bold;'>
-        <span>Coin</span>
-        <span>Prijs</span>
-        <span>24u</span>
-        <span>7d</span>
-        <span>30d</span>
-        <span>Narratief</span>
-        <span>Altseason Fase</span>
-    </div>
-""", unsafe_allow_html=True)
-      
+# ===== TABEL HTML AANMAKEN =====
+table_html = """
+<div style='overflow-x: auto;'>
+<table style='width: 100%; border-collapse: collapse; color: white;'>
+    <thead>
+        <tr style='background-color: #222;'>
+            <th style='padding: 8px;'>Coin</th>
+            <th>Prijs</th>
+            <th>24u</th>
+            <th>7d</th>
+            <th>30d</th>
+            <th>Narratief</th>
+            <th>Altseason Fase</th>
+        </tr>
+    </thead>
+    <tbody>
+"""
+
 for coin in coin_data:
-    key = f"show_{coin['symbol']}"
-    if key not in st.session_state:
-        st.session_state[key] = False
+    table_html += f"""
+        <tr>
+            <td style='padding: 6px;'>{coin['symbol']}</td>
+            <td>€ {coin['price']:.4f}</td>
+            <td>{format_change(coin['change_24h'])}</td>
+            <td>{format_change(coin['change_7d'])}</td>
+            <td>{format_change(coin['change_30d'])}</td>
+            <td>{coin['narrative']}</td>
+            <td>{coin['altseason_phase']}</td>
+        </tr>
+    """
 
-    col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 2, 2, 2, 2, 2, 1])
-    with col1:
-        st.markdown(f"**{coin['symbol']}**")
-    with col2:
-        st.markdown(f"€ {coin['price']:.4f}")
-    with col3:
-        st.markdown(format_change(coin['change_24h']), unsafe_allow_html=True)
-    with col4:
-        st.markdown(format_change(coin['change_7d']), unsafe_allow_html=True)
-    with col5:
-        st.markdown(format_change(coin['change_30d']), unsafe_allow_html=True)
-    with col6:
-        st.markdown(f"{coin['narrative']}")
-    with col7:
-        st.toggle("📈", key=key, label_visibility="collapsed")
+table_html += "</tbody></table></div>"
 
-               # === Mini-grafiek toevoegen
-        with st.spinner("📈 Grafiek laden..."):
+# ===== RENDER DE TABEL =====
+st.markdown("---")
+st.markdown(table_html, unsafe_allow_html=True)
+
+# ===== EXPANDERS MET MINI-GRAFIEKJES =====
+for coin in coin_data:
+    with st.expander(f"📈 {coin['symbol']} - 7d prijsontwikkeling", expanded=False):
+        with st.spinner("Grafiek laden..."):
             dates, values = get_chart_data(COINS[coin['symbol']]['id'])
             if dates:
                 fig = go.Figure()
@@ -208,3 +211,5 @@ for coin in coin_data:
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
+
+
