@@ -59,6 +59,23 @@ with tab1:
 #================= TAB 2 ===============
 with tab2:
     st.title("🧠 Altseason Insights")
+    st.markdown("""
+        <style>
+        div[data-testid="metric-container"] {
+            background-color: transparent;
+            border: 0px solid rgba(250, 250, 250, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+        }
+        div[data-testid="metric-container"] > label {
+            color: #ffffff !important;  /* label: zoals "ETH/BTC Ratio" */
+        }
+        div[data-testid="metric-container"] > div {
+            color: #ffffff !important;  /* waarde: zoals "0.0632" */
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
     # 1. Macro Indicatoren
     st.subheader("📈 Macro Indicatoren")
