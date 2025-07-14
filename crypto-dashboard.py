@@ -66,13 +66,14 @@ with tab2:
             border: 0px solid rgba(250, 250, 250, 0.2);
             padding: 10px;
             border-radius: 10px;
-            color: white;
         }
-        div[data-testid="metric-container"] > label {
-            color: #ffffff !important;  /* label: zoals "ETH/BTC Ratio" */
+        /* Label (bv. "Huidige BTC Dominance") */
+        div[data-testid="metric-container"] label {
+            color: white !important;
         }
-        div[data-testid="metric-container"] > div {
-            color: #ffffff !important;  /* waarde: zoals "0.0632" */
+        /* Waarde (bv. "63.63%") */
+        div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+            color: white !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -116,9 +117,10 @@ with tab2:
         if eth_btc_ratio is not None:
             st.metric(label="📉 ETH/BTC Ratio", value=f"{eth_btc_ratio:.4f}")
             st.markdown("""
-            - **ETH/BTC daalt** → Bitcoin wint kracht → vaak vroege fase in cyclus  
-            - **ETH/BTC stijgt** → Altcoins winnen terrein → momentum voor mid- en low-caps  
-            - Deze ratio wordt vaak gezien als een vroege indicator voor altseason
+            - **< 0.055** → vaak nog BTC-dominantie (early/pre-season)  
+            - **0.06–0.07** → opbouwfase voor altseason
+            - **> 0.07** → volwaardige altseason in zicht (ETH leidt de markt)
+            - **> 0.08** → vaak piek/late fase van altseason (risico op topvorming)
             """)
         else:
             st.warning("Kon ETH/BTC ratio niet ophalen.")
