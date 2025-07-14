@@ -166,10 +166,55 @@ with tab2:
 
 
     # 3. Narratief Activiteit
-    st.subheader("🔥 Narratief Activiteit")
-    narrative = st.selectbox("Selecteer narratief", ["AI", "ZK / L2", "L1", "Meme", "DeFi", "Oracles"])
-    st.info(f"Selectie: {narrative}")
+st.subheader("🔥 Narratief Activiteit")
 
+narrative_sets = {
+    "AI": ["FET", "RNDR", "AGIX", "GRT", "TAO"],
+    "ZK / Scaling": ["ZK", "STRK", "MANTA", "LRC"],
+    "RWA": ["ONDO", "POLYX", "CFG"],
+    "Gaming": ["IMX", "PYR", "GALA", "ILV"],
+    "DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
+    "Oracle": ["LINK", "BAND", "TRB"]
+}
+
+selected_narrative = st.selectbox("Selecteer narratief", list(narrative_sets.keys()))
+selected_coins = narrative_sets[selected_narrative]
+
+headers = {
+    "Accepts": "application/json",
+    "X-CMC_PRO_API_KEY": CMC_API_KEY,
+}
+
+params = {
+    "symbol": ",".join(selected_coins),
+    "convert": "USD"
+}
+
+url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+response = requests.get(url, headers=headers, params=params)
+
+if response.status_code == 200:
+    data = response.json()
+    rows = []
+    for symbol in selected_coins:
+        try:
+            coin = data["data"][symbol]
+            price = coin["quote"]["USD"]["price"]
+            change_7d = coin["quote"]["USD"]["percent_change_7d"]
+            rows.append({
+                "Coin": symbol,
+                "Prijs (USD)": round(price, 3),
+                "7d %": round(change_7d, 2)
+            })
+        except KeyError:
+            st.warning(f"{symbol} niet gevonden in CMC-data.")
+    
+    df = pd.DataFrame(rows).sort_values("7d %", ascending=False)
+    st.dataframe(df)
+else:
+    st.error(f"Fout bij ophalen data: {response.status_code}")
+
+    
     # 4. Momentum & Signalering
     st.subheader("⚡ Momentum & Signalering")
     momentum = st.selectbox("Kies signaal", ["Coins >30% (7d)", "Nieuwe ATHs", "Top 3 stijgers per week"])
