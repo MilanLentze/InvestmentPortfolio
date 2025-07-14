@@ -81,42 +81,38 @@ with tab2:
         st.markdown("### 📉 ETH/BTC Ratio – Laatste 90 dagen")
 
         def get_eth_btc_chart():
-        try:
-            data = yf.download("ETH-BTC", period="90d", interval="1d", progress=False)
-            return data
-        except Exception as e:
-            st.error(f"Fout bij ophalen ETH/BTC ratio: {e}")
-            return None
-    
-    eth_btc_data = get_eth_btc_chart()
-    
-    if eth_btc_data is not None and not eth_btc_data.empty:
-        # Zet index om naar kolom 'Date' en reset naar standaard DataFrame
-        eth_btc_data = eth_btc_data.reset_index()
-    
-        # Debug: Toon kolomnamen
-        st.write("📋 Kolommen ETH/BTC:", eth_btc_data.columns.tolist())
-        st.write("🔍 Voorbeelddata:", eth_btc_data.head())
-    
-        if "Date" in eth_btc_data.columns and "Close" in eth_btc_data.columns:
-            fig = px.line(
-                eth_btc_data,
-                x="Date",
-                y="Close",
-                title="ETH/BTC Ratio (90 dagen)",
-                labels={"Close": "Ratio", "Date": "Datum"}
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-            st.markdown("""
-            - **ETH/BTC daalt** → Bitcoin sterker → vaak vroege cyclusfase  
-            - **ETH/BTC stijgt** → Altcoins winnen kracht → kans op mid-cap rotatie  
-            - Breakouts in ETH/BTC leiden vaak tot altseason-momentum
-            """)
+            try:
+                data = yf.download("ETH-BTC", period="90d", interval="1d", progress=False)
+                return data
+            except Exception as e:
+                st.error(f"Fout bij ophalen ETH/BTC ratio: {e}")
+                return None
+
+        eth_btc_data = get_eth_btc_chart()
+
+        if eth_btc_data is not None and not eth_btc_data.empty:
+            eth_btc_data = eth_btc_data.reset_index()
+            st.write("📋 Kolommen ETH/BTC:", eth_btc_data.columns.tolist())
+            st.write("🔍 Voorbeelddata:", eth_btc_data.head())
+
+            if "Date" in eth_btc_data.columns and "Close" in eth_btc_data.columns:
+                fig = px.line(
+                    eth_btc_data,
+                    x="Date",
+                    y="Close",
+                    title="ETH/BTC Ratio (90 dagen)",
+                    labels={"Close": "Ratio", "Date": "Datum"}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                st.markdown("""
+                - **ETH/BTC daalt** → Bitcoin sterker → vaak vroege cyclusfase  
+                - **ETH/BTC stijgt** → Altcoins winnen kracht → kans op mid-cap rotatie  
+                - Breakouts in ETH/BTC leiden vaak tot altseason-momentum
+                """)
+            else:
+                st.error("❌ Vereiste kolommen 'Date' of 'Close' ontbreken in de data.")
         else:
-            st.error("❌ Vereiste kolommen 'Date' of 'Close' ontbreken in de data.")
-    else:
-        st.warning("ETH/BTC data is leeg of kon niet worden opgehaald.")
+            st.warning("ETH/BTC data is leeg of kon niet worden opgehaald.")
 
     elif macro == "Fear & Greed Index":
         st.markdown("### 😨😎 Fear & Greed Index – Crypto Sentiment")
@@ -145,7 +141,7 @@ with tab2:
             > **Actuele status:** *{classification}*
             """)
             st.caption("Bron: alternative.me – Fear & Greed API")
-   
+
     # 2. Kapitaalrotatie
     st.subheader("🔄 Kapitaalrotatie")
     rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
