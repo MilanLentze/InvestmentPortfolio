@@ -109,27 +109,25 @@ ALTCOIN_PHASES = {
 }
 
 #======= Rendement X =======
-def calculate_expected_x(current_price, ath_price, current_marketcap, narrative, price_change_30d):
-    if current_price <= 0 or current_marketcap <= 0:
-        return 0.0
+def calculate_expected_x_score_model(current_price, ath_price, current_marketcap, narrative, price_change_30d):
+    # 1. ATH Score (max 10)
+    ath_ratio = ath_price / current_price if current_price > 0 else 0
+    ath_score = min(ath_ratio, 10)
 
-    # 1. ATH-factor (max 15x)
-    ath_factor = min(ath_price / current_price, 10)
-
-    # 2. Narrative multiplier
-    narrative_multipliers = {
-        "Meme": 1.7,
-        "AI": 1.6,
-        "AI / GPU": 1.6,
-        "ZK / L2": 1.5,
-        "L1": 1.3,
-        "Oracles": 1.1,
-        "DeFi": 1.3,
-        "Solana DEX": 1.4
+    # 2. Narrative Score (max 5)
+    narrative_scores = {
+        "Meme": 5,
+        "AI": 4.5,
+        "AI / GPU": 4.5,
+        "ZK / L2": 4,
+        "L1": 3.5,
+        "DeFi": 3.5,
+        "Solana DEX": 3.5,
+        "Oracles": 3
     }
-    narrative_multiplier = narrative_multipliers.get(narrative, 1.0)
+    narrative_score = narrative_scores.get(narrative, 3)
 
-    # 3. Marketcap multiplier (max 10x)
+    # 3. Marketcap Score (max 5)
     narrative_max_caps = {
         "Meme": 8_000_000_000,
         "AI": 20_000_000_000,
@@ -141,22 +139,30 @@ def calculate_expected_x(current_price, ath_price, current_marketcap, narrative,
         "Solana DEX": 8_000_000_000
     }
     potential_cap = narrative_max_caps.get(narrative, 10_000_000_000)
-    marketcap_multiplier = min(potential_cap / current_marketcap, 5)
+    marketcap_ratio = potential_cap / current_marketcap if current_marketcap > 0 else 0
+    marketcap_score = min(marketcap_ratio, 5)
 
-    # 4. Momentum factor (straft snelle stijgers, beloont underdogs)
+    # 4. Momentum Score (max 5)
     if price_change_30d > 50:
-        momentum_factor = 0.7
+        momentum_score = 1
     elif price_change_30d > 20:
-        momentum_factor = 0.9
+        momentum_score = 2
     elif price_change_30d > 0:
-        momentum_factor = 1.0
-    elif price_change_30d > -20:
-        momentum_factor = 1.1
+        momentum_score = 3
+    elif price_change_30d > -10:
+        momentum_score = 4
     else:
-        momentum_factor = 1.2
+        momentum_score = 5
 
-    # Berekening en afronding
-    expected_x = ath_factor * narrative_multiplier * marketcap_multiplier * momentum_factor
+    # Gewogen optelling
+    expected_x = (
+        0.4 * ath_score +
+        0.3 * narrative_score +
+        0.2 * marketcap_score +
+        0.1 * momentum_score
+    )
+
+    # Maximaal 15x, afgerond op 1 decimaal
     return round(min(expected_x, 15), 1)
 
 # ===== PRIJZEN TONEN MET VERANDERING =====
