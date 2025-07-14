@@ -98,15 +98,15 @@ filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=T
 #====== ALTCOIN FASES =========
 
 ALTCOIN_PHASES = {
-    "WIF": "Fase 3: Hype & Memecoins",
-    "ZK": "Fase 2: Infra Alt Boost",
-    "RNDR": "Fase 1: Ethereum Rotation",
-    "SUI": "Fase 1: Ethereum Rotation",
-    "LINK": "Fase 2: Infra Alt Boost",
-    "STRK": "Fase 2: Infra Alt Boost",
-    "FET": "Fase 1: Ethereum Rotation",
-    "INJ": "Fase 2: Infra Alt Boost",
-    "JUP": "Fase 3: Hype & Memecoins"
+    "WIF": "Fase 4 – FOMO & Memecoins",
+    "ZK": "Fase 2 – Mid Caps & Narratieven",
+    "RNDR": "Fase 2-3 – Mid Caps & Narratieven / Fase 3 – Hypefase / Narratiefpiek",
+    "SUI": "Fase 2 – Mid Caps & Narratieven",
+    "LINK": "Fase 1 – Blue Chips & Infra",
+    "STRK": "Fase 1-2 – Blue Chips & Infra / Mid Caps & Narratieven",
+    "FET": "Fase 2 – Mid Caps & Narratieven",
+    "INJ": "Fase 2 – Mid Caps & Narratieven",
+    "JUP": "Fase 3 – Hypefase / Narratiefpiek"
 }
 
 # ===== PRIJZEN TONEN MET VERANDERING =====
