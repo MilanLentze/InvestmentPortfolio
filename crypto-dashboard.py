@@ -149,18 +149,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
       
 for coin in coin_data:
-    with st.expander(f"{coin['symbol']} • €{coin['price']:.4f}"):
-        st.markdown(f"""
-            <div style='padding: 4px 0; display: grid;
-            grid-template-columns: 80px 120px 120px 100px 100px auto; align-items: center;'>
-                <span style='color: white; font-weight:bold;'>{coin['symbol']}</span>
-                <span style='color: #10A37F; font-family: monospace;'>€ {coin['price']:.4f}</span>
-                <span>{format_change(coin['change_24h'])}</span>
-                <span>{format_change(coin['change_7d'])}</span>
-                <span>{format_change(coin['change_30d'])}</span>
-                <span style='color: #AAAAAA;'>{coin['narrative']}</span>
-            </div>
-        """, unsafe_allow_html=True)
+    st.markdown(f"""
+        <div style='padding: 10px 12px; border-bottom: 1px solid #333;
+        display: grid; grid-template-columns: 80px 120px 120px 100px 100px auto; align-items: center;'>
+            <span style='color: white;'>{coin['symbol']}</span>
+            <span style='color: #10A37F; font-family: monospace;'>€ {coin['price']:.4f}</span>
+            <span>{format_change(coin['change_24h'])}</span>
+            <span>{format_change(coin['change_7d'])}</span>
+            <span>{format_change(coin['change_30d'])}</span>
+            <span style='color: #AAAAAA;'>{coin['narrative']}</span>
+        </div>
+    """, unsafe_allow_html=True)
+
+    with st.expander("📈 Bekijk 7-daagse prijsontwikkeling"):
+        with st.spinner("Grafiek laden..."):
+            dates, values = get_chart_data(COINS[coin['symbol']]['id'])
+            if dates:
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines', line=dict(width=2)))
+                fig.update_layout(
+                    height=200, margin=dict(l=10, r=10, t=20, b=20),
+                    template="plotly_dark", showlegend=False
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Geen grafiekdata beschikbaar.")
 
                # === Mini-grafiek toevoegen
         with st.spinner("📈 Grafiek laden..."):
