@@ -152,6 +152,29 @@ elif sort_option == "Verandering 30d":
 # ===== RENDER DE TABEL =====
 st.markdown("---")
 
+# ===== TABEL WEERGAVE MET STREAMLIT KOLLOMEN =====
+st.markdown("---")
+st.markdown("""<h4 style='color:#fff;'>📊 Coin Tabel</h4>""", unsafe_allow_html=True)
+header = st.columns([1, 2, 2, 2, 2, 2, 2])
+header[0].markdown("**Coin**")
+header[1].markdown("**Prijs**")
+header[2].markdown("**24u**")
+header[3].markdown("**7d**")
+header[4].markdown("**30d**")
+header[5].markdown("**Narratief**")
+header[6].markdown("**Altseason Fase**")
+
+for coin in coin_data:
+    row = st.columns([1, 2, 2, 2, 2, 2, 2])
+    row[0].markdown(f"**{coin['symbol']}**")
+    row[1].markdown(f"€ {coin['price']:.4f}")
+    row[2].markdown(format_change(coin['change_24h']), unsafe_allow_html=True)
+    row[3].markdown(format_change(coin['change_7d']), unsafe_allow_html=True)
+    row[4].markdown(format_change(coin['change_30d']), unsafe_allow_html=True)
+    row[5].markdown(coin['narrative'])
+    row[6].markdown(coin['altseason_phase'])
+
+
 # ===== EXPANDERS MET MINI-GRAFIEKJES =====
 for coin in coin_data:
     with st.expander(f"📈 {coin['symbol']} - 7d prijsontwikkeling", expanded=False):
