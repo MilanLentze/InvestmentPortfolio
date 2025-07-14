@@ -9,6 +9,7 @@ import plotly.express as px  # mag ook bovenaan je script
 import requests  # als je dit nog niet hebt bovenin
 import yfinance as yf
 import pandas as pd
+import streamlit as st
 
 
 def get_btc_dominance_cmc(api_key):
@@ -170,7 +171,9 @@ with tab2:
     selected_tickers = ["BTC-USD"] + segments[rotation]
     
     # Download slotkoersen (8 dagen = nodig voor 7d groei)
-    df = yf.download(selected_tickers, period="8d", interval="1d")["Adj Close"].dropna()
+    raw_df = yf.download(selected_tickers, period="8d", interval="1d", group_by='ticker')
+    df = pd.DataFrame({ticker: raw_df[ticker]["Adj Close"] for ticker in selected_tickers}).dropna()
+
     
     # Bereken 7d % groei
     returns = df.pct_change().sum().iloc[1:] * 100
