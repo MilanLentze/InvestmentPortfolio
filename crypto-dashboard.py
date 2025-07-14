@@ -162,7 +162,7 @@ header[2].markdown("**24u**")
 header[3].markdown("**7d**")
 header[4].markdown("**30d**")
 header[5].markdown("**Narratief**")
-header[6].markdown("**Altseason Fase**")
+header[6].markdown("**Altseason Piek Fase**")
 
 for coin in coin_data:
     row = st.columns([1, 2, 2, 2, 2, 2, 2])
