@@ -32,7 +32,7 @@ def get_btc_dominance_cmc(api_key):
 
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
-tab1, tab2 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights"])
+tab1, tab2, tab3 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights", "📅 Investeringsplan & Exitstrategy" ])
 
 with tab1:
     st.title("📊 Live Altcoin Prices")
@@ -433,7 +433,7 @@ with tab2:
 
 #============= Tab 3 =============
 with tab3:
-    st.title("📅 Investeringsplan Juli & Augustus")
+    st.title("📅 Investeringsplan & Exitstrategy")
 
     # Juli-allocatie
     st.subheader("📊 Allocatie – Juli")
