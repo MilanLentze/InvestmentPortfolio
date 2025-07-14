@@ -33,6 +33,7 @@ def get_btc_dominance_cmc(api_key):
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 tab1, tab2, tab3 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights", "📅 Investeringsplan & Exitstrategy" ])
+
 st.markdown("""
     <style>
     .main {
@@ -459,7 +460,7 @@ with tab2:
 
 #============= Tab 3 =============
 with tab3:
-    st.title("📅 Investeringsplan & Exitstrategy")
+    st.title("📅 Investeringsplan Juli & Augustus")
 
     # Juli-allocatie
     st.subheader("📊 Allocatie – Juli")
@@ -467,7 +468,7 @@ with tab3:
         "Coin": ["FET", "STRK", "SUI", "ZK", "RNDR", "WIF", "INJ", "JUP"],
         "Allocatie %": ["20%", "20%", "15%", "15%", "10%", "10%", "5%", "5%"]
     }
-    st.dataframe(pd.DataFrame(july_data), use_container_width=True)
+    st.table(pd.DataFrame(july_data))
 
     # Augustus-allocatie
     st.subheader("📊 Allocatie – Augustus")
@@ -475,22 +476,22 @@ with tab3:
         "Coin": ["LINK", "INJ", "JUP", "ZK", "RNDR", "Cash buffer"],
         "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
     }
-    st.dataframe(pd.DataFrame(aug_data), use_container_width=True)
+    st.table(pd.DataFrame(aug_data))
 
     # Exitstrategieën
     st.subheader("🚪 Exitstrategieën per Coin")
 
     exit_data = {
         "Coin": [
-            "FET", "FET", "FET",
-            "STRK", "STRK", "STRK",
-            "SUI", "SUI", "SUI",
-            "ZK", "ZK", "ZK", "ZK",
-            "RNDR", "RNDR", "RNDR",
-            "WIF", "WIF", "WIF", "WIF",
-            "INJ", "INJ", "INJ", "INJ",
-            "JUP", "JUP", "JUP",
-            "LINK", "LINK", "LINK"
+            "FET", " ", " ",
+            "STRK", " ", " ",
+            "SUI", " ", " ",
+            "ZK", " ", " ", " ",
+            "RNDR", " ", " ",
+            "WIF", " ", " ", " ",
+            "INJ", " ", " ", " ",
+            "JUP", " ", " ",
+            "LINK", " ", " "
         ],
         "Exitstrategie": [
             "Verkoop 25% bij 3x", "Verkoop 35% bij 5x", "Verkoop 40% bij 8x of trailing stop",
@@ -537,8 +538,7 @@ with tab3:
         ]
     }
 
-    st.dataframe(pd.DataFrame(exit_data), use_container_width=True)
-
+    st.table(pd.DataFrame(exit_data))
 
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
