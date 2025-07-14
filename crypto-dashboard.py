@@ -1,14 +1,15 @@
 import streamlit as st
 import requests
+import time
 from streamlit_autorefresh import st_autorefresh
 
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 st.title("📊 Live Altcoin Prices")
-st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 10 seconden")
+st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
 
-# ===== AUTOVERVERSING (elke 10 sec) =====
-st_autorefresh(interval=10_000, key="refresh")
+# ===== AUTOVERVERSING (elke 30 sec) =====
+st_autorefresh(interval=30_000, key="refresh")
 
 # ===== COINGECKO IDs =====
 COINS = {
@@ -24,7 +25,7 @@ COINS = {
 }
 
 # ===== PRIJZEN OPHALEN FUNCTIE =====
-@st.cache_data(ttl=8)
+@st.cache_data(ttl=25)
 def get_live_prices():
     ids = ",".join(COINS.values())
     url = (
@@ -32,7 +33,10 @@ def get_live_prices():
         f"?ids={ids}&vs_currencies=eur&include_24hr_change=true"
     )
     try:
+        time.sleep(1)  # om CoinGecko-spikes te vermijden
         response = requests.get(url, timeout=10)
+        if response.status_code == 429:
+            raise Exception("📉 API-limiet bereikt (429 Too Many Requests)")
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -67,3 +71,6 @@ for symbol, coingecko_id in COINS.items():
         )
     else:
         st.warning(f"{symbol}: prijs niet gevonden")
+
+st.markdown("---")
+st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
