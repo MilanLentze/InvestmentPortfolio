@@ -33,6 +33,32 @@ def get_btc_dominance_cmc(api_key):
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 tab1, tab2, tab3 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights", "📅 Investeringsplan & Exitstrategy" ])
+st.markdown("""
+    <style>
+    .main {
+        background-color: #000000;
+        color: white;
+    }
+    div[data-testid="stDataFrame"] {
+        background-color: #000000;
+        color: white;
+    }
+    thead th {
+        background-color: #111 !important;
+        color: white !important;
+    }
+    tbody td {
+        background-color: #000000 !important;
+        color: white !important;
+    }
+    div[data-testid="column"] label, .stTextInput>div>div>input {
+        color: white !important;
+    }
+    h1, h2, h3, h4, h5, h6, p {
+        color: white !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 with tab1:
     st.title("📊 Live Altcoin Prices")
