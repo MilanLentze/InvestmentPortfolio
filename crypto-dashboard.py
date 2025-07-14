@@ -156,33 +156,14 @@ with tab2:
             st.caption("Bron: alternative.me – Fear & Greed API")
 
     # 2. Kapitaalrotatie
-    st.subheader("📊 Top 50 Altcoins – 90d Performance (CoinGecko)")
+    st.subheader("🔄 Kapitaalrotatie")
+
+    st.markdown("""
+    Bekijk hier de actuele altcoin rotatie en top 50 performance:
     
-    url = "https://api.coingecko.com/api/v3/coins/markets"
-    params = {
-        "vs_currency": "usd",
-        "order": "market_cap_desc",
-        "per_page": 50,
-        "page": 1,
-        "sparkline": False,
-        "price_change_percentage": "90d"
-    }
-    
-    response = requests.get(url, params=params)
-    data = response.json()
-    
-    df = pd.DataFrame(data)
-    df = df[["market_cap_rank", "name", "symbol", "price_change_percentage_90d_in_currency"]]
-    df = df.rename(columns={
-        "market_cap_rank": "Rank",
-        "name": "Naam",
-        "symbol": "Ticker",
-        "price_change_percentage_90d_in_currency": "90d %"
-    })
-    df["90d %"] = df["90d %"].round(2)
-    df = df.sort_values("90d %", ascending=False)
-    
-    st.dataframe(df)
+    👉 [Ga naar Blockchain Center – Altcoin Season Index](https://www.blockchaincenter.net/en/altcoin-season-index/)
+    """)
+
 
     # 3. Narratief Activiteit
     st.subheader("🔥 Narratief Activiteit")
