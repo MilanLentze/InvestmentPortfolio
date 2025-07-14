@@ -100,10 +100,10 @@ filter_enabled = st.checkbox("🔎 Toon alleen coins met > 5% stijging", value=T
 ALTCOIN_PHASES = {
     "WIF": "Fase 4 – FOMO & Memecoins",
     "ZK": "Fase 2 – Mid Caps & Narratieven",
-    "RNDR": "Fase 2-3 – Mid Caps & Narratieven / Fase 3 – Hypefase / Narratiefpiek",
+    "RNDR": "Fase 2-3 – Mid Caps & Narratieven",
     "SUI": "Fase 2 – Mid Caps & Narratieven",
     "LINK": "Fase 1 – Blue Chips & Infra",
-    "STRK": "Fase 1-2 – Blue Chips & Infra / Mid Caps & Narratieven",
+    "STRK": "Fase 1-2 – Blue Chips & Infra mid Caps",
     "FET": "Fase 2 – Mid Caps & Narratieven",
     "INJ": "Fase 2 – Mid Caps & Narratieven",
     "JUP": "Fase 3 – Hypefase / Narratiefpiek"
