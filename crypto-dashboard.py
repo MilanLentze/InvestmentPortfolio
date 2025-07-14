@@ -64,6 +64,7 @@ with tab2:
     st.subheader("📈 Macro Indicatoren")
     macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
 
+    # 1.1 BTC Dominance
     if macro == "BTC Dominance":
         btc_dom = get_btc_dominance_cmc("9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb")
         if btc_dom is not None:
@@ -79,42 +80,33 @@ with tab2:
             """)
             st.caption("Bron: CoinMarketCap")
 
+    # 1.2 ETH/BTC Ratio
     elif macro == "ETH/BTC Ratio":
-        st.markdown("### 📉 ETH/BTC Ratio – Laatste 90 dagen")
+        st.markdown("### 📉 ETH/BTC Ratio – Actuele Stand")
 
-        def get_eth_btc_chart():
+        def get_eth_btc_ratio():
             try:
-                data = yf.download("ETH-BTC", period="90d", interval="1d", progress=False)
-                return data
+                data = yf.download("ETH-BTC", period="1d", interval="1m", progress=False)
+                if not data.empty:
+                    return float(data["Close"].iloc[-1])
+                else:
+                    return None
             except Exception as e:
                 st.error(f"Fout bij ophalen ETH/BTC ratio: {e}")
                 return None
 
-        eth_btc_data = get_eth_btc_chart()
-
-        if eth_btc_data is not None and not eth_btc_data.empty:
-            eth_btc_data = eth_btc_data.reset_index()  # zorgt voor een 'Date'-kolom
-            eth_btc_data["Date"] = pd.to_datetime(eth_btc_data["Date"])  # zorg dat het datetime is
-
-            # Debug output
-            st.write("📋 Kolommen:", eth_btc_data.columns.tolist())
-            st.write("📊 Types:", eth_btc_data.dtypes)
-            st.write("🔍 Preview:", eth_btc_data.head())
-
-            if "Date" in eth_btc_data.columns and "Close" in eth_btc_data.columns:
-                fig = px.line(
-                    eth_btc_data,
-                    x="Date",
-                    y="Close",
-                    title="ETH/BTC Ratio (90 dagen)",
-                    labels={"Close": "Ratio", "Date": "Datum"}
-                )
-                st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.error("❌ 'Date' of 'Close' ontbreekt in de dataset.")
+        eth_btc_ratio = get_eth_btc_ratio()
+        if eth_btc_ratio is not None:
+            st.metric(label="📉 ETH/BTC Ratio", value=f"{eth_btc_ratio:.4f}")
+            st.markdown("""
+            - **ETH/BTC daalt** → Bitcoin wint kracht → vaak vroege fase in cyclus  
+            - **ETH/BTC stijgt** → Altcoins winnen terrein → momentum voor mid- en low-caps  
+            - Deze ratio wordt vaak gezien als een vroege indicator voor altseason
+            """)
         else:
-            st.warning("ETH/BTC data is leeg of kon niet worden opgehaald.")
+            st.warning("Kon ETH/BTC ratio niet ophalen.")
 
+    # 1.3 Fear & Greed Index
     elif macro == "Fear & Greed Index":
         st.markdown("### 😨😎 Fear & Greed Index – Crypto Sentiment")
 
@@ -142,6 +134,7 @@ with tab2:
             > **Actuele status:** *{classification}*
             """)
             st.caption("Bron: alternative.me – Fear & Greed API")
+
 
     # 2. Kapitaalrotatie
     st.subheader("🔄 Kapitaalrotatie")
