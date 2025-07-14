@@ -61,22 +61,22 @@ with tab2:
     st.subheader("📈 Macro Indicatoren")
     macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
 
+    if macro == "BTC Dominance":
+        btc_dom = get_btc_dominance_cmc("9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb")
+        if btc_dom is not None:
+            st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
+            st.markdown(f"""
+            - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
+            - **>65%** – Bitcoinfase  
+            - **60–65%** – Pre-Altseason / Rotatievoorfase  
+            - **55–60%** – Opbouwfase (L1 grote caps stijgen fors)  
+            - **50–55%** – Start Altseason (mid & Low caps breken uit)  
+            - **45–50%** – Volledige Altseason / Piek (begin winst nemen)  
+            - **<45%** – Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
+            """)
+            st.caption("Bron: CoinMarketCap")
 
-btc_dom = get_btc_dominance_cmc("9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb")
-
-if btc_dom is not None:
-    st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
-    st.markdown(f"""
-    - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
-    - **>65%**	Bitcoinfase  
-    - **60–65%**	Pre-Altseason / Rotatievoorfase  
-    - **55–60%**	Opbouwfase (L1 grote caps stijgen fors)  
-    - **50–55%**	Start Altseason (mid & Low caps breken uit)  
-    - **45–50%**	Volledige Altseason / Piek (begin winst nemen)  
-    - **<45%**	Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
-    """)
-
-    elif macro == "ETH/BTC Ratio":
+        elif macro == "ETH/BTC Ratio":
         st.markdown("### 📉 ETH/BTC Ratio – Laatste 90 dagen")
 
         def get_eth_btc_chart():
@@ -93,18 +93,18 @@ if btc_dom is not None:
                 eth_btc_data,
                 x=eth_btc_data.index,
                 y="Close",
-                title="ETH/BTC Ratio",
-                labels={"Close": "Ratio", "index": "Datum"},
+                title="ETH/BTC Ratio (90 dagen)",
+                labels={"Close": "Ratio", "index": "Datum"}
             )
             st.plotly_chart(fig, use_container_width=True)
 
             st.markdown("""
-            - **ETH/BTC daalt** → Bitcoin sterker → vroege fase
-            - **ETH/BTC stijgt** → Altcoins krijgen kracht → vaak midden altseason
-            - Een breakout in ETH/BTC ratio is vaak een signaal voor een rotatie naar grotere altcoins
+            - **ETH/BTC daalt** → Bitcoin sterker → vaak vroege cyclusfase
+            - **ETH/BTC stijgt** → Altcoins winnen kracht → kans op mid-cap rotatie
+            - Breakouts in ETH/BTC leiden vaak tot altseason-momentum
             """)
 
-    elif macro == "Fear & Greed Index":
+        elif macro == "Fear & Greed Index":
         st.markdown("### 😨😎 Fear & Greed Index – Crypto Sentiment")
 
         def get_fear_greed_index():
@@ -120,17 +120,18 @@ if btc_dom is not None:
 
         index_value, classification = get_fear_greed_index()
         if index_value is not None:
-            st.metric(label="Huidige index", value=f"{index_value}/100", delta=classification)
+            st.metric(label="📍 Huidige Index", value=f"{index_value}/100", delta=classification)
             st.markdown(f"""
             **Interpretatie:**
-            - 0–24: 😱 Extreme Fear → Capitulatie → potentiële instapkans
-            - 25–49: 😟 Fear → Risico-aversie overheerst
-            - 50–74: 🙂 Greed → Positief sentiment, opletten op euforie
-            - 75–100: 🤪 Extreme Greed → Markt is mogelijk oververhit
+            - **0–24**: 😱 *Extreme Fear* → Markt in paniek → kans op koopmoment  
+            - **25–49**: 😟 *Fear* → Negatief sentiment  
+            - **50–74**: 🙂 *Greed* → Positieve vibe, kans op FOMO  
+            - **75–100**: 🤪 *Extreme Greed* → Markt oververhit → tijd voor voorzichtigheid  
 
-            > Huidige stand: **{classification}**
+            > **Actuele status:** *{classification}*
             """)
-
+            st.caption("Bron: alternative.me – Fear & Greed API")
+   
     # 2. Kapitaalrotatie
     st.subheader("🔄 Kapitaalrotatie")
     rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
