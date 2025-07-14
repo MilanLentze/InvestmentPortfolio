@@ -114,23 +114,37 @@ def calculate_expected_x(current_price, ath_price, current_marketcap, narrative,
     if current_price <= 0 or current_marketcap <= 0:
         return 0.0
 
-    ath_factor = ath_price / current_price
+    # 1. ATH-factor (max 15x)
+    ath_factor = min(ath_price / current_price, 15)
 
+    # 2. Narrative multiplier
     narrative_multipliers = {
-        "AI": 1.3,
-        "ZK / L2": 1.25,
-        "L1": 1.2,
-        "DeFi": 1.1,
+        "Meme": 1.7,
+        "AI": 1.6,
+        "AI / GPU": 1.6,
+        "ZK / L2": 1.5,
+        "L1": 1.3,
         "Oracles": 1.1,
-        "Solana DEX": 1.15,
-        "Meme": 1.4,
-        "AI / GPU": 1.35
+        "DeFi": 1.3,
+        "Solana DEX": 1.4
     }
     narrative_multiplier = narrative_multipliers.get(narrative, 1.0)
 
-    estimated_max_cap = 5_000_000_000  # 5 miljard euro plafond
-    marketcap_multiplier = estimated_max_cap / current_marketcap
+    # 3. Marketcap multiplier (max 10x)
+    narrative_max_caps = {
+        "Meme": 8_000_000_000,
+        "AI": 20_000_000_000,
+        "AI / GPU": 20_000_000_000,
+        "ZK / L2": 12_000_000_000,
+        "L1": 15_000_000_000,
+        "Oracles": 10_000_000_000,
+        "DeFi": 10_000_000_000,
+        "Solana DEX": 8_000_000_000
+    }
+    potential_cap = narrative_max_caps.get(narrative, 10_000_000_000)
+    marketcap_multiplier = min(potential_cap / current_marketcap, 10)
 
+    # 4. Momentum factor (straft snelle stijgers, beloont underdogs)
     if price_change_30d > 50:
         momentum_factor = 0.8
     elif price_change_30d > 20:
@@ -142,6 +156,7 @@ def calculate_expected_x(current_price, ath_price, current_marketcap, narrative,
     else:
         momentum_factor = 1.25
 
+    # Berekening en afronding
     expected_x = ath_factor * narrative_multiplier * marketcap_multiplier * momentum_factor
     return round(min(expected_x, 25), 1)
 
