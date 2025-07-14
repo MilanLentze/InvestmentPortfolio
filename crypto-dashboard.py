@@ -174,29 +174,5 @@ for coin in coin_data:
     row[5].markdown(coin['narrative'])
     row[6].markdown(coin['altseason_phase'])
 
-
-# ===== EXPANDERS MET MINI-GRAFIEKJES =====
-for coin in coin_data:
-    with st.expander(f"📈 {coin['symbol']} - 7d prijsontwikkeling", expanded=False):
-        with st.spinner("Grafiek laden..."):
-            dates, values = get_chart_data(COINS[coin['symbol']]['id'])
-            if dates:
-                fig = go.Figure()
-                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines', line=dict(width=2)))
-                fig.update_layout(
-                    height=200,
-                    margin=dict(l=10, r=10, t=20, b=20),
-                    template="plotly_dark",
-                    showlegend=False,
-                    plot_bgcolor='#000000',
-                    paper_bgcolor='#000000',
-                    font=dict(color='#FFFFFF'),
-                    xaxis=dict(showgrid=False),
-                    yaxis=dict(showgrid=False)
-                )
-                st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("Geen grafiekdata beschikbaar.")
-
 st.markdown("---")
 st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
