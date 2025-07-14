@@ -481,6 +481,21 @@ with tab3:
     # Exitstrategieën
     st.subheader("🚪 Exitstrategieën per Coin")
 
+    st.markdown("### 🪙 WIF")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 40% bij 2x  
+    - Verkoop 30% bij 3.5x  
+    - Verkoop 20% bij 5x  
+    - Laat 10% als moonbag of exit op hype top  
+    
+    **Uitleg**  
+    Meme-coins stijgen snel en corrigeren hard.  
+    Meestal mid-phase parabool.  
+    Laatste winsten veiligstellen.  
+    Meeliften op euforie of alles verkopen als hype piekt.
+    """)
+
     st.markdown("### 🪙 FET")
     st.markdown("""
     **Exitstrategie**  
@@ -505,6 +520,19 @@ with tab3:
     ZK hype kan plots opkomen – winst vroeg nemen.  
     Piek meestal in één golf.  
     Laatste deel volgen met trailing stop voor piekmaximalisatie.
+    """)
+   
+    st.markdown("### 🪙 RNDR")
+    st.markdown("""
+    **Exitstrategie**  
+    - Verkoop 25% bij 2.5x  
+    - Verkoop 35% bij 4x  
+    - Verkoop 40% via trailing vanaf 5x  
+    
+    **Uitleg**  
+    RNDR volgt AI-leiders, maar is iets trager.  
+    AI tweede golf of hype push.  
+    Laat laatste deel meelopen, maar stop-loss goed zetten.
     """)
     
     st.markdown("### 🪙 SUI")
@@ -533,33 +561,18 @@ with tab3:
     Grote hypepiek – kans op rotatie.  
     Maximaliseer piek met stop (bv. -15% vanaf ATH).
     """)
-    
-    st.markdown("### 🪙 RNDR")
+       
+    st.markdown("### 🪙 JUP")
     st.markdown("""
     **Exitstrategie**  
-    - Verkoop 25% bij 2.5x  
-    - Verkoop 35% bij 4x  
-    - Verkoop 40% via trailing vanaf 5x  
+    - Verkoop 30% bij 2x  
+    - Verkoop 40% bij 4x  
+    - Verkoop 30% via trailing of news-based exit  
     
     **Uitleg**  
-    RNDR volgt AI-leiders, maar is iets trager.  
-    AI tweede golf of hype push.  
-    Laat laatste deel meelopen, maar stop-loss goed zetten.
-    """)
-    
-    st.markdown("### 🪙 WIF")
-    st.markdown("""
-    **Exitstrategie**  
-    - Verkoop 40% bij 2x  
-    - Verkoop 30% bij 3.5x  
-    - Verkoop 20% bij 5x  
-    - Laat 10% als moonbag of exit op hype top  
-    
-    **Uitleg**  
-    Meme-coins stijgen snel en corrigeren hard.  
-    Meestal mid-phase parabool.  
-    Laatste winsten veiligstellen.  
-    Meeliften op euforie of alles verkopen als hype piekt.
+    Solana-infra coins kunnen snel pieken.  
+    Momentum coin, gevoelig voor hype.  
+    Volg hypecycli op X / Solana ecosysteem.
     """)
     
     st.markdown("### 🪙 INJ")
@@ -577,19 +590,6 @@ with tab3:
     Laat meeliften als narratief oppakt.
     """)
     
-    st.markdown("### 🪙 JUP")
-    st.markdown("""
-    **Exitstrategie**  
-    - Verkoop 30% bij 2x  
-    - Verkoop 40% bij 4x  
-    - Verkoop 30% via trailing of news-based exit  
-    
-    **Uitleg**  
-    Solana-infra coins kunnen snel pieken.  
-    Momentum coin, gevoelig voor hype.  
-    Volg hypecycli op X / Solana ecosysteem.
-    """)
-    
     st.markdown("### 🪙 LINK")
     st.markdown("""
     **Exitstrategie**  
@@ -604,4 +604,7 @@ with tab3:
     """)
 
 st.markdown("---")
-st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit + CoinGecko")
+st.markdown("---")
+st.markdown("---")
+st.markdown("---")
+st.caption("Dashboard ontwikkeld door Milan
