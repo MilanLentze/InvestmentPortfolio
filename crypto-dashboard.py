@@ -18,8 +18,13 @@ st.markdown("""
         background-color: #000000;
         color: #FFFFFF;
     }
+    label, .stSelectbox label, .stCheckbox > div {
+        color: #AAAAAA !important;
+        font-weight: normal;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 # ===== AUTOVERVERSING (elke 30 sec) =====
 st_autorefresh(interval=30_000, key="refresh")
