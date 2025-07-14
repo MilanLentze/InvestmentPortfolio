@@ -114,7 +114,7 @@ def calculate_expected_x(current_price, ath_price, current_marketcap, narrative,
         return 0.0
 
     # 1. ATH-factor (max 15x)
-    ath_factor = min(ath_price / current_price, 15)
+    ath_factor = min(ath_price / current_price, 10)
 
     # 2. Narrative multiplier
     narrative_multipliers = {
@@ -141,23 +141,23 @@ def calculate_expected_x(current_price, ath_price, current_marketcap, narrative,
         "Solana DEX": 8_000_000_000
     }
     potential_cap = narrative_max_caps.get(narrative, 10_000_000_000)
-    marketcap_multiplier = min(potential_cap / current_marketcap, 10)
+    marketcap_multiplier = min(potential_cap / current_marketcap, 5)
 
     # 4. Momentum factor (straft snelle stijgers, beloont underdogs)
     if price_change_30d > 50:
-        momentum_factor = 0.8
+        momentum_factor = 0.7
     elif price_change_30d > 20:
-        momentum_factor = 0.95
+        momentum_factor = 0.9
     elif price_change_30d > 0:
         momentum_factor = 1.0
     elif price_change_30d > -20:
         momentum_factor = 1.1
     else:
-        momentum_factor = 1.25
+        momentum_factor = 1.2
 
     # Berekening en afronding
     expected_x = ath_factor * narrative_multiplier * marketcap_multiplier * momentum_factor
-    return round(min(expected_x, 25), 1)
+    return round(min(expected_x, 15), 1)
 
 # ===== PRIJZEN TONEN MET VERANDERING =====
 prices = get_live_prices()
