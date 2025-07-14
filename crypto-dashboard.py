@@ -272,114 +272,14 @@ st_autorefresh(interval=30_000, key="refresh")
 #================= TAB 2 ===============
 with tab2:
     st.title("🧠 Altseason Insights")
-    st.markdown("""
-        <style>
-        div[data-testid="metric-container"] {
-            background-color: transparent;
-            border: 0px solid rgba(250, 250, 250, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-        }
-        /* Label (bv. "Huidige BTC Dominance") */
-        div[data-testid="metric-container"] label {
-            color: white !important;
-        }
-        /* Waarde (bv. "63.63%") */
-        div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
-            color: white !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
 
-    # 1. Macro Indicatoren
-    st.subheader("📈 Macro Indicatoren")
-    macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
-
-    # 1.1 BTC Dominance
-    if macro == "BTC Dominance":
-        btc_dom = get_btc_dominance_cmc("9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb")
-        if btc_dom is not None:
-            st.metric(label="📊 Huidige BTC Dominance", value=f"{btc_dom:.2f}%")
-            st.markdown(f"""
-            - Een BTC dominance van **{btc_dom:.2f}%** betekent dat Bitcoin momenteel een aanzienlijk aandeel van de totale markt inneemt.
-            - **>65%** – Bitcoinfase  
-            - **60–65%** – Pre-Altseason / Rotatievoorfase  
-            - **55–60%** – Opbouwfase (L1 grote caps stijgen fors)  
-            - **50–55%** – Start Altseason (mid & Low caps breken uit)  
-            - **45–50%** – Volledige Altseason / Piek (begin winst nemen)  
-            - **<45%** – Blow-off fase / Markt oververhit (voor 45% alle winst eruit)
-            """)
-            st.caption("Bron: CoinMarketCap")
-
-    # 1.2 ETH/BTC Ratio
-    elif macro == "ETH/BTC Ratio":
-        st.markdown("### 📉 ETH/BTC Ratio – Actuele Stand")
-
-        def get_eth_btc_ratio():
-            try:
-                data = yf.download("ETH-BTC", period="1d", interval="1m", progress=False)
-                if not data.empty:
-                    return float(data["Close"].iloc[-1])
-                else:
-                    return None
-            except Exception as e:
-                st.error(f"Fout bij ophalen ETH/BTC ratio: {e}")
-                return None
-
-        eth_btc_ratio = get_eth_btc_ratio()
-        if eth_btc_ratio is not None:
-            st.metric(label="📉 ETH/BTC Ratio", value=f"{eth_btc_ratio:.4f}")
-            st.markdown("""
-            - **< 0.055** → vaak nog BTC-dominantie (early/pre-season)  
-            - **0.06–0.07** → opbouwfase voor altseason
-            - **> 0.07** → volwaardige altseason in zicht (ETH leidt de markt)
-            - **> 0.08** → vaak piek/late fase van altseason (risico op topvorming)
-            """)
-        else:
-            st.warning("Kon ETH/BTC ratio niet ophalen.")
-
-    # 1.3 Fear & Greed Index
-    elif macro == "Fear & Greed Index":
-        st.markdown("### 😨😎 Fear & Greed Index – Crypto Sentiment")
-
-        def get_fear_greed_index():
-            url = "https://api.alternative.me/fng/?limit=1"
-            try:
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-                data = response.json()
-                return int(data["data"][0]["value"]), data["data"][0]["value_classification"]
-            except Exception as e:
-                st.error(f"Fout bij ophalen Fear & Greed Index: {e}")
-                return None, None
-
-        index_value, classification = get_fear_greed_index()
-        if index_value is not None:
-            st.metric(label="📍 Huidige Index", value=f"{index_value}/100", delta=classification)
-            st.markdown(f"""
-            **Interpretatie:**
-            - **0–24**: 😱 *Extreme Fear* → Markt in paniek → kans op koopmoment  
-            - **25–49**: 😟 *Fear* → Negatief sentiment  
-            - **50–74**: 🙂 *Greed* → Positieve vibe, kans op FOMO  
-            - **75–100**: 🤪 *Extreme Greed* → Markt oververhit → tijd voor voorzichtigheid  
-
-            > **Actuele status:** *{classification}*
-            """)
-            st.caption("Bron: alternative.me – Fear & Greed API")
-
-    # 2. Kapitaalrotatie
+    # 🔄 Kapitaalrotatie
     st.subheader("🔄 Kapitaalrotatie")
+    st.markdown("👉 [Blockchain Center – Altcoin Season Index](https://www.blockchaincenter.net/en/altcoin-season-index/)")
 
-    st.markdown("""
-    Bekijk hier de actuele altcoin rotatie en top 50 performance:
-    
-    👉 [Ga naar Blockchain Center – Altcoin Season Index](https://www.blockchaincenter.net/en/altcoin-season-index/)
-    """)
-
-
-    # 3. Narratief Activiteit
+    # 🔥 Narratief Activiteit
     st.subheader("🔥 Narratief Activiteit")
-    
+
     narrative_sets = {
         "AI": ["FET", "RNDR", "AGIX", "GRT", "TAO"],
         "ZK / Scaling": ["ZK", "STRK", "MANTA", "LRC"],
@@ -388,65 +288,50 @@ with tab2:
         "DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
         "Oracle": ["LINK", "BAND", "TRB"]
     }
-    
+
     selected_narrative = st.selectbox("Selecteer narratief", list(narrative_sets.keys()))
     selected_coins = narrative_sets[selected_narrative]
-    selected_coins_with_btc = selected_coins + ["BTC"]
-    
+
     headers = {
         "Accepts": "application/json",
         "X-CMC_PRO_API_KEY": CMC_API_KEY,
     }
-    
+
     params = {
-        "symbol": ",".join(selected_coins_with_btc),
+        "symbol": ",".join(selected_coins + ["BTC"]),
         "convert": "USD"
     }
-    
+
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
     response = requests.get(url, headers=headers, params=params)
-    
+
     if response.status_code == 200:
         data = response.json()
-    
-        try:
+        rows = []
+        pct_changes = []
+
+        for symbol in selected_coins:
+            try:
+                coin = data["data"][symbol]
+                price = coin["quote"]["USD"]["price"]
+                change_7d = coin["quote"]["USD"]["percent_change_7d"]
+                pct_changes.append(change_7d)
+                rows.append({"Coin": symbol, "Prijs (USD)": round(price, 3), "7d %": round(change_7d, 2)})
+            except:
+                st.warning(f"{symbol} niet gevonden in CMC-data.")
+
+        df = pd.DataFrame(rows).sort_values("7d %", ascending=False)
+        st.dataframe(df)
+
+        if "BTC" in data["data"]:
             btc_7d = data["data"]["BTC"]["quote"]["USD"]["percent_change_7d"]
-            growth_values = []
-    
-            for symbol in selected_coins:
-                coin = data["data"].get(symbol)
-                if coin:
-                    change_7d = coin["quote"]["USD"]["percent_change_7d"]
-                    verschil_btc = change_7d - btc_7d
-                    growth_values.append(verschil_btc)
-    
-            if growth_values:
-                avg_diff = sum(growth_values) / len(growth_values)
-                kleur = "🟢" if avg_diff > 0 else "🔴"
-                st.metric(label=f"Gemiddelde 7d groei t.o.v. BTC – {selected_narrative}", value=f"{avg_diff:.2f}%", delta=f"{kleur} tov BTC")
-            else:
-                st.warning("Geen geldige data voor geselecteerde coins.")
-        except Exception as e:
-            st.error(f"Fout bij berekenen gemiddelde verschil: {e}")
+            avg_change = sum(pct_changes) / len(pct_changes) if pct_changes else 0
+            diff_vs_btc = avg_change - btc_7d
+
+            st.markdown(f"📊 **Gemiddelde groei narratief:** `{avg_change:.2f}%`")
+            st.markdown(f"🔁 **Verschil t.o.v. BTC:** `{diff_vs_btc:.2f}%` (BTC = {btc_7d:.2f}%)")
     else:
         st.error(f"Fout bij ophalen data: {response.status_code}")
-
-    # 4. Momentum & Signalering
-    st.subheader("⚡ Momentum & Signalering")
-    momentum = st.selectbox("Kies signaal", ["Coins >30% (7d)", "Nieuwe ATHs", "Top 3 stijgers per week"])
-    st.info(f"Momentum inzicht: {momentum}")
-
-    # 5. Cycle Timing
-    st.subheader("⏱️ Cycle Timing & Index")
-    timing = st.selectbox("Kies timing-indicator", ["Halving Countdown", "Dagen sinds BTC-top", "Altseason Index"])
-    st.info(f"Timing gekozen: {timing}")
-
-    # 6. Analyse & Strategie (educatief)
-    st.subheader("🧠 Analyse & Strategie")
-    st.markdown("""
-        > *Voorbeeldanalyse: We zitten momenteel in Fase 2. Mid caps tonen momentum. BTC dominance daalt licht. ETH trekt aan. Meme-coins reageren nog niet voluit.*
-    """)
-    st.download_button("📥 Download strategie (PDF)", data="PDF-content", file_name="strategie_altseason.pdf")
 
 
 
