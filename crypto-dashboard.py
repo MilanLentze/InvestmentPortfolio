@@ -173,20 +173,21 @@ for symbol, info in COINS.items():
     match = next((coin for coin in prices if coin["id"] == info["id"]), None)
     if not match:
         continue
+
     price = match.get("current_price")
-    ath = match.get("ath")  # <-- voeg toe
-    market_cap = match.get("market_cap")  # <-- voeg toe
+    ath = match.get("ath")
+    market_cap = match.get("market_cap")
     change_24h = match.get("price_change_percentage_24h_in_currency")
     change_7d = match.get("price_change_percentage_7d_in_currency")
     change_30d = match.get("price_change_percentage_30d_in_currency")
 
-expected_x = calculate_expected_x_score_model(
-    current_price=price,
-    ath_price=match.get("ath", 0),
-    current_marketcap=match.get("market_cap", 0),
-    narrative=info["narrative"],
-    price_change_30d=change_30d
-)
+    expected_x = calculate_expected_x_score_model(
+        current_price=price,
+        ath_price=ath,
+        current_marketcap=market_cap,
+        narrative=info["narrative"],
+        price_change_30d=change_30d
+    )
 
     if price is not None and change_24h is not None:
         coin_data.append({
@@ -198,8 +199,8 @@ expected_x = calculate_expected_x_score_model(
             "narrative": info["narrative"],
             "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
             "expected_x": expected_x
-            )
         })
+
 
 # Sorteren
 if sort_option == "Coin":
