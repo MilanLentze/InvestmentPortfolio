@@ -181,12 +181,7 @@ narrative_sets = {
 
 selected_narrative = st.selectbox("Selecteer narratief", list(narrative_sets.keys()))
 selected_coins = narrative_sets[selected_narrative]
-
-# Voeg BTC toe om te vergelijken
-if "BTC" not in selected_coins:
-    selected_coins_with_btc = selected_coins + ["BTC"]
-else:
-    selected_coins_with_btc = selected_coins
+selected_coins_with_btc = selected_coins + ["BTC"]
 
 headers = {
     "Accepts": "application/json",
@@ -203,28 +198,26 @@ response = requests.get(url, headers=headers, params=params)
 
 if response.status_code == 200:
     data = response.json()
-    btc_7d = data["data"]["BTC"]["quote"]["USD"]["percent_change_7d"]
 
-    rows = []
-    for symbol in selected_coins:
-        try:
-            coin = data["data"][symbol]
-            price = coin["quote"]["USD"]["price"]
-            change_7d = coin["quote"]["USD"]["percent_change_7d"]
-            verschil_btc = round(change_7d - btc_7d, 2)
-            rows.append({
-                "Coin": symbol,
-                "Prijs (USD)": round(price, 3),
-                "7d %": round(change_7d, 2),
-                "T.o.v. BTC": verschil_btc
-            })
-        except KeyError:
-            st.warning(f"{symbol} niet gevonden in CMC-data.")
+    try:
+        btc_7d = data["data"]["BTC"]["quote"]["USD"]["percent_change_7d"]
+        growth_values = []
 
-    df = pd.DataFrame(rows).sort_values("T.o.v. BTC", ascending=False)
+        for symbol in selected_coins:
+            coin = data["data"].get(symbol)
+            if coin:
+                change_7d = coin["quote"]["USD"]["percent_change_7d"]
+                verschil_btc = change_7d - btc_7d
+                growth_values.append(verschil_btc)
 
-    st.markdown(f"📉 **BTC 7d groei**: `{btc_7d:.2f}%`")
-    st.dataframe(df)
+        if growth_values:
+            avg_diff = sum(growth_values) / len(growth_values)
+            kleur = "🟢" if avg_diff > 0 else "🔴"
+            st.metric(label=f"Gemiddelde 7d groei t.o.v. BTC – {selected_narrative}", value=f"{avg_diff:.2f}%", delta=f"{kleur} tov BTC")
+        else:
+            st.warning("Geen geldige data voor geselecteerde coins.")
+    except Exception as e:
+        st.error(f"Fout bij berekenen gemiddelde verschil: {e}")
 else:
     st.error(f"Fout bij ophalen data: {response.status_code}")
 
