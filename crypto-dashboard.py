@@ -8,6 +8,7 @@ from datetime import datetime
 
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
+tab1, tab2 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights"])
 st.title("📊 Live Altcoin Prices")
 st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
 
@@ -31,6 +32,41 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+with tab2:
+    st.title("🧠 Altseason Insights")
+
+    # 1. Macro Indicatoren
+    st.subheader("📈 Macro Indicatoren")
+    macro = st.selectbox("Kies macro-indicator", ["BTC Dominance", "ETH/BTC Ratio", "Fear & Greed Index"])
+    st.info(f"Inzicht: {macro}")
+
+    # 2. Kapitaalrotatie
+    st.subheader("🔄 Kapitaalrotatie")
+    rotation = st.selectbox("Kies segment", ["Blue Chips", "Narratief Coins", "Meme Coins"])
+    st.info(f"Segment gekozen: {rotation}")
+
+    # 3. Narratief Activiteit
+    st.subheader("🔥 Narratief Activiteit")
+    narrative = st.selectbox("Selecteer narratief", ["AI", "ZK / L2", "L1", "Meme", "DeFi", "Oracles"])
+    st.info(f"Selectie: {narrative}")
+
+    # 4. Momentum & Signalering
+    st.subheader("⚡ Momentum & Signalering")
+    momentum = st.selectbox("Kies signaal", ["Coins >30% (7d)", "Nieuwe ATHs", "Top 3 stijgers per week"])
+    st.info(f"Momentum inzicht: {momentum}")
+
+    # 5. Cycle Timing
+    st.subheader("⏱️ Cycle Timing & Index")
+    timing = st.selectbox("Kies timing-indicator", ["Halving Countdown", "Dagen sinds BTC-top", "Altseason Index"])
+    st.info(f"Timing gekozen: {timing}")
+
+    # 6. Analyse & Strategie (educatief)
+    st.subheader("🧠 Analyse & Strategie")
+    st.markdown("""
+        > *Voorbeeldanalyse: We zitten momenteel in Fase 2. Mid caps tonen momentum. BTC dominance daalt licht. ETH trekt aan. Meme-coins reageren nog niet voluit.*
+    """)
+    st.download_button("📥 Download strategie (PDF)", data="PDF-content", file_name="strategie_altseason.pdf")
 
 # ===== AUTOVERVERSING (elke 30 sec) =====
 st_autorefresh(interval=30_000, key="refresh")
