@@ -34,10 +34,10 @@ COINS = {
     "STRK": "starknet",
     "FET": "fetch-ai",
     "INJ": "injective-protocol",
-    "JUP": "jupiter"  # Uitzondering: halen we op via Jupiter Aggregator API
+    "JUP": "jupiter"  # JUP behandelen we apart via Jupiter API
 }
 
-# ===== FUNCTIE: JUP ophalen via Jupiter Aggregator API =====
+# ===== JUP via Jupiter Aggregator API =====
 def get_jup_price_from_jupiter():
     url = "https://quote-api.jup.ag/v6/price?ids=JUP"
     try:
@@ -45,13 +45,12 @@ def get_jup_price_from_jupiter():
         response.raise_for_status()
         data = response.json()
         jup_data = data.get("data", {}).get("JUP", {})
-        price = jup_data.get("price")
-        return price
+        return jup_data.get("price")
     except Exception as e:
         st.warning(f"Jupiter API fout: {e}")
         return None
 
-# ===== FUNCTIE: Andere coins ophalen via CoinGecko =====
+# ===== PRIJZEN OPHALEN COINGECKO =====
 @st.cache_data(ttl=25)
 def get_live_prices():
     ids = ",".join([v for k, v in COINS.items() if k != "JUP"])
@@ -60,7 +59,7 @@ def get_live_prices():
         f"?ids={ids}&vs_currencies=eur&include_24hr_change=true"
     )
     try:
-        time.sleep(1)  # om CoinGecko-spikes te vermijden
+        time.sleep(1)
         response = requests.get(url, timeout=10)
         if response.status_code == 429:
             raise Exception("📉 API-limiet bereikt (429 Too Many Requests)")
@@ -75,10 +74,9 @@ prices = get_live_prices()
 
 st.markdown("---")
 for symbol, coingecko_id in COINS.items():
-    # Speciaal geval: JUP via Jupiter API
     if symbol == "JUP":
         price = get_jup_price_from_jupiter()
-        change = None  # Geen 24h-change beschikbaar
+        change = None  # Geen 24u-change beschikbaar via Jupiter
     else:
         data = prices.get(coingecko_id, {})
         price = data.get("eur", None)
@@ -101,6 +99,8 @@ for symbol, coingecko_id in COINS.items():
             """,
             unsafe_allow_html=True
         )
-        st.markdown(
-                    f"""
-                    <div style='padding: 10px 12px; border-bottom: 1px solid #333; display: flex; justify-content: sp
+    else:
+        st.warning(f"{symbol}: prijs niet gevonden")
+
+st.markdown("---")
+st.caption("Dashboard ontwikkeld door Milan • Powered by Streamlit, CoinGecko & Jupiter")
