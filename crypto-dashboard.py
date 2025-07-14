@@ -156,30 +156,30 @@ with tab2:
             st.caption("Bron: alternative.me – Fear & Greed API")
 
     # 2. Kapitaalrotatie
-st.subheader("🔄 Top 50 Altcoin Performance (90 dagen) – Live data")
-
-# URL van de Blockchain Center Altcoin Season Index
-url = "https://www.blockchaincenter.net/en/altcoin-season-index/"
-
-try:
-    # Haal alle tabellen op van de pagina
-    tables = pd.read_html(url)
-
-    # De juiste tabel zit meestal op index 1 (kan veranderen)
-    top50_df = tables[1]
-
-    # Optioneel: hernoem kolommen voor duidelijkheid
-    top50_df.columns = ["#", "Coin", "Performance (90d)"]
-
-    # Sorteer op performance
-    top50_df = top50_df.sort_values("Performance (90d)", ascending=False).reset_index(drop=True)
-
-    # Toon in dashboard
-    st.dataframe(top50_df)
-
-except Exception as e:
-    st.error("❌ Kan live data niet laden. Mogelijk is de structuur van de website gewijzigd.")
-    st.exception(e)
+    st.subheader("🔄 Top 50 Altcoin Performance (90 dagen) – Live data")
+    
+    # URL van de Blockchain Center Altcoin Season Index
+    url = "https://www.blockchaincenter.net/en/altcoin-season-index/"
+    
+    try:
+        # Haal alle tabellen op van de pagina
+        tables = pd.read_html(url)
+    
+        # De juiste tabel zit meestal op index 1 (kan veranderen)
+        top50_df = tables[1]
+    
+        # Optioneel: hernoem kolommen voor duidelijkheid
+        top50_df.columns = ["#", "Coin", "Performance (90d)"]
+    
+        # Sorteer op performance
+        top50_df = top50_df.sort_values("Performance (90d)", ascending=False).reset_index(drop=True)
+    
+        # Toon in dashboard
+        st.dataframe(top50_df)
+    
+    except Exception as e:
+        st.error("❌ Kan live data niet laden. Mogelijk is de structuur van de website gewijzigd.")
+        st.exception(e)
 
     # 3. Narratief Activiteit
     st.subheader("🔥 Narratief Activiteit")
