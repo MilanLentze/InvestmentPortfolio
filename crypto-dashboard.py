@@ -91,9 +91,13 @@ with tab2:
         eth_btc_data = get_eth_btc_chart()
 
         if eth_btc_data is not None and not eth_btc_data.empty:
-            eth_btc_data = eth_btc_data.reset_index()
-            st.write("📋 Kolommen ETH/BTC:", eth_btc_data.columns.tolist())
-            st.write("🔍 Voorbeelddata:", eth_btc_data.head())
+            eth_btc_data = eth_btc_data.reset_index()  # zorgt voor een 'Date'-kolom
+            eth_btc_data["Date"] = pd.to_datetime(eth_btc_data["Date"])  # zorg dat het datetime is
+
+            # Debug output
+            st.write("📋 Kolommen:", eth_btc_data.columns.tolist())
+            st.write("📊 Types:", eth_btc_data.dtypes)
+            st.write("🔍 Preview:", eth_btc_data.head())
 
             if "Date" in eth_btc_data.columns and "Close" in eth_btc_data.columns:
                 fig = px.line(
@@ -104,13 +108,8 @@ with tab2:
                     labels={"Close": "Ratio", "Date": "Datum"}
                 )
                 st.plotly_chart(fig, use_container_width=True)
-                st.markdown("""
-                - **ETH/BTC daalt** → Bitcoin sterker → vaak vroege cyclusfase  
-                - **ETH/BTC stijgt** → Altcoins winnen kracht → kans op mid-cap rotatie  
-                - Breakouts in ETH/BTC leiden vaak tot altseason-momentum
-                """)
             else:
-                st.error("❌ Vereiste kolommen 'Date' of 'Close' ontbreken in de data.")
+                st.error("❌ 'Date' of 'Close' ontbreekt in de dataset.")
         else:
             st.warning("ETH/BTC data is leeg of kon niet worden opgehaald.")
 
