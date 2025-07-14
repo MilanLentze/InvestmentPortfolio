@@ -73,9 +73,9 @@ for symbol, coingecko_id in COINS.items():
 
         st.markdown(
             f"""
-            <div style='padding: 10px 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between;'>
+            <div style='padding: 10px 12px; border-bottom: 1px solid #333; display: grid; grid-template-columns: 80px 120px auto; align-items: center;'>
                 <span style='font-size: 0.95rem; color: white;'>{symbol}</span>
-                <span style='font-size: 0.95rem; color: #10A37F;'>€ {price:,.4f}</span>
+                <span style='font-size: 0.95rem; color: #10A37F; font-family: monospace;'>€ {price:,.4f}</span>
                 <span style='font-size: 0.95rem;'>{change_str}</span>
             </div>
             """,
