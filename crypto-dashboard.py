@@ -9,29 +9,31 @@ from datetime import datetime
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
 tab1, tab2 = st.tabs(["📊 Live Altcoin Prices", "🧠 Altseason Insights"])
-st.title("📊 Live Altcoin Prices")
-st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
 
-st.markdown("""
-    <style>
-    body {
-        background-color: #000000;
-        color: #FFFFFF;
-    }
-    .stApp {
-        background-color: #000000;
-        color: #FFFFFF;
-    }
-    label, .stSelectbox label {
-        color: #AAAAAA !important;
-        font-weight: normal;
-    }
-    .css-16huue1 > label, .stCheckbox > div > label {
-        color: #AAAAAA !important;
-        font-weight: normal;
-    }
-    </style>
-""", unsafe_allow_html=True)
+with tab1:
+    st.title("📊 Live Altcoin Prices")
+    st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
+    
+    st.markdown("""
+        <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+        .stApp {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+        label, .stSelectbox label {
+            color: #AAAAAA !important;
+            font-weight: normal;
+        }
+        .css-16huue1 > label, .stCheckbox > div > label {
+            color: #AAAAAA !important;
+            font-weight: normal;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
 with tab2:
     st.title("🧠 Altseason Insights")
