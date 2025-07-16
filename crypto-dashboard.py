@@ -124,6 +124,26 @@ with tab1:
         color = "#10A37F" if value >= 0 else "#FF4B4B"
         return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
     
+    @st.cache_data(ttl=25)
+    def get_jup_price_from_cmc(api_key):
+        url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+        headers = {
+            "Accepts": "application/json",
+            "X-CMC_PRO_API_KEY": api_key
+        }
+        params = {
+            "symbol": "JUP",
+            "convert": "EUR"
+        }
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            return data["data"]["JUP"]["quote"]["EUR"]["price"]
+        except Exception as e:
+            st.warning(f"⚠️ JUP prijs via CMC mislukt: {e}")
+            return None
+
     # ===== PRIJZEN OPHALEN FUNCTIE =====
     @st.cache_data(ttl=25)
     def get_live_prices():
@@ -243,6 +263,11 @@ with tab1:
             continue
     
         price = match.get("current_price")
+        # OVERRIDE JUP PRIJS MET CMC
+        if symbol == "JUP":
+            cmc_price = get_jup_price_from_cmc(CMC_API_KEY)
+            if cmc_price:
+                price = cmc_price  # overschrijf CoinGecko-prijs met CMC-prijs
         ath = match.get("ath")
         market_cap = match.get("market_cap")
         change_24h = match.get("price_change_percentage_24h_in_currency")
