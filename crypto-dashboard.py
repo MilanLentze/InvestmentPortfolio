@@ -372,6 +372,7 @@ with tab1:
     kleur_doel = "#10A37F" if total_with_cash >= 19737.67 else "#FF4B4B"
     
     # HTML-rendering in één blok
+    # 1. Eerste blok: Portfolio Samenvatting
     st.markdown(f"""
     <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px;'>
         <h4 style='margin-bottom:15px;'>📦 Portfolio Samenvatting</h4>
@@ -383,9 +384,12 @@ with tab1:
             <li><b>Totale winst/verlies:</b> <span style='color:{kleur_winst};'><b>€{total_winst:,.2f}</b></span></li>
             <li><b>Rendement:</b> <span style='color:{kleur_rendement};'><b>{total_rendement:.2f}%</b></span></li>
         </ul>
+    </div>
+    """, unsafe_allow_html=True)
     
-        <hr style='margin:20px 0; border-top: 1px solid #444;'>
-    
+    # 2. Tweede blok: Doel & Scenario’s
+    st.markdown(f"""
+    <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px; margin-top:10px;'>
         <h5 style='margin-bottom:10px;'>🎯 <u>Doel & Scenario’s</u></h5>
         <ul style='list-style-position: inside; line-height: 1.8;'>
             <li><b>Doelwaarde:</b> <span style='color:{kleur_doel};'><b>€19.737,67</b></span></li>
