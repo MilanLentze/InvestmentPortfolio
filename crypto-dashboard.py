@@ -30,20 +30,7 @@ def get_btc_dominance_cmc(api_key):
         return None
 
 
-    # ======= HARDGEKODEERDE PORTFOLIO =======
-    PORTFOLIO = {
-        "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
-        "ZK":   {"aantal": 5268.41192482, "inkoopprijs": 0.04218},
-        "RNDR": {"aantal": 72.35723437,   "inkoopprijs": 2.8543},
-        "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
-        "LINK": {"aantal": 11.7140771,    "inkoopprijs": 11.9748},
-        "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
-        "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
-        "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
-        "JUP":  {"aantal": 154.25295998,  "inkoopprijs": 0.38687}
-    }
-    CASH_EURO = 108.90
-
+   
 
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
@@ -115,6 +102,20 @@ with tab1:
         "JUP": {"id": "jupiter", "narrative": "Solana DEX"}
     }
     
+    # ======= HARDGEKODEERDE PORTFOLIO =======
+    PORTFOLIO = {
+        "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
+        "ZK":   {"aantal": 5268.41192482, "inkoopprijs": 0.04218},
+        "RNDR": {"aantal": 72.35723437,   "inkoopprijs": 2.8543},
+        "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
+        "LINK": {"aantal": 11.7140771,    "inkoopprijs": 11.9748},
+        "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
+        "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
+        "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
+        "JUP":  {"aantal": 154.25295998,  "inkoopprijs": 0.38687}
+    }
+    CASH_EURO = 108.90
+
     # ===== FORMAT FUNCTIE VOOR PERCENTAGES =====
     def format_change(value):
         if value is None:
