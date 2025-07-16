@@ -295,6 +295,78 @@ with tab1:
         row[5].markdown(coin['narrative'])
         row[6].markdown(coin['altseason_phase'])
         row[7].markdown(f"{coin['expected_x']}x")
+
+   st.markdown("---")
+   st.markdown("---")
+   
+    # ======= HARDGEKODEERDE PORTFOLIO =======
+    PORTFOLIO = {
+        "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
+        "ZK":   {"aantal": 5268.41192482, "inkoopprijs": 0.04218},
+        "RNDR": {"aantal": 72.35723437,   "inkoopprijs": 2.8543},
+        "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
+        "LINK": {"aantal": 11.7140771,    "inkoopprijs": 11.9748},
+        "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
+        "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
+        "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
+        "JUP":  {"aantal": 154.25295998,  "inkoopprijs": 0.38687}
+    }
+    CASH_EURO = 108.90
+
+    # === PORFOLIO BEREKENING OP BASIS VAN LIVE PRIJZEN ===
+    st.markdown("---")
+    st.markdown("<h4 style='color:#fff;'>📦 Portfolio Samenvatting</h4>", unsafe_allow_html=True)
+
+    total_current = 0
+    total_invested = 0
+    portfolio_rows = []
+
+    for coin in coin_data:
+        sym = coin["symbol"]
+        price_now = coin["price"]
+        if sym in PORTFOLIO:
+            aantal = PORTFOLIO[sym]["aantal"]
+            inkoopprijs = PORTFOLIO[sym]["inkoopprijs"]
+            invested = aantal * inkoopprijs
+            current = aantal * price_now
+            winst = current - invested
+            rendement_pct = (winst / invested) * 100 if invested > 0 else 0
+
+            total_current += current
+            total_invested += invested
+
+            portfolio_rows.append({
+                "Coin": sym,
+                "Aantal": round(aantal, 2),
+                "Inkoop (€)": round(inkoopprijs, 4),
+                "Live (€)": round(price_now, 4),
+                "Waarde (€)": round(current, 2),
+                "Winst/Verlies (€)": round(winst, 2),
+                "Rendement (%)": round(rendement_pct, 2)
+            })
+
+    df_portfolio = pd.DataFrame(portfolio_rows)
+    st.dataframe(df_portfolio, use_container_width=True)
+
+    # Samenvatting
+    total_with_cash = total_current + CASH_EURO
+    total_winst = total_current - total_invested
+    total_rendement = (total_winst / total_invested) * 100 if total_invested > 0 else 0
+
+    st.markdown(f"""
+    <div style='background-color:#111; padding:15px; border-radius:10px; color:white;'>
+        <h5>📈 Totaaloverzicht</h5>
+        <ul>
+            <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
+            <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
+            <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
+            <li><b>Totale winst/verlies:</b> €{total_winst:,.2f}</li>
+            <li><b>Rendement:</b> {total_rendement:.2f}%</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 #================= TAB 2 ===============
 with tab2:
     st.title("🧠 Altseason Insights")
