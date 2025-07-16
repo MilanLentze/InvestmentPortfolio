@@ -311,8 +311,8 @@ with tab1:
         row[6].markdown(coin['altseason_phase'])
         row[7].markdown(f"{coin['expected_x']}x")
 
-     st.markdown("---")
-     st.markdown("---")
+st.markdown("---")
+st.markdown("---")
      # === PORFOLIO BEREKENING OP BASIS VAN LIVE PRIJZEN ===
      st.markdown("---")
      st.markdown("<h4 style='color:#fff;'>📦 Portfolio Samenvatting</h4>", unsafe_allow_html=True)
