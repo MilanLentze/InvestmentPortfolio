@@ -371,10 +371,11 @@ with tab1:
     kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
     kleur_doel = "#10A37F" if total_with_cash >= 19737.67 else "#FF4B4B"
     
-    # HTML-rendering
+    # HTML-rendering in één blok
     st.markdown(f"""
     <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px;'>
-        <h4 style='margin-bottom:15px;'>📈 <u>Totaaloverzicht</u></h4>
+        <h4 style='margin-bottom:15px;'>📦 Portfolio Samenvatting</h4>
+        <h5 style='margin-bottom:10px;'>📘 <u>Totaaloverzicht</u></h5>
         <ul style='list-style-position: inside; line-height: 1.8;'>
             <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
             <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
@@ -394,8 +395,22 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
-
-
+    # Donkere voortgangsbalk naar doel
+    doelwaarde = 19737.67
+    progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
+    progress_percent = progress * 100
+    
+    # HTML-balk met aangepaste kleur
+    st.markdown(f"""
+    <div style='background-color:#222; padding:12px 20px; border-radius:10px; margin-top:10px;'>
+        <div style='font-size:16px; color:white; margin-bottom:5px;'>
+            🚀 Voortgang naar doel: <b>{progress_percent:.1f}%</b>
+        </div>
+        <div style='width: 100%; background-color: #444; height: 20px; border-radius: 10px; overflow: hidden;'>
+            <div style='width: {progress_percent:.1f}%; height: 100%; background-color: {"#10A37F" if progress >= 1 else "#FFD700"};'></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 #================= TAB 2 ===============
 with tab2:
