@@ -360,27 +360,29 @@ with tab1:
 
             total_current += current
             total_invested += invested
-           
 
-
-    
     # Samenvatting
     total_with_cash = total_current + CASH_EURO
     total_winst = total_current - total_invested
     total_rendement = (total_winst / total_invested) * 100 if total_invested > 0 else 0
-
+    
+    # Kleur voor winst/verlies
+    kleur_winst = "#10A37F" if total_winst >= 0 else "#FF4B4B"
+    kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
+    
     st.markdown(f"""
-    <div style='background-color:#111; padding:15px; border-radius:10px; color:white;'>
-        <h5>📈 Totaaloverzicht</h5>
-        <ul>
+    <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px;'>
+        <h4 style='margin-bottom:15px;'>📈 <u>Totaaloverzicht</u></h4>
+        <ul style='list-style-position: inside; line-height: 1.8;'>
+            <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
             <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
             <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
-            <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
-            <li><b>Totale winst/verlies:</b> €{total_winst:,.2f}</li>
-            <li><b>Rendement:</b> {total_rendement:.2f}%</li>
+            <li><b>Totale winst/verlies:</b> <span style='color:{kleur_winst};'><b>€{total_winst:,.2f}</b></span></li>
+            <li><b>Rendement:</b> <span style='color:{kleur_rendement};'><b>{total_rendement:.2f}%</b></span></li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
+
 
 
 #================= TAB 2 ===============
