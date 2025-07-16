@@ -341,7 +341,6 @@ with tab1:
     st.markdown("---")
     # === PORTFOLIO BEREKENING OP BASIS VAN LIVE PRIJZEN ===
     st.markdown("---")
-    st.markdown("<h4 style='color:#fff;'>📦 Portfolio Samenvatting</h4>", unsafe_allow_html=True)
 
     total_current = 0
     total_invested = 0
@@ -378,7 +377,7 @@ with tab1:
         <h4 style='margin-bottom:15px;'>📦 Portfolio Samenvatting</h4>
         <h5 style='margin-bottom:10px;'>📘 <u>Totaaloverzicht</u></h5>
         <ul style='list-style-position: inside; line-height: 1.8;'>
-            <li><b>Totaalwaarde portfolio:</b>     €{total_with_cash:,.2f}</li>
+            <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
             <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
             <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
             <li><b>Totale winst/verlies:</b> <span style='color:{kleur_winst};'><b>€{total_winst:,.2f}</b></span></li>
