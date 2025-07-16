@@ -185,7 +185,7 @@ with tab1:
     #====== ALTCOIN FASES =========
     
     ALTCOIN_PHASES = {
-        "WIF": "Fase 4 – FOMO & Memecoins",
+        "WIF": "Fase 0-1 – FOMO & Memecoins",
         "ZK": "Fase 2 – Mid Caps & Narratieven",
         "RNDR": "Fase 2-3 – Mid Caps & Narratieven",
         "SUI": "Fase 2 – Mid Caps & Narratieven",
@@ -399,19 +399,30 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
-    # Donkere voortgangsbalk naar doel
+    # === DOEL PROGRESS CALCULATIE ===
     doelwaarde = 19737.67
     progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
     progress_percent = progress * 100
+    euro_nodig = max(doelwaarde - total_with_cash, 0)
     
-    # HTML-balk met aangepaste kleur
+    # Dynamische kleur (rood <50%, geel <100%, groen =100%)
+    if progress < 0.5:
+        kleur_balk = "#FF4B4B"  # rood
+    elif progress < 1:
+        kleur_balk = "#FFD700"  # geel
+    else:
+        kleur_balk = "#10A37F"  # groen
+    
     st.markdown(f"""
     <div style='background-color:#222; padding:12px 20px; border-radius:10px; margin-top:10px;'>
         <div style='font-size:16px; color:white; margin-bottom:5px;'>
             🚀 Voortgang naar doel: <b>{progress_percent:.1f}%</b>
         </div>
         <div style='width: 100%; background-color: #444; height: 20px; border-radius: 10px; overflow: hidden;'>
-            <div style='width: {progress_percent:.1f}%; height: 100%; background-color: {"#10A37F" if progress >= 1 else "#FFD700"};'></div>
+            <div style='width: {progress_percent:.1f}%; height: 100%; background-color: {kleur_balk};'></div>
+        </div>
+        <div style='font-size:14px; color:#bbb; margin-top:8px;'>
+            Nog €{euro_nodig:,.2f} te gaan tot je doel.
         </div>
     </div>
     """, unsafe_allow_html=True)
