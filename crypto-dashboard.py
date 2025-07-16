@@ -336,15 +336,7 @@ with tab1:
             total_current += current
             total_invested += invested
 
-            portfolio_rows.append({
-                "Coin": sym,
-                "Aantal": round(aantal, 2),
-                "Inkoop (€)": round(inkoopprijs, 4),
-                "Live (€)": round(price_now, 4),
-                "Waarde (€)": round(current, 2),
-                "Winst/Verlies (€)": round(winst, 2),
-                "Rendement (%)": round(rendement_pct, 2)
-            })
+            
 
     df_portfolio = pd.DataFrame(portfolio_rows)
     st.dataframe(df_portfolio, use_container_width=True)
