@@ -318,29 +318,6 @@ with tab1:
     st.markdown("---")
     st.markdown("<h4 style='color:#fff;'>📦 Portfolio Samenvatting</h4>", unsafe_allow_html=True)
 
-    total_current = 0
-    total_invested = 0
-    portfolio_rows = []
-
-    for coin in coin_data:
-        sym = coin["symbol"]
-        price_now = coin["price"]
-        if sym in PORTFOLIO:
-            aantal = PORTFOLIO[sym]["aantal"]
-            inkoopprijs = PORTFOLIO[sym]["inkoopprijs"]
-            invested = aantal * inkoopprijs
-            current = aantal * price_now
-            winst = current - invested
-            rendement_pct = (winst / invested) * 100 if invested > 0 else 0
-
-            total_current += current
-            total_invested += invested
-
-            
-
-    df_portfolio = pd.DataFrame(portfolio_rows)
-    st.dataframe(df_portfolio, use_container_width=True)
-
     # Samenvatting
     total_with_cash = total_current + CASH_EURO
     total_winst = total_current - total_invested
