@@ -366,10 +366,12 @@ with tab1:
     total_winst = total_current - total_invested
     total_rendement = (total_winst / total_invested) * 100 if total_invested > 0 else 0
     
-    # Kleur voor winst/verlies
+    # Kleur voor winst/verlies en doel
     kleur_winst = "#10A37F" if total_winst >= 0 else "#FF4B4B"
     kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
+    kleur_doel = "#10A37F" if total_with_cash >= 19737.67 else "#FF4B4B"
     
+    # HTML-rendering
     st.markdown(f"""
     <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px;'>
         <h4 style='margin-bottom:15px;'>📈 <u>Totaaloverzicht</u></h4>
@@ -377,12 +379,22 @@ with tab1:
             <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
             <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
             <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
-            st.markdown("---")
+            
             <li><b>Totale winst/verlies:</b> <span style='color:{kleur_winst};'><b>€{total_winst:,.2f}</b></span></li>
             <li><b>Rendement:</b> <span style='color:{kleur_rendement};'><b>{total_rendement:.2f}%</b></span></li>
         </ul>
+    
+        <hr style='margin:20px 0; border-top: 1px solid #444;'>
+    
+        <h5 style='margin-bottom:10px;'>🎯 <u>Doel & Scenario’s</u></h5>
+        <ul style='list-style-position: inside; line-height: 1.8;'>
+            <li><b>Doelwaarde:</b> <span style='color:{kleur_doel};'><b>€19.737,67</b></span></li>
+            <li><b>Best Case:</b> €28.071,34</li>
+            <li><b>Worst Case:</b> €9.649,52</li>
+        </ul>
     </div>
     """, unsafe_allow_html=True)
+
 
 
 
