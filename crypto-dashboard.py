@@ -143,6 +143,26 @@ with tab1:
         except Exception as e:
             st.warning(f"⚠️ JUP prijs via CMC mislukt: {e}")
             return None
+    
+    @st.cache_data(ttl=25)
+    def get_degen_price_from_cmc(api_key):
+        url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+        headers = {
+            "Accepts": "application/json",
+            "X-CMC_PRO_API_KEY": api_key
+        }
+        params = {
+            "symbol": "DEGEN",
+            "convert": "EUR"
+        }
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            return data["data"]["DEGEN"]["quote"]["EUR"]["price"]
+        except Exception as e:
+            st.warning(f"⚠️ DEGEN prijs via CMC mislukt: {e}")
+            return None
 
     # ===== PRIJZEN OPHALEN FUNCTIE =====
     @st.cache_data(ttl=25)
@@ -263,11 +283,15 @@ with tab1:
             continue
     
         price = match.get("current_price")
-        # OVERRIDE JUP PRIJS MET CMC
+        # OVERRIDE  JUP & DEGEN PRIJS MET CMC
         if symbol == "JUP":
             cmc_price = get_jup_price_from_cmc(CMC_API_KEY)
             if cmc_price:
-                price = cmc_price  # overschrijf CoinGecko-prijs met CMC-prijs
+                price = cmc_price
+        elif symbol == "DEGEN":
+            cmc_price = get_degen_price_from_cmc(CMC_API_KEY)
+            if cmc_price:
+                price = cmc_price
         ath = match.get("ath")
         market_cap = match.get("market_cap")
         change_24h = match.get("price_change_percentage_24h_in_currency")
