@@ -114,7 +114,7 @@ with tab1:
         "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
         "AEVO":  {"aantal": 685.25251414,  "inkoopprijs": 0.10434}
     }
-    CASH_EURO = 108.90
+    CASH_EURO = 0
 
     # ===== FORMAT FUNCTIE VOOR PERCENTAGES =====
     def format_change(value):
