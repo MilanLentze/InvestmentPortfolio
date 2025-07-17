@@ -99,7 +99,7 @@ with tab1:
         "STRK": {"id": "starknet", "narrative": "ZK / L2"},
         "FET": {"id": "fetch-ai", "narrative": "AI"},
         "INJ": {"id": "injective-protocol", "narrative": "DeFi"},
-        "JUP": {"id": "jupiter", "narrative": "Solana DEX"}
+        "AEVO": {"id": "aevo", "narrative": "Options / Derivatives"},
     }
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
@@ -112,7 +112,7 @@ with tab1:
         "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
         "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
         "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
-        "JUP":  {"aantal": 154.25295998,  "inkoopprijs": 0.38687}
+        "AEVO":  {"aantal": 685,25251414,  "inkoopprijs": 0,10434}
     }
     CASH_EURO = 108.90
 
@@ -125,23 +125,23 @@ with tab1:
         return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
     
     @st.cache_data(ttl=25)
-    def get_jup_price_from_cmc(api_key):
+    def get_aevo_price_from_cmc(api_key):
         url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
         headers = {
             "Accepts": "application/json",
             "X-CMC_PRO_API_KEY": api_key
         }
         params = {
-            "symbol": "JUP",
+            "symbol": "AEVO",
             "convert": "EUR"
         }
         try:
             response = requests.get(url, headers=headers, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
-            return data["data"]["JUP"]["quote"]["EUR"]["price"]
+            return data["data"]["AEVO"]["quote"]["EUR"]["price"]
         except Exception as e:
-            st.warning(f"⚠️ JUP prijs via CMC mislukt: {e}")
+            st.warning(f"⚠️ AEVO prijs via CMC mislukt: {e}")
             return None
     
     @st.cache_data(ttl=25)
@@ -222,7 +222,7 @@ with tab1:
         "STRK": "Fase 1-2 – Blue Chips & Mid C",
         "FET": "Fase 2 – Mid Caps & Narratieven",
         "INJ": "Fase 2 – Mid Caps & Narratieven",
-        "JUP": "Fase 3 – Hypefase / Narratiefpiek"
+        "AEVO": "Fase 3 – Hypefase / Narratiefpiek"
     }
     
     #======= Rendement X =======
@@ -315,9 +315,9 @@ with tab1:
             change_7d = match.get("price_change_percentage_7d_in_currency")
             change_30d = match.get("price_change_percentage_30d_in_currency")
     
-        # ====== Fallback via CMC voor JUP ======
-        if symbol == "JUP":
-            cmc_price = get_jup_price_from_cmc(CMC_API_KEY)
+        # ====== Fallback via CMC voor AEVO ======
+        if symbol == "AEVO":
+            cmc_price = get_aevo_price_from_cmc(CMC_API_KEY)
             if cmc_price:
                 price = cmc_price
     
@@ -655,7 +655,7 @@ with tab3:
     # Juli-allocatie
     st.subheader("📊 Allocatie – Juli")
     july_data = {
-        "Coin": ["FET", "STRK", "SUI", "ZK", "RNDR", "WIF", "INJ", "JUP"],
+        "Coin": ["FET", "STRK", "SUI", "ZK", "RNDR", "WIF", "INJ", "AEVO"],
         "Allocatie %": ["20%", "20%", "15%", "15%", "10%", "10%", "5%", "5%"]
     }
     st.table(pd.DataFrame(july_data))
@@ -663,7 +663,7 @@ with tab3:
     # Augustus-allocatie
     st.subheader("📊 Allocatie – Augustus")
     aug_data = {
-        "Coin": ["LINK", "INJ", "JUP", "ZK", "RNDR", "Cash buffer"],
+        "Coin": ["LINK", "INJ", "AEVO", "ZK", "RNDR", "Cash buffer"],
         "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
     }
     st.table(pd.DataFrame(aug_data))
@@ -752,17 +752,17 @@ with tab3:
     Maximaliseer piek met stop (bv. -15% vanaf ATH).
     """)
        
-    st.markdown("### 🪙 JUP")
+    st.markdown("### 🪙 AEVO")
     st.markdown("""
     **Exitstrategie**  
     - Verkoop 30% bij 2x  
     - Verkoop 40% bij 4x  
-    - Verkoop 30% via trailing of news-based exit  
+    - Verkoop 30% via trailing of ecosysteem-nieuws  
     
     **Uitleg**  
-    Solana-infra coins kunnen snel pieken.  
-    Momentum coin, gevoelig voor hype.  
-    Volg hypecycli op X / Solana ecosysteem.
+    AEVO speelt in op de groeiende Derivatives/Options-markt.  
+    Wordt vaak laat wakker in de cycle, maar kan sterk presteren bij hype rond leverage of pro-trading tools.  
+    Volg ontwikkelingen rond CEX-integraties en derivaten-volume op X.
     """)
     
     st.markdown("### 🪙 INJ")
