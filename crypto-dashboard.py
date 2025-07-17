@@ -284,17 +284,20 @@ with tab1:
     prices = get_live_prices()
     
     coin_data = []
+
     for symbol, info in COINS.items():
+        # Standaard: probeer CoinGecko match te vinden
         match = next((coin for coin in prices if coin["id"] == info["id"]), None)
-        # Start met lege vars
+    
+        # Initieer alle variabelen
         price = None
         ath = None
         market_cap = None
         change_24h = None
         change_7d = None
         change_30d = None
-        
-        # Als CoinGecko data aanwezig is: haal het eruit
+    
+        # ====== Als CoinGecko data beschikbaar is ======
         if match:
             price = match.get("current_price")
             ath = match.get("ath")
@@ -302,37 +305,43 @@ with tab1:
             change_24h = match.get("price_change_percentage_24h_in_currency")
             change_7d = match.get("price_change_percentage_7d_in_currency")
             change_30d = match.get("price_change_percentage_30d_in_currency")
-        
-        # Altijd fallback voor JUP en DEGEN (overschrijft CoinGecko-prijs)
+    
+        # ====== Fallback via CMC voor JUP ======
         if symbol == "JUP":
             cmc_price = get_jup_price_from_cmc(CMC_API_KEY)
             if cmc_price:
                 price = cmc_price
-        elif symbol == "DEGEN":
-            cmc_price = get_degen_price_from_cmc(CMC_API_KEY)
-            if cmc_price:
-                price = cmc_price
-
     
-        expected_x = calculate_expected_x_score_model(
-            current_price=price,
-            ath_price=ath,
-            current_marketcap=market_cap,
-            narrative=info["narrative"],
-            price_change_30d=change_30d
-        )
+        # ====== Volledige fallback via CMC voor DEGEN ======
+        if symbol == "DEGEN":
+            cmc_data = get_degen_full_data_from_cmc(CMC_API_KEY)
+            if cmc_data:
+                price = cmc_data["price"]
+                market_cap = cmc_data["market_cap"]
+                change_24h = cmc_data["change_24h"]
+                change_7d = cmc_data["change_7d"]
+                change_30d = cmc_data["change_30d"]
+                ath = cmc_data["ath"] or 0.012  # Vaste ATH (aanpasbaar)
     
-        if price is not None and change_24h is not None:
+        # ====== Alleen toevoegen als prijs bekend is ======
+        if price is not None:
             coin_data.append({
                 "symbol": symbol,
                 "price": price,
-                "change_24h": change_24h,
-                "change_7d": change_7d,
-                "change_30d": change_30d,
+                "change_24h": change_24h if change_24h is not None else 0,
+                "change_7d": change_7d if change_7d is not None else 0,
+                "change_30d": change_30d if change_30d is not None else 0,
                 "narrative": info["narrative"],
                 "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
-                "expected_x": expected_x
+                "expected_x": calculate_expected_x_score_model(
+                    current_price=price,
+                    ath_price=ath or 0,
+                    current_marketcap=market_cap or 1,
+                    narrative=info["narrative"],
+                    price_change_30d=change_30d if change_30d is not None else 0
+                )
             })
+
     
     
     # Sorteren
