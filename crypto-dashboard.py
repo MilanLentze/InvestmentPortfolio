@@ -279,11 +279,24 @@ with tab1:
     coin_data = []
     for symbol, info in COINS.items():
         match = next((coin for coin in prices if coin["id"] == info["id"]), None)
-        if not match:
-            continue
-    
-        price = match.get("current_price")
-        # OVERRIDE  JUP & DEGEN PRIJS MET CMC
+        # Start met lege vars
+        price = None
+        ath = None
+        market_cap = None
+        change_24h = None
+        change_7d = None
+        change_30d = None
+        
+        # Als CoinGecko data aanwezig is: haal het eruit
+        if match:
+            price = match.get("current_price")
+            ath = match.get("ath")
+            market_cap = match.get("market_cap")
+            change_24h = match.get("price_change_percentage_24h_in_currency")
+            change_7d = match.get("price_change_percentage_7d_in_currency")
+            change_30d = match.get("price_change_percentage_30d_in_currency")
+        
+        # Altijd fallback voor JUP en DEGEN (overschrijft CoinGecko-prijs)
         if symbol == "JUP":
             cmc_price = get_jup_price_from_cmc(CMC_API_KEY)
             if cmc_price:
@@ -292,11 +305,7 @@ with tab1:
             cmc_price = get_degen_price_from_cmc(CMC_API_KEY)
             if cmc_price:
                 price = cmc_price
-        ath = match.get("ath")
-        market_cap = match.get("market_cap")
-        change_24h = match.get("price_change_percentage_24h_in_currency")
-        change_7d = match.get("price_change_percentage_7d_in_currency")
-        change_30d = match.get("price_change_percentage_30d_in_currency")
+
     
         expected_x = calculate_expected_x_score_model(
             current_price=price,
