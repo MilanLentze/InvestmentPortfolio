@@ -145,7 +145,7 @@ with tab1:
             return None
     
     @st.cache_data(ttl=25)
-    def get_degen_price_from_cmc(api_key):
+    def get_degen_full_data_from_cmc(api_key):
         url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
         headers = {
             "Accepts": "application/json",
@@ -159,10 +159,19 @@ with tab1:
             response = requests.get(url, headers=headers, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
-            return data["data"]["DEGEN"]["quote"]["EUR"]["price"]
+            quote = data["data"]["DEGEN"]["quote"]["EUR"]
+            return {
+                "price": quote["price"],
+                "market_cap": quote["market_cap"],
+                "change_24h": quote["percent_change_24h"],
+                "change_7d": quote["percent_change_7d"],
+                "change_30d": quote.get("percent_change_30d", 0),  # extra fallback
+                "ath": None  # handmatig in de loop fallbacken op 0.012
+            }
         except Exception as e:
-            st.warning(f"⚠️ DEGEN prijs via CMC mislukt: {e}")
+            st.warning(f"⚠️ DEGEN data via CMC mislukt: {e}")
             return None
+
 
     # ===== PRIJZEN OPHALEN FUNCTIE =====
     @st.cache_data(ttl=25)
