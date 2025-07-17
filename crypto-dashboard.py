@@ -125,7 +125,7 @@ with tab1:
         return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
     
     @st.cache_data(ttl=25)
-    def get_aevo_price_from_cmc(api_key):
+    def get_aevo_full_data_from_cmc(api_key):
         url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
         headers = {
             "Accepts": "application/json",
@@ -139,9 +139,17 @@ with tab1:
             response = requests.get(url, headers=headers, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
-            return data["data"]["AEVO"]["quote"]["EUR"]["price"]
+            quote = data["data"]["AEVO"]["quote"]["EUR"]
+            return {
+                "price": quote["price"],
+                "market_cap": quote["market_cap"],
+                "change_24h": quote["percent_change_24h"],
+                "change_7d": quote["percent_change_7d"],
+                "change_30d": quote.get("percent_change_30d", 0),  # fallback
+                "ath": None  # kan in loop vervangen worden door handmatige waarde
+            }
         except Exception as e:
-            st.warning(f"⚠️ AEVO prijs via CMC mislukt: {e}")
+            st.warning(f"⚠️ AEVO data via CMC mislukt: {e}")
             return None
     
     @st.cache_data(ttl=25)
@@ -315,13 +323,8 @@ with tab1:
             change_7d = match.get("price_change_percentage_7d_in_currency")
             change_30d = match.get("price_change_percentage_30d_in_currency")
     
-        # ====== Fallback via CMC voor AEVO ======
-        if symbol == "AEVO":
-            cmc_price = get_aevo_price_from_cmc(CMC_API_KEY)
-            if cmc_price:
-                price = cmc_price
-    
-        # ====== Volledige fallback via CMC voor DEGEN ======
+         
+        # ====== Volledige fallback via CMC voor DEGEN & AEVO ======
         if symbol == "DEGEN":
             cmc_data = get_degen_full_data_from_cmc(CMC_API_KEY)
             if cmc_data:
@@ -331,7 +334,17 @@ with tab1:
                 change_7d = cmc_data["change_7d"]
                 change_30d = cmc_data["change_30d"]
                 ath = cmc_data["ath"] or 0.012  # Vaste ATH (aanpasbaar)
-    
+
+        elif symbol == "AEVO":
+            cmc_data = get_aevo_full_data_from_cmc(CMC_API_KEY)
+            if cmc_data:
+                price = cmc_data["price"]
+                market_cap = cmc_data["market_cap"]
+                change_24h = cmc_data["change_24h"]
+                change_7d = cmc_data["change_7d"]
+                change_30d = cmc_data["change_30d"]
+                ath = cmc_data["ath"] or 1.20  # handmatig fallback ATH
+       
         # ====== Alleen toevoegen als prijs bekend is ======
         if price is not None:
             coin_data.append({
