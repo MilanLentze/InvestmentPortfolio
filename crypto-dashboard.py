@@ -688,10 +688,10 @@ with tab3:
     st.markdown("""
     **Exitstrategie**  
     🪙 WIF (Meme – piekt in Fase 4)
-    30% bij 2x → Fase 3 (early hype/euforie)
-    40% bij 4x → Fase 4 (parabolisch momentum)
-    30% bij 6x → Fase 4 top of trailing stop -15%
-    Let op: explosief, maar snel terugval → trailing op laatste deel
+    30% bij 2x → Fase 3 (early hype/euforie)  
+    40% bij 4x → Fase 4 (parabolisch momentum)  
+    30% bij 6x → Fase 4 top of trailing stop -15%  
+    Let op: explosief, maar snel terugval → trailing op laatste deel  
     
     **Uitleg**  
     Meme-coins stijgen snel en corrigeren hard.  
@@ -703,10 +703,10 @@ with tab3:
     st.markdown("### 🪙 FET")
     st.markdown("""
     **Exitstrategie**  
-    25% bij 3x → Fase 2 
-    35% bij 5x → Fase 3 
-    40% bij 8x → trailing of Fase 4 
-    AI push komt vaak vroeg, maar tweede piek is ook mogelijk
+    25% bij 3x → Fase 2  
+    35% bij 5x → Fase 3  
+    40% bij 8x → trailing of Fase 4  
+    AI push komt vaak vroeg, maar tweede piek is ook mogelijk  
     
     **Uitleg**  
     AI-coins pieken vaak vroeg. 3x is verstandig.  
@@ -717,10 +717,10 @@ with tab3:
     st.markdown("### 🪙 STRK")
     st.markdown("""
     **Exitstrategie**  
-    25% bij 3x → Fase 2 
-    35% bij 5x → Fase 3 
-    40% bij 8x → Fase 4 of trailing 
-    Momentumcoin, kan hard en snel gaan – snel winstnemen 
+    25% bij 3x → Fase 2  
+    35% bij 5x → Fase 3  
+    40% bij 8x → Fase 4 of trailing  
+    Momentumcoin, kan hard en snel gaan – snel winstnemen  
     
     **Uitleg**  
     ZK hype kan plots opkomen – winst vroeg nemen.  
@@ -731,10 +731,10 @@ with tab3:
     st.markdown("### 🪙 RNDR")
     st.markdown("""
     **Exitstrategie**  
-    25% bij 3x → Fase 2 top 
-    35% bij 5x → Fase 3 begin 
-    40% bij 8x → Fase 3–4 overgang (trailing -15%) 
-    AI kan cyclisch exploderen – trailing cruciaal in hype
+    25% bij 3x → Fase 2 top  
+    35% bij 5x → Fase 3 begin  
+    40% bij 8x → Fase 3–4 overgang (trailing -15%)  
+    AI kan cyclisch exploderen – trailing cruciaal in hype  
     
     **Uitleg**  
     RNDR volgt AI-leiders, maar is iets trager.  
@@ -745,10 +745,10 @@ with tab3:
     st.markdown("### 🪙 SUI")
     st.markdown("""
     **Exitstrategie**  
-    - 25% bij 2x → Fase 2–3 overgang 
-    35% bij 4x → Fase 3 
-    40% bij 6x → Fase 4
-    Meestal trage stijging, maar sterk blow-off topmoment 
+    - 25% bij 2x → Fase 2–3 overgang  
+    35% bij 4x → Fase 3  
+    40% bij 6x → Fase 4  
+    Meestal trage stijging, maar sterk blow-off topmoment  
     
     **Uitleg**  
     L1’s stijgen vaak stabiel – blow-off rond 5x.  
@@ -758,10 +758,10 @@ with tab3:
     st.markdown("### 🪙 ZK")
     st.markdown("""
     **Exitstrategie**  
-    25% bij 3x → Fase 2 (breakout) 
-    35% bij 5x → Fase 3 
-    40% bij 8x → Fase 4 top of trailing stop 
-    Structuur-play met late rotatie mogelijk – piekt vaak na AI
+    25% bij 3x → Fase 2 (breakout)  
+    35% bij 5x → Fase 3  
+    40% bij 8x → Fase 4 top of trailing stop  
+    Structuur-play met late rotatie mogelijk – piekt vaak na AI  
     
     **Uitleg**  
     Accumuleert vaak langer – kleine winst vroeg.  
@@ -773,10 +773,10 @@ with tab3:
     st.markdown("### 🪙 AEVO")
     st.markdown("""
     **Exitstrategie**  
-    30% bij 3x → Fase 2 
-    40% bij 5x → Fase 3 
-    30% bij 7x → trailing of Fase 4
-    Afhankelijk van derivatenbuzz – scherp volgen op X en volume
+    30% bij 3x → Fase 2  
+    40% bij 5x → Fase 3  
+    30% bij 7x → trailing of Fase 4  
+    Afhankelijk van derivatenbuzz – scherp volgen op X en volume  
     
     **Uitleg**  
     AEVO speelt in op de groeiende Derivatives/Options-markt.  
@@ -787,10 +787,10 @@ with tab3:
     st.markdown("### 🪙 INJ")
     st.markdown("""
     **Exitstrategie**  
-    25% bij 2x → Fase 2–3 
-    35% bij 4x → Fase 3 
-    40% bij 6x → Fase 4 top of trailing
-    Geen hypecoin, dus stabieler – piekt vaak laat
+    25% bij 2x → Fase 2–3  
+    35% bij 4x → Fase 3  
+    40% bij 6x → Fase 4 top of trailing  
+    Geen hypecoin, dus stabieler – piekt vaak laat  
     
     **Uitleg**  
     Undervalued asset, piekt vaak laat.  
@@ -802,11 +802,11 @@ with tab3:
     st.markdown("### 🪙 DEGEN")
     st.markdown("""
     **Exitstrategie**  
-    30% bij 2x → Fase 2 (early hype) 
-    40% bij 3.5x → Fase 3 
-    20% bij 5x → Fase 4 
-    10% → moonbag of trailing bij extreme pump
-    High risk, high reward – momentumgedreven
+    30% bij 2x → Fase 2 (early hype)  
+    40% bij 3.5x → Fase 3  
+    20% bij 5x → Fase 4  
+    10% → moonbag of trailing bij extreme pump  
+    High risk, high reward – momentumgedreven  
     
     **Uitleg**  
     Volatiele SocialFi/memecoin met explosief potentieel.  
