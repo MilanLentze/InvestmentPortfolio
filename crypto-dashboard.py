@@ -99,7 +99,7 @@ with tab1:
         "STRK": {"id": "starknet", "narrative": "ZK / L2"},
         "FET": {"id": "fetch-ai", "narrative": "AI"},
         "INJ": {"id": "injective-protocol", "narrative": "DeFi"},
-        "AEVO": {"id": "aevo", "narrative": "Options / Derivatives"},
+        "AEVO": {"id": "aevo-2", "narrative": "Options / Derivatives"},
     }
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
