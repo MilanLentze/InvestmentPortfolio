@@ -105,11 +105,11 @@ with tab1:
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
         "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
-        "ZK":   {"aantal": 5268.41192482, "inkoopprijs": 0.04218},
-        "RNDR": {"aantal": 72.35723437,   "inkoopprijs": 2.8543},
+        "ZK":   {"aantal": 5642.24306186, "inkoopprijs": 0.043023},
+        "RNDR": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
         "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
         "DEGEN": {"aantal": 40767.88288737,    "inkoopprijs": 0.0041699},
-        "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
+        "STRK": {"aantal": 1568.47270184, "inkoopprijs": 0.10724},
         "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
         "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
         "AEVO":  {"aantal": 685.25251414,  "inkoopprijs": 0.10434}
