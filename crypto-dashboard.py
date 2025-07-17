@@ -219,65 +219,65 @@ with tab1:
     #======= Rendement X =======
     
     def calculate_expected_x_score_model(current_price, ath_price, current_marketcap, narrative, price_change_30d):
-    # ====== Fallbacks voor missende data ======
-    current_price = current_price or 0.0001  # voorkom deling door nul
-    ath_price = ath_price or 0
-    current_marketcap = current_marketcap or 1
-    price_change_30d = price_change_30d if price_change_30d is not None else 0
-
-    # 1. ATH Score (max 10)
-    ath_ratio = ath_price / current_price if current_price > 0 else 0
-    ath_score = min(ath_ratio, 10)
-
-    # 2. Narrative Score (max 5)
-    narrative_scores = {
-        "Meme": 5,
-        "AI": 4.5,
-        "AI / GPU": 4.5,
-        "ZK / L2": 4,
-        "L1": 3.5,
-        "DeFi": 3.5,
-        "Solana DEX": 3.5,
-        "Oracles": 3
-    }
-    narrative_score = narrative_scores.get(narrative, 3)
-
-    # 3. Marketcap Score (max 5)
-    narrative_max_caps = {
-        "Meme": 8_000_000_000,
-        "AI": 20_000_000_000,
-        "AI / GPU": 20_000_000_000,
-        "ZK / L2": 12_000_000_000,
-        "L1": 15_000_000_000,
-        "Oracles": 10_000_000_000,
-        "DeFi": 10_000_000_000,
-        "Solana DEX": 8_000_000_000
-    }
-    potential_cap = narrative_max_caps.get(narrative, 10_000_000_000)
-    marketcap_ratio = potential_cap / current_marketcap if current_marketcap > 0 else 0
-    marketcap_score = min(marketcap_ratio, 5)
-
-    # 4. Momentum Score (max 5)
-    if price_change_30d > 50:
-        momentum_score = 1
-    elif price_change_30d > 20:
-        momentum_score = 2
-    elif price_change_30d > 0:
-        momentum_score = 3
-    elif price_change_30d > -10:
-        momentum_score = 4
-    else:
-        momentum_score = 5
-
-    # Gewogen optelling
-    expected_x = (
-        0.4 * ath_score +
-        0.3 * narrative_score +
-        0.2 * marketcap_score +
-        0.1 * momentum_score
-    )
-
-    return round(min(expected_x, 15), 1)
+        # ====== Fallbacks voor missende data ======
+        current_price = current_price or 0.0001  # voorkom deling door nul
+        ath_price = ath_price or 0
+        current_marketcap = current_marketcap or 1
+        price_change_30d = price_change_30d if price_change_30d is not None else 0
+    
+        # 1. ATH Score (max 10)
+        ath_ratio = ath_price / current_price if current_price > 0 else 0
+        ath_score = min(ath_ratio, 10)
+    
+        # 2. Narrative Score (max 5)
+        narrative_scores = {
+            "Meme": 5,
+            "AI": 4.5,
+            "AI / GPU": 4.5,
+            "ZK / L2": 4,
+            "L1": 3.5,
+            "DeFi": 3.5,
+            "Solana DEX": 3.5,
+            "Oracles": 3
+        }
+        narrative_score = narrative_scores.get(narrative, 3)
+    
+        # 3. Marketcap Score (max 5)
+        narrative_max_caps = {
+            "Meme": 8_000_000_000,
+            "AI": 20_000_000_000,
+            "AI / GPU": 20_000_000_000,
+            "ZK / L2": 12_000_000_000,
+            "L1": 15_000_000_000,
+            "Oracles": 10_000_000_000,
+            "DeFi": 10_000_000_000,
+            "Solana DEX": 8_000_000_000
+        }
+        potential_cap = narrative_max_caps.get(narrative, 10_000_000_000)
+        marketcap_ratio = potential_cap / current_marketcap if current_marketcap > 0 else 0
+        marketcap_score = min(marketcap_ratio, 5)
+    
+        # 4. Momentum Score (max 5)
+        if price_change_30d > 50:
+            momentum_score = 1
+        elif price_change_30d > 20:
+            momentum_score = 2
+        elif price_change_30d > 0:
+            momentum_score = 3
+        elif price_change_30d > -10:
+            momentum_score = 4
+        else:
+            momentum_score = 5
+    
+        # Gewogen optelling
+        expected_x = (
+            0.4 * ath_score +
+            0.3 * narrative_score +
+            0.2 * marketcap_score +
+            0.1 * momentum_score
+        )
+    
+        return round(min(expected_x, 15), 1)
 
     
     # ===== PRIJZEN TONEN MET VERANDERING =====
