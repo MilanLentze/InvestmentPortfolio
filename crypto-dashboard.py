@@ -95,7 +95,7 @@ with tab1:
         "ZK": {"id": "zksync", "narrative": "ZK / L2"},
         "RNDR": {"id": "render-token", "narrative": "AI / GPU"},
         "SUI": {"id": "sui", "narrative": "L1"},
-        "LINK": {"id": "chainlink", "narrative": "Oracles"},
+        "DEGEN": {"id": "degen", "narrative": "SocialFi / Meme"},
         "STRK": {"id": "starknet", "narrative": "ZK / L2"},
         "FET": {"id": "fetch-ai", "narrative": "AI"},
         "INJ": {"id": "injective-protocol", "narrative": "DeFi"},
@@ -108,7 +108,7 @@ with tab1:
         "ZK":   {"aantal": 5268.41192482, "inkoopprijs": 0.04218},
         "RNDR": {"aantal": 72.35723437,   "inkoopprijs": 2.8543},
         "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
-        "LINK": {"aantal": 11.7140771,    "inkoopprijs": 11.9748},
+        "DEGEN": {"aantal": 40767.88288737,    "inkoopprijs": 0.0041699},
         "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
         "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
         "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
@@ -185,11 +185,11 @@ with tab1:
     #====== ALTCOIN FASES =========
     
     ALTCOIN_PHASES = {
-        "WIF": "Fase 0-1 – FOMO & Memecoins",
+        "WIF": "Fase 4 – FOMO & Memecoins",
         "ZK": "Fase 2 – Mid Caps & Narratieven",
         "RNDR": "Fase 2-3 – Mid Caps & Narratieven",
         "SUI": "Fase 2 – Mid Caps & Narratieven",
-        "LINK": "Fase 1 – Blue Chips & Infra",
+        "DEGEN": "Fase 4 – FOMO & Memecoins",
         "STRK": "Fase 1-2 – Blue Chips & Mid C",
         "FET": "Fase 2 – Mid Caps & Narratieven",
         "INJ": "Fase 2 – Mid Caps & Narratieven",
@@ -544,6 +544,7 @@ with tab2:
         "Gaming": ["IMX", "PYR", "GALA", "ILV"],
         "DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
         "Oracle": ["LINK", "BAND", "TRB"]
+        "MEME": ["WIF", "PEPE", "DEGEN"]
     }
     
     selected_narrative = st.selectbox("Selecteer narratief", list(narrative_sets.keys()))
@@ -721,17 +722,18 @@ with tab3:
     Laat meeliften als narratief oppakt.
     """)
     
-    st.markdown("### 🪙 LINK")
+    st.markdown("### 🪙 DEGEN")
     st.markdown("""
     **Exitstrategie**  
-    - Verkoop 25% bij 2x  
-    - Verkoop 35% bij 4x  
-    - Verkoop 40% bij 6x  
+    - Verkoop 25% bij 3x  
+    - Verkoop 35% bij 6x  
+    - Verkoop 30% bij 10x  
+    - Laatste 10% als moonbag of trailing stop  
     
     **Uitleg**  
-    Late mover, breakout komt laat maar vaak krachtig.  
-    Infra-plays pieken vaak als laatste.  
-    Na breakout is het meestal snel over – dus afbouwen.
+    Volatiele SocialFi/memecoin met explosief potentieel.  
+    Kan snel 10–20x gaan, maar net zo hard terugvallen.  
+    Zodra hype begint, fases strak afbouwen – timing is cruciaal.  
     """)
 
 st.markdown("---")
