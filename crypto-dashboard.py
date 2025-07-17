@@ -112,7 +112,7 @@ with tab1:
         "STRK": {"aantal": 1218.53743738, "inkoopprijs": 0.10169},
         "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
         "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
-        "AEVO":  {"aantal": 685,25251414,  "inkoopprijs": 0,10434}
+        "AEVO":  {"aantal": 685.25251414,  "inkoopprijs": 0.10434}
     }
     CASH_EURO = 108.90
 
