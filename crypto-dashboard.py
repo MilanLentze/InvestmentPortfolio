@@ -543,7 +543,7 @@ with tab2:
         "RWA": ["ONDO", "POLYX", "CFG"],
         "Gaming": ["IMX", "PYR", "GALA", "ILV"],
         "DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
-        "Oracle": ["LINK", "BAND", "TRB"]
+        "Oracle": ["LINK", "BAND", "TRB"],
         "MEME": ["WIF", "PEPE", "DEGEN"]
     }
     
