@@ -462,15 +462,15 @@ with tab1:
     <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px; margin-top:10px;'>
         <h5 style='margin-bottom:10px;'>🎯 <u>Doel & Scenario’s</u></h5>
         <ul style='list-style-position: inside; line-height: 1.8;'>
-            <li><b>Doelwaarde:</b> <span style='color:{kleur_doel};'><b>€19.737,67</b></span></li>
-            <li><b>Best Case:</b> €28.071,34</li>
-            <li><b>Worst Case:</b> €9.649,52</li>
+            <li><b>Doelwaarde:</b> <span style='color:{kleur_doel};'><b>€13.583,64</b></span></li>
+            <li><b>Best Case:</b> €24.493,39</li>
+            <li><b>Worst Case:</b> €8.566,03</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
 
     # === DOEL PROGRESS CALCULATIE ===
-    doelwaarde = 19737.67
+    doelwaarde = 13583.64
     progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
     progress_percent = progress * 100
     euro_nodig = max(doelwaarde - total_with_cash, 0)
@@ -668,8 +668,8 @@ with tab3:
     # Juli-allocatie
     st.subheader("📊 Allocatie – Juli")
     july_data = {
-        "Coin": ["FET", "STRK", "SUI", "ZK", "RNDR", "WIF", "INJ", "AEVO"],
-        "Allocatie %": ["20%", "20%", "15%", "15%", "10%", "10%", "5%", "5%"]
+        "Coin": ["STRK", "ZK", "SUI", "RNDR", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
+        "Allocatie %": ["20%", "15%", "15%", "10%", "10%", "10%", "10%", "5%", "5%"]
     }
     st.table(pd.DataFrame(july_data))
 
