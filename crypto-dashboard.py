@@ -12,7 +12,7 @@ import pandas as pd
 import streamlit as st
 
 # API-key opslaan
-
+CMC_API_KEY = "9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb"
 
 def get_btc_dominance_cmc(api_key):
     url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
@@ -28,39 +28,50 @@ def get_btc_dominance_cmc(api_key):
     except Exception as e:
         st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
         return None
+
         
-def bepaal_altseason_fase(change_7d, change_24h, distance_to_ath):
-    # Simpele versie op basis van jouw indicatoren
-    if change_7d > 50 and change_24h > 10 and distance_to_ath < 30:
-        return "Peak"
-    elif change_7d > 30 and distance_to_ath < 50:
-        return "Momentum"
-    elif change_7d > 10 or change_24h > 5:
-        return "Rising"
-    elif change_7d < -10 or change_24h < -5:
+def bepaal_altseason_fase(p7, p24, ath_dist, vol_ratio, vol_change, volat):
+    # Fase 5: Decline
+    if p7 < -10 and vol_change < -20 and vol_ratio < 0.8:
         return "Decline"
-    else:
+    # Fase 4: Peak
+    if p7 > 40 and ath_dist < 20 and vol_ratio > 1.5 and volat > 7:
+        return "Peak"
+    # Fase 3: Momentum
+    if 20 < p7 <= 40 and vol_ratio > 1.2 and vol_change > 15:
+        return "Momentum"
+    # Fase 2: Rising
+    if 5 < p7 <= 20 and vol_ratio > 1 and p24 > 0:
+        return "Rising"
+    # Fase 1: Base
+    if p7 <= 5 and vol_ratio <= 1 and ath_dist > 50:
         return "Base"
+    return "Base"
 
-
-
-@st.cache_data(ttl=60)
-def get_bulk_coingecko_data(coin_ids):
-    url = "https://api.coingecko.com/api/v3/coins/markets"
-    params = {
-        "vs_currency": "eur",
-        "ids": ",".join(coin_ids),
-        "price_change_percentage": "24h,7d,30d",
-        "sparkline": False
-    }
+def get_coin_sparkline_and_volume(coin_id):
+    url = f"https://api.coingecko.com/api/v3/coins/{coin_id}?localization=false&sparkline=true"
     try:
-        response = requests.get(url, params=params, timeout=10)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        market_data = data["market_data"]
+        sparkline = market_data["sparkline_7d"]["price"]
+        volume_today = market_data["total_volume"]["eur"]
+        volumes = [v for v in sparkline[-168:]]  # laatste 7 dagen (24*7 = 168)
+        return {
+            "sparkline": sparkline,
+            "volatility_7d": round(pd.Series(sparkline).std(), 2),
+            "volume_ratio": round(volume_today / pd.Series(volumes).mean(), 2) if volumes else 1.0
+        }
     except Exception as e:
-        st.warning(f"❗️Fout bij ophalen CoinGecko data: {e}")
-        return []
-   
+        st.warning(f"❗️Geen sparkline voor {coin_id}: {e}")
+        return {
+            "sparkline": [],
+            "volatility_7d": 4.0,
+            "volume_ratio": 1.0
+        }
+
+
 
 # ========== CONFIGURATIE ==========
 st.set_page_config(page_title="📈 Live Altcoin Prices", layout="centered")
@@ -117,8 +128,9 @@ with tab1:
         }
         </style>
     """, unsafe_allow_html=True)
-   
-     # ===== COINGECKO IDs & Narratieven =====
+
+
+    # ===== COINGECKO IDs & Narratieven =====
     COINS = {
         "WIF": {"id": "dogwifcoin", "narrative": "Meme"},
         "ZK": {"id": "zksync", "narrative": "ZK / L2"},
@@ -131,12 +143,6 @@ with tab1:
         "AEVO": {"id": "aevo-2", "narrative": "Options / Derivatives"},
     }
 
-    coingecko_ids = [info["id"] for info in COINS.values()]
-    gecko_data = get_bulk_coingecko_data(coingecko_ids)
-    symbol_lookup = {info["id"]: symbol for symbol, info in COINS.items()}
-
-   
-    
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
         "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
@@ -158,11 +164,45 @@ with tab1:
         icon = "🔼" if value >= 0 else "🔽"
         color = "#10A37F" if value >= 0 else "#FF4B4B"
         return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
-  
-  
 
-  
-    
+    @st.cache_data(ttl=25)
+    def get_multiple_cmc_data(api_key, symbols):
+        url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+        headers = {
+            "Accepts": "application/json",
+            "X-CMC_PRO_API_KEY": api_key
+        }
+        params = {
+            "symbol": ",".join(symbols),
+            "convert": "EUR"
+        }
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            response.raise_for_status()
+            raw_data = response.json().get("data", {})
+
+            result = {}
+            for sym in symbols:
+                if sym in raw_data:
+                    quote = raw_data[sym]["quote"]["EUR"]
+                    result[sym] = {
+                        "price": quote["price"],
+                        "market_cap": quote.get("market_cap"),
+                        "change_24h": quote.get("percent_change_24h", 0),
+                        "change_7d": quote.get("percent_change_7d", 0),
+                        "change_30d": quote.get("percent_change_30d", 0),
+                        "ath": None  # Optioneel: later invullen
+                    }
+                else:
+                    st.warning(f"⚠️ Geen data voor {sym} in CMC-response.")
+            return result
+
+        except Exception as e:
+            st.error(f"Fout bij ophalen CMC-data: {e}")
+            return {}
+
+
+
     # ===== HISTORISCHE GRAFIEKDATA OPHALEN =====
     @st.cache_data(ttl=1800)
     def get_chart_data(coin_id):
@@ -177,15 +217,12 @@ with tab1:
             return dates, values
         except:
             return [], []
-    
+
     # ===== USER FILTERS & CONTROLS =====
-    sort_option = st.selectbox(
-        "🔃 Sorteer op",
-        ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase"]
-    )
-    
+    sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase"])
+
     #====== ALTCOIN FASES =========
-    
+
     ALTCOIN_PHASES = {
         "WIF": "Fase 4 – FOMO & Memecoins",
         "ZK": "Fase 2 – Mid Caps & Narratieven",
@@ -197,20 +234,20 @@ with tab1:
         "INJ": "Fase 2 – Mid Caps & Narratieven",
         "AEVO": "Fase 3 – Hypefase / Narratiefpiek"
     }
-    
+
     #======= Rendement X =======
-    
+
     def calculate_expected_x_score_model(current_price, ath_price, current_marketcap, narrative, price_change_30d):
         # ====== Fallbacks voor missende data ======
         current_price = current_price or 0.0001  # voorkom deling door nul
         ath_price = ath_price or 0
         current_marketcap = current_marketcap or 1
         price_change_30d = price_change_30d if price_change_30d is not None else 0
-    
+
         # 1. ATH Score (max 10)
         ath_ratio = ath_price / current_price if current_price > 0 else 0
         ath_score = min(ath_ratio, 10)
-    
+
         # 2. Narrative Score (max 5)
         narrative_scores = {
             "Meme": 5,
@@ -223,7 +260,7 @@ with tab1:
             "Oracles": 3
         }
         narrative_score = narrative_scores.get(narrative, 3)
-    
+
         # 3. Marketcap Score (max 5)
         narrative_max_caps = {
             "Meme": 8_000_000_000,
@@ -238,7 +275,7 @@ with tab1:
         potential_cap = narrative_max_caps.get(narrative, 10_000_000_000)
         marketcap_ratio = potential_cap / current_marketcap if current_marketcap > 0 else 0
         marketcap_score = min(marketcap_ratio, 5)
-    
+
         # 4. Momentum Score (max 5)
         if price_change_30d > 50:
             momentum_score = 1
@@ -250,7 +287,7 @@ with tab1:
             momentum_score = 4
         else:
             momentum_score = 5
-    
+
         # Gewogen optelling
         expected_x = (
             0.4 * ath_score +
@@ -258,26 +295,57 @@ with tab1:
             0.2 * marketcap_score +
             0.1 * momentum_score
         )
-    
+
         return round(min(expected_x, 15), 1)
 
-    
+
     # ===== PRIJZEN TONEN MET VERANDERING =====
     # Ophalen van alle prijsdata via CMC
-        
+    symbols = list(COINS.keys())
+    prices = get_multiple_cmc_data(CMC_API_KEY, symbols)
+
     coin_data = []
 
-    for coin in gecko_data:
-        symbol = symbol_lookup.get(coin["id"], coin["symbol"].upper())
-        price = coin["current_price"]
-        ath = coin["ath"] or 0.0001
-        distance_to_ath = max((1 - price / ath) * 100, 0)
+    for symbol, info in COINS.items():
+        cmc = prices.get(symbol)
 
-        change_24h = coin.get("price_change_percentage_24h_in_currency", 0)
-        change_7d = coin.get("price_change_percentage_7d_in_currency", 0)
-        change_30d = coin.get("price_change_percentage_30d_in_currency", 0)
+        if not cmc:
+            continue  # sla over als geen data beschikbaar
 
-        fase = bepaal_altseason_fase(change_7d, change_24h, distance_to_ath)
+        price = cmc.get("price")
+        market_cap = cmc.get("market_cap")
+        change_24h = cmc.get("change_24h", 0)
+        change_7d = cmc.get("change_7d", 0)
+        change_30d = cmc.get("change_30d", 0)
+
+        # Handmatige ATH fallback
+       # ===== Extra indicatoren =====
+        ath_fallbacks = {
+            "AEVO": 1.20,
+            "DEGEN": 0.012
+        }
+        ath = cmc.get("ath") or ath_fallbacks.get(symbol, 0)
+        distance_to_ath = max((1 - price / ath) * 100, 0) if ath > 0 else 100
+        
+        # Voor nu placeholder data – later vervang je dit met echte sparkline/volume data
+        volume_ratio = 1.0  # TODO: vervangen met echte waarde
+        volume_change_24h = cmc.get("change_24h", 0)  # tijdelijke benadering
+        volatility_7d = 4.0  # TODO: via CoinGecko sparkline
+        
+        coingecko_id = info["id"]
+        extra = get_coin_sparkline_and_volume(coingecko_id)
+        
+        volatility_7d = extra["volatility_7d"]
+        volume_ratio = extra["volume_ratio"]
+
+        fase = bepaal_altseason_fase(
+            p7=change_7d,
+            p24=change_24h,
+            ath_dist=distance_to_ath,
+            vol_ratio=volume_ratio,
+            vol_change=volume_change_24h,
+            volat=volatility_7d
+        )
         fase_icons = {
             "Base": "⚙️",
             "Rising": "📈",
@@ -287,40 +355,45 @@ with tab1:
         }
         fase_met_icoon = f"{fase_icons.get(fase, '')} {fase}"
 
-        coin_data.append({
-            "Coin": symbol,
-            "Prijs (€)": round(price, 3),
-            "24h": round(change_24h, 2),
-            "7d": round(change_7d, 2),
-            "30d": round(change_30d, 2),
-            "Distance to ATH (%)": round(distance_to_ath, 1),
-            "Narratief": COINS[symbol]["narrative"],
-            "Altseason Fase": fase_met_icoon,
-            "Rendement (%)": (
-                round(((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100, 2)
-                if symbol in PORTFOLIO else 0
-            )
-        })
 
-    df = pd.DataFrame(coin_data)
-    df.sort_values(by="Altseason Fase", inplace=True)
-    st.dataframe(df, use_container_width=True)
-        
-    sort_map = {
-        "Coin": "Coin",
-        "Prijs": "Prijs (€)",
-        "Verandering 24u": "24h",
-        "Verandering 7d": "7d",
-        "Verandering 30d": "30d",
-        "Altseason Piek Fase": "Altseason Fase"
-    }
-    df.sort_values(by=sort_map[sort_option], ascending=False, inplace=True)
+        if price is not None:
+            coin_data.append({
+                "symbol": symbol,
+                "price": price,
+                "change_24h": change_24h,
+                "change_7d": change_7d,
+                "change_30d": change_30d,
+                "narrative": info["narrative"],
+                "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
+                "altseason_phase": fase_met_icoon,
+                "rendement_pct": (
+                    ((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100
+                    if symbol in PORTFOLIO else 0
+                )
 
-        
-        
+            })
+
+
+
+
+    # Sorteren
+    if sort_option == "Coin":
+        coin_data = sorted(coin_data, key=lambda x: x["symbol"])
+    elif sort_option == "Prijs":
+        coin_data = sorted(coin_data, key=lambda x: x["price"], reverse=True)
+    elif sort_option == "Verandering 24u":
+        coin_data = sorted(coin_data, key=lambda x: x["change_24h"], reverse=True)
+    elif sort_option == "Verandering 7d":
+        coin_data = sorted(coin_data, key=lambda x: x["change_7d"], reverse=True)
+    elif sort_option == "Verandering 30d":
+        coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
+    elif sort_option == "Altseason Piek Fase":
+        coin_data = sorted(coin_data, key=lambda x: x["altseason_phase"], reverse=False)
+
+
     # ===== RENDER DE TABEL =====
     st.markdown("---")
-    
+
     # ===== TABEL WEERGAVE MET STREAMLIT KOLLOMEN =====
     st.markdown("---")
     st.markdown("""<h4 style='color:#fff;'>📊 Coin Tabel</h4>""", unsafe_allow_html=True)
@@ -333,7 +406,7 @@ with tab1:
     header[5].markdown("**Narratief**")
     header[6].markdown("**Altseason Piek Fase**")
     header[7].markdown("**Rendement %**")
-    
+
     for coin in coin_data:
         row = st.columns([1, 2, 2, 2, 2, 2, 2, 2])
         row[0].markdown(f"**{coin['symbol']}**")
@@ -374,12 +447,12 @@ with tab1:
     total_with_cash = total_current + CASH_EURO
     total_winst = total_current - total_invested
     total_rendement = (total_winst / total_invested) * 100 if total_invested > 0 else 0
-    
+
     # Kleur voor winst/verlies en doel
     kleur_winst = "#10A37F" if total_winst >= 0 else "#FF4B4B"
     kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
     kleur_doel = "#10A37F" if total_with_cash >= 19737.67 else "#FF4B4B"
-    
+
     # HTML-rendering in één blok
     # 1. Eerste blok: Portfolio Samenvatting
     st.markdown(f"""
@@ -395,7 +468,7 @@ with tab1:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    
+
     # 2. Tweede blok: Doel & Scenario’s
     st.markdown(f"""
     <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px; margin-top:10px;'>
@@ -413,7 +486,7 @@ with tab1:
     progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
     progress_percent = progress * 100
     euro_nodig = max(doelwaarde - total_with_cash, 0)
-    
+
     # Dynamische kleur (rood <50%, geel <100%, groen =100%)
     if progress < 0.5:
         kleur_balk = "#FF4B4B"  # rood
@@ -421,7 +494,7 @@ with tab1:
         kleur_balk = "#FFD700"  # geel
     else:
         kleur_balk = "#10A37F"  # groen
-    
+
     st.markdown(f"""
     <div style='background-color:#222; padding:12px 20px; border-radius:10px; margin-top:10px;'>
         <div style='font-size:16px; color:white; margin-bottom:5px;'>
@@ -546,7 +619,7 @@ with tab2:
 
     # 3. Narratief Activiteit
     st.subheader("🔥 Narratief Activiteit")
-    
+
     narrative_sets = {
         "AI": ["FET", "RENDER", "AGIX", "GRT", "TAO"],
         "ZK / Scaling": ["ZK", "STRK", "MANTA", "LRC"],
@@ -556,38 +629,38 @@ with tab2:
         "Oracle": ["LINK", "BAND", "TRB"],
         "MEME": ["WIF", "PEPE", "DEGEN"]
     }
-    
+
     selected_narrative = st.selectbox("Selecteer narratief", list(narrative_sets.keys()))
     selected_coins = narrative_sets[selected_narrative]
     selected_coins_with_btc = selected_coins + ["BTC"]
-    
+
     headers = {
         "Accepts": "application/json",
         "X-CMC_PRO_API_KEY": CMC_API_KEY,
     }
-    
+
     params = {
         "symbol": ",".join(selected_coins_with_btc),
         "convert": "USD"
     }
-    
+
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
     response = requests.get(url, headers=headers, params=params)
-    
+
     if response.status_code == 200:
         data = response.json()
-    
+
         try:
             btc_7d = data["data"]["BTC"]["quote"]["USD"]["percent_change_7d"]
             growth_values = []
-    
+
             for symbol in selected_coins:
                 coin = data["data"].get(symbol)
                 if coin:
                     change_7d = coin["quote"]["USD"]["percent_change_7d"]
                     verschil_btc = change_7d - btc_7d
                     growth_values.append(verschil_btc)
-    
+
             if growth_values:
                 avg_diff = sum(growth_values) / len(growth_values)
                 kleur = "🟢" if avg_diff > 0 else "🔴"
@@ -652,7 +725,7 @@ with tab3:
     FET kan in fase 4 nog fors doorstijgen.  
     Laatste deel meelopen op AI-euforie of bij breakdown verkopen.
     """)
-    
+
     st.markdown("### 🪙 STRK")
     st.markdown("""
     **Exitstrategie**  
@@ -666,7 +739,7 @@ with tab3:
     Piek meestal in één golf.  
     Laatste deel volgen met trailing stop voor piekmaximalisatie.
     """)
-   
+
     st.markdown("### 🪙 RENDER")
     st.markdown("""
     **Exitstrategie**  
@@ -680,7 +753,7 @@ with tab3:
     AI tweede golf of hype push.  
     Laat laatste deel meelopen, maar stop-loss goed zetten.
     """)
-    
+
     st.markdown("### 🪙 SUI")
     st.markdown("""
     **Exitstrategie**  
@@ -693,7 +766,7 @@ with tab3:
     L1’s stijgen vaak stabiel – blow-off rond 5x.  
     Daarna volledig uitstappen zodra hype over is.
     """)
-    
+
     st.markdown("### 🪙 ZK")
     st.markdown("""
     **Exitstrategie**  
@@ -708,7 +781,7 @@ with tab3:
     Grote hypepiek – kans op rotatie.  
     Maximaliseer piek met stop (bv. -15% vanaf ATH).
     """)
-       
+
     st.markdown("### 🪙 AEVO")
     st.markdown("""
     **Exitstrategie**  
@@ -722,7 +795,7 @@ with tab3:
     Wordt vaak laat wakker in de cycle, maar kan sterk presteren bij hype rond leverage of pro-trading tools.  
     Volg ontwikkelingen rond CEX-integraties en derivaten-volume op X.
     """)
-    
+
     st.markdown("### 🪙 INJ")
     st.markdown("""
     **Exitstrategie**  
@@ -737,7 +810,7 @@ with tab3:
     Laatste piek in altseason voor dit type coin.  
     Laat meeliften als narratief oppakt.
     """)
-    
+
     st.markdown("### 🪙 DEGEN")
     st.markdown("""
     **Exitstrategie**  
