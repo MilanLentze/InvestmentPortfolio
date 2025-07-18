@@ -29,18 +29,19 @@ def get_btc_dominance_cmc(api_key):
         st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
         return None
         
-def bepaal_altseason_fase(p7, p24, ath_dist):
-    if p7 < -10:
-        return "Decline"
-    if p7 > 40 and ath_dist < 20:
+def bepaal_altseason_fase(change_7d, change_24h, distance_to_ath):
+    # Simpele versie op basis van jouw indicatoren
+    if change_7d > 50 and change_24h > 10 and distance_to_ath < 30:
         return "Peak"
-    if 20 < p7 <= 40:
+    elif change_7d > 30 and distance_to_ath < 50:
         return "Momentum"
-    if 5 < p7 <= 20 and p24 > 0:
+    elif change_7d > 10 or change_24h > 5:
         return "Rising"
-    if p7 <= 5 and ath_dist > 50:
+    elif change_7d < -10 or change_24h < -5:
+        return "Decline"
+    else:
         return "Base"
-    return "Base"
+
 
 
 @st.cache_data(ttl=60)
@@ -176,7 +177,10 @@ with tab1:
             return [], []
     
     # ===== USER FILTERS & CONTROLS =====
-    sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase"])
+    sort_option = st.selectbox(
+        "🔃 Sorteer op",
+        ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase"]
+    )
     
     #====== ALTCOIN FASES =========
     
@@ -299,23 +303,17 @@ with tab1:
     df = pd.DataFrame(coin_data)
     df.sort_values(by="Altseason Fase", inplace=True)
     st.dataframe(df, use_container_width=True)
-    
+        
+    sort_map = {
+        "Coin": "Coin",
+        "Prijs": "Prijs (€)",
+        "Verandering 24u": "24h",
+        "Verandering 7d": "7d",
+        "Verandering 30d": "30d",
+        "Altseason Piek Fase": "Altseason Fase"
+    }
+    df.sort_values(by=sort_map[sort_option], ascending=False, inplace=True)
 
-    
-    
-    # Sorteren
-    if sort_option == "Coin":
-        coin_data = sorted(coin_data, key=lambda x: x["symbol"])
-    elif sort_option == "Prijs":
-        coin_data = sorted(coin_data, key=lambda x: x["price"], reverse=True)
-    elif sort_option == "Verandering 24u":
-        coin_data = sorted(coin_data, key=lambda x: x["change_24h"], reverse=True)
-    elif sort_option == "Verandering 7d":
-        coin_data = sorted(coin_data, key=lambda x: x["change_7d"], reverse=True)
-    elif sort_option == "Verandering 30d":
-        coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
-    elif sort_option == "Altseason Piek Fase":
-        coin_data = sorted(coin_data, key=lambda x: x["altseason_phase"], reverse=False)
         
         
     # ===== RENDER DE TABEL =====
