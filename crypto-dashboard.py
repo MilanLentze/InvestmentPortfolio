@@ -66,7 +66,7 @@ st.markdown("""
 with tab1:
     st.title("📊 Live Altcoin Prices")
     st.caption("Gegevens via CoinGecko · Prijzen in euro · Automatisch ververst elke 30 seconden")
-    st_autorefresh(interval=30_000, key="refresh")
+    st_autorefresh(interval=45_000, key="refresh")
     st.markdown("""
         <style>
         body {
