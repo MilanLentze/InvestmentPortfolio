@@ -118,11 +118,7 @@ with tab1:
         </style>
     """, unsafe_allow_html=True)
    
-    coingecko_ids = [info["id"] for info in COINS.values()]
-    gecko_data = get_bulk_coingecko_data(coingecko_ids)
-    symbol_lookup = {info["id"]: symbol for symbol, info in COINS.items()}
-
-    # ===== COINGECKO IDs & Narratieven =====
+     # ===== COINGECKO IDs & Narratieven =====
     COINS = {
         "WIF": {"id": "dogwifcoin", "narrative": "Meme"},
         "ZK": {"id": "zksync", "narrative": "ZK / L2"},
@@ -134,6 +130,12 @@ with tab1:
         "INJ": {"id": "injective-protocol", "narrative": "DeFi"},
         "AEVO": {"id": "aevo-2", "narrative": "Options / Derivatives"},
     }
+
+    coingecko_ids = [info["id"] for info in COINS.values()]
+    gecko_data = get_bulk_coingecko_data(coingecko_ids)
+    symbol_lookup = {info["id"]: symbol for symbol, info in COINS.items()}
+
+   
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
