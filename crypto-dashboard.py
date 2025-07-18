@@ -12,7 +12,7 @@ import pandas as pd
 import streamlit as st
 
 # API-key opslaan
-CMC_API_KEY = "9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb"
+
 
 def get_btc_dominance_cmc(api_key):
     url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
@@ -29,47 +29,36 @@ def get_btc_dominance_cmc(api_key):
         st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
         return None
         
-def bepaal_altseason_fase(p7, p24, ath_dist, vol_ratio, vol_change, volat):
-    # Fase 5: Decline
-    if p7 < -10 and vol_change < -20 and vol_ratio < 0.8:
+def bepaal_altseason_fase(p7, p24, ath_dist):
+    if p7 < -10:
         return "Decline"
-    # Fase 4: Peak
-    if p7 > 40 and ath_dist < 20 and vol_ratio > 1.5 and volat > 7:
+    if p7 > 40 and ath_dist < 20:
         return "Peak"
-    # Fase 3: Momentum
-    if 20 < p7 <= 40 and vol_ratio > 1.2 and vol_change > 15:
+    if 20 < p7 <= 40:
         return "Momentum"
-    # Fase 2: Rising
-    if 5 < p7 <= 20 and vol_ratio > 1 and p24 > 0:
+    if 5 < p7 <= 20 and p24 > 0:
         return "Rising"
-    # Fase 1: Base
-    if p7 <= 5 and vol_ratio <= 1 and ath_dist > 50:
+    if p7 <= 5 and ath_dist > 50:
         return "Base"
     return "Base"
 
-def get_coin_sparkline_and_volume(coin_id):
-    url = f"https://api.coingecko.com/api/v3/coins/{coin_id}?localization=false&sparkline=true"
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-        market_data = data["market_data"]
-        sparkline = market_data["sparkline_7d"]["price"]
-        volume_today = market_data["total_volume"]["eur"]
-        volumes = [v for v in sparkline[-168:]]  # laatste 7 dagen (24*7 = 168)
-        return {
-            "sparkline": sparkline,
-            "volatility_7d": round(pd.Series(sparkline).std(), 2),
-            "volume_ratio": round(volume_today / pd.Series(volumes).mean(), 2) if volumes else 1.0
-        }
-    except Exception as e:
-        st.warning(f"❗️Geen sparkline voor {coin_id}: {e}")
-        return {
-            "sparkline": [],
-            "volatility_7d": 4.0,
-            "volume_ratio": 1.0
-        }
 
+@st.cache_data(ttl=60)
+def get_bulk_coingecko_data(coin_ids):
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        "vs_currency": "eur",
+        "ids": ",".join(coin_ids),
+        "price_change_percentage": "24h,7d,30d",
+        "sparkline": False
+    }
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        st.warning(f"❗️Fout bij ophalen CoinGecko data: {e}")
+        return []
    
 
 # ========== CONFIGURATIE ==========
@@ -128,6 +117,9 @@ with tab1:
         </style>
     """, unsafe_allow_html=True)
    
+    coingecko_ids = [info["id"] for info in COINS.values()]
+    gecko_data = get_bulk_coingecko_data(coingecko_ids)
+    symbol_lookup = {info["id"]: symbol for symbol, info in COINS.items()}
 
     # ===== COINGECKO IDs & Narratieven =====
     COINS = {
@@ -164,41 +156,7 @@ with tab1:
         color = "#10A37F" if value >= 0 else "#FF4B4B"
         return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
   
-    @st.cache_data(ttl=25)
-    def get_multiple_cmc_data(api_key, symbols):
-        url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-        headers = {
-            "Accepts": "application/json",
-            "X-CMC_PRO_API_KEY": api_key
-        }
-        params = {
-            "symbol": ",".join(symbols),
-            "convert": "EUR"
-        }
-        try:
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            response.raise_for_status()
-            raw_data = response.json().get("data", {})
-    
-            result = {}
-            for sym in symbols:
-                if sym in raw_data:
-                    quote = raw_data[sym]["quote"]["EUR"]
-                    result[sym] = {
-                        "price": quote["price"],
-                        "market_cap": quote.get("market_cap"),
-                        "change_24h": quote.get("percent_change_24h", 0),
-                        "change_7d": quote.get("percent_change_7d", 0),
-                        "change_30d": quote.get("percent_change_30d", 0),
-                        "ath": None  # Optioneel: later invullen
-                    }
-                else:
-                    st.warning(f"⚠️ Geen data voor {sym} in CMC-response.")
-            return result
-    
-        except Exception as e:
-            st.error(f"Fout bij ophalen CMC-data: {e}")
-            return {}
+  
 
   
     
@@ -300,50 +258,20 @@ with tab1:
     
     # ===== PRIJZEN TONEN MET VERANDERING =====
     # Ophalen van alle prijsdata via CMC
-    symbols = list(COINS.keys())
-    prices = get_multiple_cmc_data(CMC_API_KEY, symbols)
-    
+        
     coin_data = []
-    
-    for symbol, info in COINS.items():
-        cmc = prices.get(symbol)
-    
-        if not cmc:
-            continue  # sla over als geen data beschikbaar
-    
-        price = cmc.get("price")
-        market_cap = cmc.get("market_cap")
-        change_24h = cmc.get("change_24h", 0)
-        change_7d = cmc.get("change_7d", 0)
-        change_30d = cmc.get("change_30d", 0)
-    
-       # ===== Extra indicatoren =====
-        ath_fallbacks = {
-            "AEVO": 1.20,
-            "DEGEN": 0.012
-        }
-        ath = cmc.get("ath") or ath_fallbacks.get(symbol, 0)
-        distance_to_ath = max((1 - price / ath) * 100, 0) if ath > 0 else 100
-        
-        # Voor nu placeholder data – later vervang je dit met echte sparkline/volume data
-        volume_ratio = 1.0  # TODO: vervangen met echte waarde
-        volume_change_24h = cmc.get("change_24h", 0)  # tijdelijke benadering
-        volatility_7d = 4.0  # TODO: via CoinGecko sparkline
-        
-        coingecko_id = info["id"]
-        extra = get_coin_sparkline_and_volume(coingecko_id)
-        
-        volatility_7d = extra["volatility_7d"]
-        volume_ratio = extra["volume_ratio"]
 
-        fase = bepaal_altseason_fase(
-            p7=change_7d,
-            p24=change_24h,
-            ath_dist=distance_to_ath,
-            vol_ratio=volume_ratio,
-            vol_change=volume_change_24h,
-            volat=volatility_7d
-        )
+    for coin in gecko_data:
+        symbol = symbol_lookup.get(coin["id"], coin["symbol"].upper())
+        price = coin["current_price"]
+        ath = coin["ath"] or 0.0001
+        distance_to_ath = max((1 - price / ath) * 100, 0)
+
+        change_24h = coin.get("price_change_percentage_24h_in_currency", 0)
+        change_7d = coin.get("price_change_percentage_7d_in_currency", 0)
+        change_30d = coin.get("price_change_percentage_30d_in_currency", 0)
+
+        fase = bepaal_altseason_fase(change_7d, change_24h, distance_to_ath)
         fase_icons = {
             "Base": "⚙️",
             "Rising": "📈",
@@ -353,22 +281,24 @@ with tab1:
         }
         fase_met_icoon = f"{fase_icons.get(fase, '')} {fase}"
 
-    
-        if price is not None:
-            coin_data.append({
-                "symbol": symbol,
-                "price": price,
-                "change_24h": change_24h,
-                "change_7d": change_7d,
-                "change_30d": change_30d,
-                "narrative": info["narrative"],
-                "altseason_phase": fase_met_icoon,
-                "rendement_pct": (
-                    ((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100
-                    if symbol in PORTFOLIO else 0
-                )
+        coin_data.append({
+            "Coin": symbol,
+            "Prijs (€)": round(price, 3),
+            "24h": round(change_24h, 2),
+            "7d": round(change_7d, 2),
+            "30d": round(change_30d, 2),
+            "Distance to ATH (%)": round(distance_to_ath, 1),
+            "Narratief": COINS[symbol]["narrative"],
+            "Altseason Fase": fase_met_icoon,
+            "Rendement (%)": (
+                round(((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100, 2)
+                if symbol in PORTFOLIO else 0
+            )
+        })
 
-            })
+    df = pd.DataFrame(coin_data)
+    df.sort_values(by="Altseason Fase", inplace=True)
+    st.dataframe(df, use_container_width=True)
     
 
     
