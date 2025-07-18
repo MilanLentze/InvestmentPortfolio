@@ -28,7 +28,47 @@ def get_btc_dominance_cmc(api_key):
     except Exception as e:
         st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
         return None
+        
+def bepaal_altseason_fase(p7, p24, ath_dist, vol_ratio, vol_change, volat):
+    # Fase 5: Decline
+    if p7 < -10 and vol_change < -20 and vol_ratio < 0.8:
+        return "Decline"
+    # Fase 4: Peak
+    if p7 > 40 and ath_dist < 20 and vol_ratio > 1.5 and volat > 7:
+        return "Peak"
+    # Fase 3: Momentum
+    if 20 < p7 <= 40 and vol_ratio > 1.2 and vol_change > 15:
+        return "Momentum"
+    # Fase 2: Rising
+    if 5 < p7 <= 20 and vol_ratio > 1 and p24 > 0:
+        return "Rising"
+    # Fase 1: Base
+    if p7 <= 5 and vol_ratio <= 1 and ath_dist > 50:
+        return "Base"
+    return "Base"
 
+def get_coin_sparkline_and_volume(coin_id):
+    url = f"https://api.coingecko.com/api/v3/coins/{coin_id}?localization=false&sparkline=true"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        market_data = data["market_data"]
+        sparkline = market_data["sparkline_7d"]["price"]
+        volume_today = market_data["total_volume"]["eur"]
+        volumes = [v for v in sparkline[-168:]]  # laatste 7 dagen (24*7 = 168)
+        return {
+            "sparkline": sparkline,
+            "volatility_7d": round(pd.Series(sparkline).std(), 2),
+            "volume_ratio": round(volume_today / pd.Series(volumes).mean(), 2) if volumes else 1.0
+        }
+    except Exception as e:
+        st.warning(f"❗️Geen sparkline voor {coin_id}: {e}")
+        return {
+            "sparkline": [],
+            "volatility_7d": 4.0,
+            "volume_ratio": 1.0
+        }
 
    
 
@@ -277,12 +317,42 @@ with tab1:
         change_7d = cmc.get("change_7d", 0)
         change_30d = cmc.get("change_30d", 0)
     
-        # Handmatige ATH fallback
+       # ===== Extra indicatoren =====
         ath_fallbacks = {
             "AEVO": 1.20,
             "DEGEN": 0.012
         }
         ath = cmc.get("ath") or ath_fallbacks.get(symbol, 0)
+        distance_to_ath = max((1 - price / ath) * 100, 0) if ath > 0 else 100
+        
+        # Voor nu placeholder data – later vervang je dit met echte sparkline/volume data
+        volume_ratio = 1.0  # TODO: vervangen met echte waarde
+        volume_change_24h = cmc.get("change_24h", 0)  # tijdelijke benadering
+        volatility_7d = 4.0  # TODO: via CoinGecko sparkline
+        
+        coingecko_id = info["id"]
+        extra = get_coin_sparkline_and_volume(coingecko_id)
+        
+        volatility_7d = extra["volatility_7d"]
+        volume_ratio = extra["volume_ratio"]
+
+        fase = bepaal_altseason_fase(
+            p7=change_7d,
+            p24=change_24h,
+            ath_dist=distance_to_ath,
+            vol_ratio=volume_ratio,
+            vol_change=volume_change_24h,
+            volat=volatility_7d
+        )
+        fase_icons = {
+            "Base": "⚙️",
+            "Rising": "📈",
+            "Momentum": "🚀",
+            "Peak": "🧨",
+            "Decline": "🛑"
+        }
+        fase_met_icoon = f"{fase_icons.get(fase, '')} {fase}"
+
     
         if price is not None:
             coin_data.append({
@@ -292,7 +362,7 @@ with tab1:
                 "change_7d": change_7d,
                 "change_30d": change_30d,
                 "narrative": info["narrative"],
-                "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
+                "altseason_phase": fase_met_icoon,
                 "rendement_pct": (
                     ((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100
                     if symbol in PORTFOLIO else 0
