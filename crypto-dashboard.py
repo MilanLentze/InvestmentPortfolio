@@ -15,19 +15,19 @@ import streamlit as st
 CMC_API_KEY = "9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb"
 
 def get_btc_dominance_cmc(api_key):
-url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
-headers = {
-"Accepts": "application/json",
-"X-CMC_PRO_API_KEY": api_key
-}
-try:
-response = requests.get(url, headers=headers, timeout=10)
-response.raise_for_status()
-data = response.json()
-return data["data"]["btc_dominance"]
-except Exception as e:
-st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
-return None
+   url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
+   headers = {
+   "Accepts": "application/json",
+   "X-CMC_PRO_API_KEY": api_key
+   }
+   try:
+   response = requests.get(url, headers=headers, timeout=10)
+   response.raise_for_status()
+   data = response.json()
+   return data["data"]["btc_dominance"]
+   except Exception as e:
+   st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
+   return None
 
 
 
