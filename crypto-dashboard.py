@@ -293,13 +293,11 @@ with tab1:
                 "change_30d": change_30d,
                 "narrative": info["narrative"],
                 "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
-                "expected_x": calculate_expected_x_score_model(
-                    current_price=price,
-                    ath_price=ath,
-                    current_marketcap=market_cap or 1,
-                    narrative=info["narrative"],
-                    price_change_30d=change_30d
+                "rendement_pct": (
+                    ((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100
+                    if symbol in PORTFOLIO else 0
                 )
+
             })
     
 
@@ -334,7 +332,7 @@ with tab1:
     header[4].markdown("**30d**")
     header[5].markdown("**Narratief**")
     header[6].markdown("**Altseason Piek Fase**")
-    header[7].markdown("**Verwacht X**")
+    header[7].markdown("**Rendement %**")
     
     for coin in coin_data:
         row = st.columns([1, 2, 2, 2, 2, 2, 2, 2])
@@ -345,7 +343,9 @@ with tab1:
         row[4].markdown(format_change(coin['change_30d']), unsafe_allow_html=True)
         row[5].markdown(coin['narrative'])
         row[6].markdown(coin['altseason_phase'])
-        row[7].markdown(f"{coin['expected_x']}x")
+        kleur = "#10A37F" if coin["rendement_pct"] >= 0 else "#FF4B4B"
+        row[7].markdown(f"<span style='color:{kleur};'>{coin['rendement_pct']:.2f}%</span>", unsafe_allow_html=True)
+
 
     st.markdown("---")
     st.markdown("---")
