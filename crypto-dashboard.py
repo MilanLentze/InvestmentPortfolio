@@ -15,19 +15,19 @@ import streamlit as st
 CMC_API_KEY = "9dc43086-b4b2-43ca-b2e7-5f5dcfadf9fb"
 
 def get_btc_dominance_cmc(api_key):
-   url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
-   headers = {
-   "Accepts": "application/json",
-   "X-CMC_PRO_API_KEY": api_key
-   }
-   try:
-   response = requests.get(url, headers=headers, timeout=10)
-   response.raise_for_status()
-   data = response.json()
-   return data["data"]["btc_dominance"]
-   except Exception as e:
-   st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
-   return None
+url = "https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest"
+headers = {
+"Accepts": "application/json",
+"X-CMC_PRO_API_KEY": api_key
+}
+try:
+response = requests.get(url, headers=headers, timeout=10)
+response.raise_for_status()
+data = response.json()
+return data["data"]["btc_dominance"]
+except Exception as e:
+st.error(f"Fout bij ophalen BTC Dominance via CMC: {e}")
+return None
 
 
 
@@ -93,8 +93,7 @@ st.markdown("""
 COINS = {
 "WIF": {"id": "dogwifcoin", "narrative": "Meme"},
 "ZK": {"id": "zksync", "narrative": "ZK / L2"},
-        "RNDR": {"id": "render-token", "narrative": "AI / GPU"},
-        "RENDER": {"id": "render-token", "narrative": "AI / GPU"},
+"RNDR": {"id": "render-token", "narrative": "AI / GPU"},
 "SUI": {"id": "sui", "narrative": "L1"},
 "DEGEN": {"id": "degen", "narrative": "SocialFi / Meme"},
 "STRK": {"id": "starknet", "narrative": "ZK / L2"},
@@ -107,8 +106,7 @@ COINS = {
 PORTFOLIO = {
 "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
 "ZK":   {"aantal": 5642.24306186, "inkoopprijs": 0.043023},
-        "RNDR": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
-        "RENDER": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
+"RNDR": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
 "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
 "DEGEN": {"aantal": 40767.88288737,    "inkoopprijs": 0.0041699},
 "STRK": {"aantal": 1568.47270184, "inkoopprijs": 0.10724},
@@ -187,8 +185,7 @@ sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7
 ALTCOIN_PHASES = {
 "WIF": "Fase 4 – FOMO & Memecoins",
 "ZK": "Fase 2 – Mid Caps & Narratieven",
-        "RNDR": "Fase 2-3 – Mid Caps & Narratieven",
-        "RENDER": "Fase 2-3 – Mid Caps & Narratieven",
+"RNDR": "Fase 2-3 – Mid Caps & Narratieven",
 "SUI": "Fase 2 – Mid Caps & Narratieven",
 "DEGEN": "Fase 4 – FOMO & Memecoins",
 "STRK": "Fase 1-2 – Blue Chips & Mid C",
@@ -296,9 +293,15 @@ coin_data.append({
 "change_30d": change_30d,
 "narrative": info["narrative"],
 "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
-"rendement_pct": (
-((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100
-if symbol in PORTFOLIO else 0
+                "expected_x": calculate_expected_x_score_model(
+                    current_price=price,
+                    ath_price=ath,
+                    current_marketcap=market_cap or 1,
+                    narrative=info["narrative"],
+                    price_change_30d=change_30d
+                "rendement_pct": (
+                    ((price - PORTFOLIO[symbol]["inkoopprijs"]) / PORTFOLIO[symbol]["inkoopprijs"]) * 100
+                    if symbol in PORTFOLIO else 0
 )
 
 })
@@ -335,7 +338,8 @@ header[3].markdown("**7d**")
 header[4].markdown("**30d**")
 header[5].markdown("**Narratief**")
 header[6].markdown("**Altseason Piek Fase**")
-header[7].markdown("**Rendement %**")
+    header[7].markdown("**Verwacht X**")
+    header[7].markdown("**Rendement %**")
 
 for coin in coin_data:
 row = st.columns([1, 2, 2, 2, 2, 2, 2, 2])
@@ -346,8 +350,9 @@ row[3].markdown(format_change(coin['change_7d']), unsafe_allow_html=True)
 row[4].markdown(format_change(coin['change_30d']), unsafe_allow_html=True)
 row[5].markdown(coin['narrative'])
 row[6].markdown(coin['altseason_phase'])
-kleur = "#10A37F" if coin["rendement_pct"] >= 0 else "#FF4B4B"
-row[7].markdown(f"<span style='color:{kleur};'>{coin['rendement_pct']:.2f}%</span>", unsafe_allow_html=True)
+        row[7].markdown(f"{coin['expected_x']}x")
+        kleur = "#10A37F" if coin["rendement_pct"] >= 0 else "#FF4B4B"
+        row[7].markdown(f"<span style='color:{kleur};'>{coin['rendement_pct']:.2f}%</span>", unsafe_allow_html=True)
 
 
 st.markdown("---")
@@ -551,13 +556,11 @@ st.markdown("""
 st.subheader("🔥 Narratief Activiteit")
 
 narrative_sets = {
-        "AI": ["FET", "RNDR", "AGIX", "GRT", "TAO"],
-        "AI": ["FET", "RENDER", "AGIX", "GRT", "TAO"],
+"AI": ["FET", "RNDR", "AGIX", "GRT", "TAO"],
 "ZK / Scaling": ["ZK", "STRK", "MANTA", "LRC"],
 "RWA": ["ONDO", "POLYX", "CFG"],
 "Gaming": ["IMX", "PYR", "GALA", "ILV"],
-        "DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
-        "DePIN": ["HNT", "IOTX", "AKT", "RENDER"],
+"DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
 "Oracle": ["LINK", "BAND", "TRB"],
 "MEME": ["WIF", "PEPE", "DEGEN"]
 }
@@ -612,8 +615,7 @@ st.title("📅 Investeringsplan Juli & Augustus")
 # Juli-allocatie
 st.subheader("📊 Allocatie – Juli")
 july_data = {
-        "Coin": ["STRK", "ZK", "SUI", "RNDR", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
-        "Coin": ["STRK", "ZK", "SUI", "RENDER", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
+"Coin": ["STRK", "ZK", "SUI", "RNDR", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
 "Allocatie %": ["20%", "15%", "15%", "10%", "10%", "10%", "10%", "5%", "5%"]
 }
 st.table(pd.DataFrame(july_data))
@@ -621,8 +623,7 @@ st.table(pd.DataFrame(july_data))
 # Augustus-allocatie
 st.subheader("📊 Allocatie – Augustus")
 aug_data = {
-        "Coin": ["LINK", "INJ", "AEVO", "ZK", "RNDR", "Cash buffer"],
-        "Coin": ["LINK", "INJ", "AEVO", "ZK", "RENDER", "Cash buffer"],
+"Coin": ["LINK", "INJ", "AEVO", "ZK", "RNDR", "Cash buffer"],
 "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
 }
 st.table(pd.DataFrame(aug_data))
@@ -674,8 +675,7 @@ st.markdown("""
    Laatste deel volgen met trailing stop voor piekmaximalisatie.
    """)
 
-    st.markdown("### 🪙 RNDR")
-    st.markdown("### 🪙 RENDER")
+st.markdown("### 🪙 RNDR")
 st.markdown("""
    **Exitstrategie**  
    25% bij 3x → Fase 2 top  
@@ -684,8 +684,7 @@ st.markdown("""
    AI kan cyclisch exploderen – trailing cruciaal in hype  
    
    **Uitleg**  
-    RNDR volgt AI-leiders, maar is iets trager.  
-    RENDER volgt AI-leiders, maar is iets trager.  
+   RNDR volgt AI-leiders, maar is iets trager.  
    AI tweede golf of hype push.  
    Laat laatste deel meelopen, maar stop-loss goed zetten.
    """)
