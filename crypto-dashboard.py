@@ -123,83 +123,44 @@ with tab1:
         icon = "🔼" if value >= 0 else "🔽"
         color = "#10A37F" if value >= 0 else "#FF4B4B"
         return f"{icon} <span style='color: {color};'>{value:.2f}%</span>"
-    
+  
     @st.cache_data(ttl=25)
-    def get_aevo_full_data_from_cmc(api_key):
+    def get_multiple_cmc_data(api_key, symbols):
         url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
         headers = {
             "Accepts": "application/json",
             "X-CMC_PRO_API_KEY": api_key
         }
         params = {
-            "symbol": "AEVO",
+            "symbol": ",".join(symbols),
             "convert": "EUR"
         }
         try:
             response = requests.get(url, headers=headers, params=params, timeout=10)
             response.raise_for_status()
-            data = response.json()
-            quote = data["data"]["AEVO"]["quote"]["EUR"]
-            return {
-                "price": quote["price"],
-                "market_cap": quote["market_cap"],
-                "change_24h": quote["percent_change_24h"],
-                "change_7d": quote["percent_change_7d"],
-                "change_30d": quote.get("percent_change_30d", 0),  # fallback
-                "ath": None  # kan in loop vervangen worden door handmatige waarde
-            }
-        except Exception as e:
-            st.warning(f"⚠️ AEVO data via CMC mislukt: {e}")
-            return None
+            raw_data = response.json().get("data", {})
     
-    @st.cache_data(ttl=25)
-    def get_degen_full_data_from_cmc(api_key):
-        url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-        headers = {
-            "Accepts": "application/json",
-            "X-CMC_PRO_API_KEY": api_key
-        }
-        params = {
-            "symbol": "DEGEN",
-            "convert": "EUR"
-        }
-        try:
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            response.raise_for_status()
-            data = response.json()
-            quote = data["data"]["DEGEN"]["quote"]["EUR"]
-            return {
-                "price": quote["price"],
-                "market_cap": quote["market_cap"],
-                "change_24h": quote["percent_change_24h"],
-                "change_7d": quote["percent_change_7d"],
-                "change_30d": quote.get("percent_change_30d", 0),  # extra fallback
-                "ath": None  # handmatig in de loop fallbacken op 0.012
-            }
+            result = {}
+            for sym in symbols:
+                if sym in raw_data:
+                    quote = raw_data[sym]["quote"]["EUR"]
+                    result[sym] = {
+                        "price": quote["price"],
+                        "market_cap": quote.get("market_cap"),
+                        "change_24h": quote.get("percent_change_24h", 0),
+                        "change_7d": quote.get("percent_change_7d", 0),
+                        "change_30d": quote.get("percent_change_30d", 0),
+                        "ath": None  # Optioneel: later invullen
+                    }
+                else:
+                    st.warning(f"⚠️ Geen data voor {sym} in CMC-response.")
+            return result
+    
         except Exception as e:
-            st.warning(f"⚠️ DEGEN data via CMC mislukt: {e}")
-            return None
+            st.error(f"Fout bij ophalen CMC-data: {e}")
+            return {}
 
-
-    # ===== PRIJZEN OPHALEN FUNCTIE =====
-    @st.cache_data(ttl=25)
-    def get_live_prices():
-        ids = ",".join([info["id"] for info in COINS.values()])
-        url = (
-            f"https://api.coingecko.com/api/v3/coins/markets"
-            f"?vs_currency=eur&ids={ids}"
-            f"&price_change_percentage=24h,7d,30d"
-        )
-        try:
-            time.sleep(1)
-            response = requests.get(url, timeout=10)
-            if response.status_code == 429:
-                raise Exception("📉 API-limiet bereikt (429 Too Many Requests)")
-            response.raise_for_status()
-            return response.json()  # Lijst van coin dicts
-        except Exception as e:
-            st.error(f"Kon prijzen niet ophalen: {e}")
-            return []
+  
     
     # ===== HISTORISCHE GRAFIEKDATA OPHALEN =====
     @st.cache_data(ttl=1800)
