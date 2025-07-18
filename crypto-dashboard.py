@@ -259,71 +259,49 @@ with tab1:
 
     
     # ===== PRIJZEN TONEN MET VERANDERING =====
-    prices = get_live_prices()
+    # Ophalen van alle prijsdata via CMC
+    symbols = list(COINS.keys())
+    prices = get_multiple_cmc_data(CMC_API_KEY, symbols)
     
     coin_data = []
-
+    
     for symbol, info in COINS.items():
-        # Standaard: probeer CoinGecko match te vinden
-        match = next((coin for coin in prices if coin["id"] == info["id"]), None)
+        cmc = prices.get(symbol)
     
-        # Initieer alle variabelen
-        price = None
-        ath = None
-        market_cap = None
-        change_24h = None
-        change_7d = None
-        change_30d = None
+        if not cmc:
+            continue  # sla over als geen data beschikbaar
     
-        # ====== Als CoinGecko data beschikbaar is ======
-        if match:
-            price = match.get("current_price")
-            ath = match.get("ath")
-            market_cap = match.get("market_cap")
-            change_24h = match.get("price_change_percentage_24h_in_currency")
-            change_7d = match.get("price_change_percentage_7d_in_currency")
-            change_30d = match.get("price_change_percentage_30d_in_currency")
+        price = cmc.get("price")
+        market_cap = cmc.get("market_cap")
+        change_24h = cmc.get("change_24h", 0)
+        change_7d = cmc.get("change_7d", 0)
+        change_30d = cmc.get("change_30d", 0)
     
-         
-        # ====== Volledige fallback via CMC voor DEGEN & AEVO ======
-        if symbol == "DEGEN":
-            cmc_data = get_degen_full_data_from_cmc(CMC_API_KEY)
-            if cmc_data:
-                price = cmc_data["price"]
-                market_cap = cmc_data["market_cap"]
-                change_24h = cmc_data["change_24h"]
-                change_7d = cmc_data["change_7d"]
-                change_30d = cmc_data["change_30d"]
-                ath = cmc_data["ath"] or 0.012  # Vaste ATH (aanpasbaar)
-
-        elif symbol == "AEVO":
-            cmc_data = get_aevo_full_data_from_cmc(CMC_API_KEY)
-            if cmc_data:
-                price = cmc_data["price"]
-                market_cap = cmc_data["market_cap"]
-                change_24h = cmc_data["change_24h"]
-                change_7d = cmc_data["change_7d"]
-                change_30d = cmc_data["change_30d"]
-                ath = cmc_data["ath"] or 1.20  # handmatig fallback ATH
-       
-        # ====== Alleen toevoegen als prijs bekend is ======
+        # Handmatige ATH fallback
+        ath_fallbacks = {
+            "AEVO": 1.20,
+            "DEGEN": 0.012
+        }
+        ath = cmc.get("ath") or ath_fallbacks.get(symbol, 0)
+    
         if price is not None:
             coin_data.append({
                 "symbol": symbol,
                 "price": price,
-                "change_24h": change_24h if change_24h is not None else 0,
-                "change_7d": change_7d if change_7d is not None else 0,
-                "change_30d": change_30d if change_30d is not None else 0,
+                "change_24h": change_24h,
+                "change_7d": change_7d,
+                "change_30d": change_30d,
                 "narrative": info["narrative"],
                 "altseason_phase": ALTCOIN_PHASES.get(symbol, "Onbekend"),
                 "expected_x": calculate_expected_x_score_model(
                     current_price=price,
-                    ath_price=ath or 0,
+                    ath_price=ath,
                     current_marketcap=market_cap or 1,
                     narrative=info["narrative"],
-                    price_change_30d=change_30d if change_30d is not None else 0
+                    price_change_30d=change_30d
                 )
             })
+    
 
     
     
