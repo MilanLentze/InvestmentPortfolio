@@ -93,7 +93,7 @@ with tab1:
     COINS = {
         "WIF": {"id": "dogwifcoin", "narrative": "Meme"},
         "ZK": {"id": "zksync", "narrative": "ZK / L2"},
-        "RNDR": {"id": "render-token", "narrative": "AI / GPU"},
+        "RENDER": {"id": "render-token", "narrative": "AI / GPU"},
         "SUI": {"id": "sui", "narrative": "L1"},
         "DEGEN": {"id": "degen", "narrative": "SocialFi / Meme"},
         "STRK": {"id": "starknet", "narrative": "ZK / L2"},
@@ -106,7 +106,7 @@ with tab1:
     PORTFOLIO = {
         "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
         "ZK":   {"aantal": 5642.24306186, "inkoopprijs": 0.043023},
-        "RNDR": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
+        "RENDER": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
         "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
         "DEGEN": {"aantal": 40767.88288737,    "inkoopprijs": 0.0041699},
         "STRK": {"aantal": 1568.47270184, "inkoopprijs": 0.10724},
@@ -185,7 +185,7 @@ with tab1:
     ALTCOIN_PHASES = {
         "WIF": "Fase 4 – FOMO & Memecoins",
         "ZK": "Fase 2 – Mid Caps & Narratieven",
-        "RNDR": "Fase 2-3 – Mid Caps & Narratieven",
+        "RENDER": "Fase 2-3 – Mid Caps & Narratieven",
         "SUI": "Fase 2 – Mid Caps & Narratieven",
         "DEGEN": "Fase 4 – FOMO & Memecoins",
         "STRK": "Fase 1-2 – Blue Chips & Mid C",
@@ -548,11 +548,11 @@ with tab2:
     st.subheader("🔥 Narratief Activiteit")
     
     narrative_sets = {
-        "AI": ["FET", "RNDR", "AGIX", "GRT", "TAO"],
+        "AI": ["FET", "RENDER", "AGIX", "GRT", "TAO"],
         "ZK / Scaling": ["ZK", "STRK", "MANTA", "LRC"],
         "RWA": ["ONDO", "POLYX", "CFG"],
         "Gaming": ["IMX", "PYR", "GALA", "ILV"],
-        "DePIN": ["HNT", "IOTX", "AKT", "RNDR"],
+        "DePIN": ["HNT", "IOTX", "AKT", "RENDER"],
         "Oracle": ["LINK", "BAND", "TRB"],
         "MEME": ["WIF", "PEPE", "DEGEN"]
     }
@@ -607,7 +607,7 @@ with tab3:
     # Juli-allocatie
     st.subheader("📊 Allocatie – Juli")
     july_data = {
-        "Coin": ["STRK", "ZK", "SUI", "RNDR", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
+        "Coin": ["STRK", "ZK", "SUI", "RENDER", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
         "Allocatie %": ["20%", "15%", "15%", "10%", "10%", "10%", "10%", "5%", "5%"]
     }
     st.table(pd.DataFrame(july_data))
@@ -615,7 +615,7 @@ with tab3:
     # Augustus-allocatie
     st.subheader("📊 Allocatie – Augustus")
     aug_data = {
-        "Coin": ["LINK", "INJ", "AEVO", "ZK", "RNDR", "Cash buffer"],
+        "Coin": ["LINK", "INJ", "AEVO", "ZK", "RENDER", "Cash buffer"],
         "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
     }
     st.table(pd.DataFrame(aug_data))
@@ -667,7 +667,7 @@ with tab3:
     Laatste deel volgen met trailing stop voor piekmaximalisatie.
     """)
    
-    st.markdown("### 🪙 RNDR")
+    st.markdown("### 🪙 RENDER")
     st.markdown("""
     **Exitstrategie**  
     25% bij 3x → Fase 2 top  
@@ -676,7 +676,7 @@ with tab3:
     AI kan cyclisch exploderen – trailing cruciaal in hype  
     
     **Uitleg**  
-    RNDR volgt AI-leiders, maar is iets trager.  
+    RENDER volgt AI-leiders, maar is iets trager.  
     AI tweede golf of hype push.  
     Laat laatste deel meelopen, maar stop-loss goed zetten.
     """)
