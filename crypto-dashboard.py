@@ -104,15 +104,15 @@ with tab1:
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
-        "WIF":  {"aantal": 360.50809298, "inkoopprijs": 0.67645},
-        "ZK":   {"aantal": 5642.24306186, "inkoopprijs": 0.043023},
-        "RENDER": {"aantal": 76.51597485,   "inkoopprijs": 2.9003},
-        "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5996},
-        "DEGEN": {"aantal": 40767.88288737,    "inkoopprijs": 0.0041699},
-        "STRK": {"aantal": 1568.47270184, "inkoopprijs": 0.10724},
-        "FET":  {"aantal": 190.22287504,  "inkoopprijs": 0.60319},
-        "INJ":  {"aantal": 7.94579095,    "inkoopprijs": 10.1083},
-        "AEVO":  {"aantal": 685.25251414,  "inkoopprijs": 0.10434}
+        "WIF":  {"aantal": 531.49630172, "inkoopprijs": 0.74589},
+        "ZK":   {"aantal": 6744.97142968, "inkoopprijs": 0.042935},
+        "RENDER": {"aantal": 100.18592034,   "inkoopprijs": 2.9855},
+        "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5714},
+        "DEGEN": {"aantal": 133810.63419024,    "inkoopprijs": 0.0036460},
+        "STRK": {"aantal": 2727.5065212, "inkoopprijs": 0.10675},
+        "FET":  {"aantal": 502.35357828,  "inkoopprijs": 0.62436},
+        "INJ":  {"aantal": 38.60500032,    "inkoopprijs": 11.3916},
+        "AEVO":  {"aantal": 3425.46799067,  "inkoopprijs": 0.090780}
     }
     CASH_EURO = 0
 
