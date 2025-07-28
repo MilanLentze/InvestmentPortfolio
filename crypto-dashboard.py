@@ -605,7 +605,7 @@ with tab3:
     st.title("Investeringsplan Juli & Augustus")
 
     # Juli-allocatie
-    st.subheader("Allocatie – Juli")
+    st.subheader("✨ Allocatie – Juli")
     july_data = {
         "Coin": ["STRK", "ZK", "SUI", "RENDER", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
         "Allocatie %": ["20%", "15%", "15%", "10%", "10%", "10%", "10%", "5%", "5%"]
@@ -613,7 +613,7 @@ with tab3:
     st.table(pd.DataFrame(july_data))
 
     # Augustus-allocatie
-    st.subheader("Allocatie – Augustus")
+    st.subheader("✨ Allocatie – Augustus")
     aug_data = {
         "Coin": ["LINK", "INJ", "AEVO", "ZK", "RENDER", "Cash buffer"],
         "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
@@ -621,10 +621,10 @@ with tab3:
     st.table(pd.DataFrame(aug_data))
 
     # Exitstrategieën
-    st.subheader("Exitstrategieën per Coin")
+    st.subheader("🚪 Exitstrategieën in volgorde van winstnemen")
 
-    def add_coin_section(coin, exit_strategy, herallocatie):
-        st.markdown(f"### {coin}")
+    def add_coin_section(coin, exit_strategy, herallocatie, emotie):
+        st.markdown(f"### {coin} {emotie}")
         st.markdown(f"""
         **Exitstrategie**  
         {exit_strategy}  
@@ -634,28 +634,28 @@ with tab3:
         """)
 
     exit_data = [
-        ("WIF", "30% bij 2x, 40% bij 4x, 10% bij 6x, 20% trailing vanaf 5x (-20%)",
-         "Herinvesteer Fase 2 winst in SUI of STRK als nog in Fase 1"),
-        ("FET", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
-         "Herinvesteer in ZK of AEVO als die nog in opbouw zitten"),
-        ("STRK", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
-         "Herinvesteer Fase 2 winst in SUI of AEVO als laat begint"),
-        ("ZK", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
-         "Herinvesteer in AEVO of late L1's (INJ) bij faseverschil"),
-        ("RENDER", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
-         "Herinvesteer in ZK of Meme sector indien momentum"),
         ("SUI", "25% bij 2x, 35% bij 4x, 30% bij 6x, 10% optional moonbag",
-         "Herinvesteer vroege winsten in STRK of DEGEN"),
-        ("DEGEN", "30% bij 2x, 40% bij 3.5x, 20% bij 5x, 10% trailing vanaf 5x (max 8x)",
-         "Herinvesteer na 2–3x in ZK of L1 (SUI) als die traag zijn"),
-        ("AEVO", "30% bij 3x, 40% bij 5x, 15% bij 6x, 15% trailing vanaf 6x",
-         "Herinvesteer alleen bij vroege verkoop in AI of Meme sector"),
+         "Herinvesteer vroege winsten in STRK of DEGEN", "💪"),
+        ("WIF", "30% bij 2x, 40% bij 4x, 10% bij 6x, 20% trailing vanaf 5x (-20%)",
+         "Herinvesteer Fase 2 winst in SUI of STRK als nog in Fase 1", "🤯"),
         ("INJ", "25% bij 2x, 35% bij 4x, 30% bij 6x, 10% optional moonbag",
-         "Herinvesteer vroege winst in Meme of ZK als die net beginnen")
+         "Herinvesteer vroege winst in Meme of ZK als die net beginnen", "🧠"),
+        ("DEGEN", "30% bij 2x, 40% bij 3.5x, 20% bij 5x, 10% trailing vanaf 5x (max 8x)",
+         "Herinvesteer na 2–3x in ZK of L1 (SUI) als die traag zijn", "🤪"),
+        ("FET", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer in ZK of AEVO als die nog in opbouw zitten", "🤖"),
+        ("STRK", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer Fase 2 winst in SUI of AEVO als laat begint", "🚀"),
+        ("ZK", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer in AEVO of late L1's (INJ) bij faseverschil", "🔮"),
+        ("RENDER", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer in ZK of Meme sector indien momentum", "🎨"),
+        ("AEVO", "30% bij 3x, 40% bij 5x, 15% bij 6x, 15% trailing vanaf 6x",
+         "Herinvesteer alleen bij vroege verkoop in AI of Meme sector", "⚖️")
     ]
 
-    for coin, strategy, realloc in exit_data:
-        add_coin_section(coin, strategy, realloc)
+    for coin, strategy, realloc, emotie in exit_data:
+        add_coin_section(coin, strategy, realloc, emotie)
 
     st.markdown("---")
     st.markdown("---")
