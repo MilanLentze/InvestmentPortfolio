@@ -602,10 +602,10 @@ with tab2:
 
 #============= Tab 3 =============
 with tab3:
-    st.title("\ud83d\udcc5 Investeringsplan Juli & Augustus")
+    st.title("Investeringsplan Juli & Augustus")
 
     # Juli-allocatie
-    st.subheader("\ud83d\udcca Allocatie – Juli")
+    st.subheader("Allocatie – Juli")
     july_data = {
         "Coin": ["STRK", "ZK", "SUI", "RENDER", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
         "Allocatie %": ["20%", "15%", "15%", "10%", "10%", "10%", "10%", "5%", "5%"]
@@ -613,7 +613,7 @@ with tab3:
     st.table(pd.DataFrame(july_data))
 
     # Augustus-allocatie
-    st.subheader("\ud83d\udcca Allocatie – Augustus")
+    st.subheader("Allocatie – Augustus")
     aug_data = {
         "Coin": ["LINK", "INJ", "AEVO", "ZK", "RENDER", "Cash buffer"],
         "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
@@ -621,10 +621,10 @@ with tab3:
     st.table(pd.DataFrame(aug_data))
 
     # Exitstrategieën
-    st.subheader("\ud83d\udeaa Exitstrategieën per Coin")
+    st.subheader("Exitstrategieën per Coin")
 
     def add_coin_section(coin, exit_strategy, herallocatie):
-        st.markdown(f"### \ud83e\ude99 {coin}")
+        st.markdown(f"### {coin}")
         st.markdown(f"""
         **Exitstrategie**  
         {exit_strategy}  
