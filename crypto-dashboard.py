@@ -622,6 +622,18 @@ with tab3:
 
     # Exitstrategieën
     st.subheader("🚪 Exitstrategieën per Coin")
+    
+    st.markdown("### 🪙 Herallocatie kansen op basis van narratives")
+    st.markdown("""
+    Narratief	Piekt vaak...	Heralloceren naar...
+    AI (FET, RENDER)	Vroeg (Fase 2–3)	ZK (STRK, ZK), L1's (SUI, INJ)  
+    Meme (WIF, DEGEN)	Mid (Fase 3–4)	AI of Derivaten (AEVO)  
+    ZK / STRK	Laat (Fase 4)	Geen herallocatie — cashen  
+    Derivaten (AEVO)	Laat, traag start	Geen rotatie – exit  
+    💡 Voorbeeld:  
+    FET piekt vroeg → verkoop 50%, herinvesteer in STRK dat pas net begint  
+    DEGEN doet 3.5x → verkoop 40%, herinvesteer in SUI als die nog in Fase 1 zit
+    """)
 
     st.markdown("### 🪙 WIF")
     st.markdown("""
