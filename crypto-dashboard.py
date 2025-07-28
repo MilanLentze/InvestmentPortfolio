@@ -602,10 +602,10 @@ with tab2:
 
 #============= Tab 3 =============
 with tab3:
-    st.title("📅 Investeringsplan Juli & Augustus")
+    st.title("\ud83d\udcc5 Investeringsplan Juli & Augustus")
 
     # Juli-allocatie
-    st.subheader("📊 Allocatie – Juli")
+    st.subheader("\ud83d\udcca Allocatie – Juli")
     july_data = {
         "Coin": ["STRK", "ZK", "SUI", "RENDER", "FET", "AEVO", "WIF", "INJ", "DEGEN"],
         "Allocatie %": ["20%", "15%", "15%", "10%", "10%", "10%", "10%", "5%", "5%"]
@@ -613,7 +613,7 @@ with tab3:
     st.table(pd.DataFrame(july_data))
 
     # Augustus-allocatie
-    st.subheader("📊 Allocatie – Augustus")
+    st.subheader("\ud83d\udcca Allocatie – Augustus")
     aug_data = {
         "Coin": ["LINK", "INJ", "AEVO", "ZK", "RENDER", "Cash buffer"],
         "Allocatie %": ["30%", "20%", "20%", "15%", "10%", "5%"]
@@ -621,152 +621,44 @@ with tab3:
     st.table(pd.DataFrame(aug_data))
 
     # Exitstrategieën
-    st.subheader("🚪 Exitstrategieën per Coin")
-    
-    st.markdown("### 🪙 Herallocatie kansen op basis van narratives")
-    st.markdown("""
-    Narratief	Piekt vaak...	Heralloceren naar...
-    AI (FET, RENDER)	Vroeg (Fase 2–3)	ZK (STRK, ZK), L1's (SUI, INJ)  
-    Meme (WIF, DEGEN)	Mid (Fase 3–4)	AI of Derivaten (AEVO)  
-    ZK / STRK	Laat (Fase 4)	Geen herallocatie — cashen  
-    Derivaten (AEVO)	Laat, traag start	Geen rotatie – exit  
-    💡 Voorbeeld:  
-    FET piekt vroeg → verkoop 50%, herinvesteer in STRK dat pas net begint  
-    DEGEN doet 3.5x → verkoop 40%, herinvesteer in SUI als die nog in Fase 1 zit
-    """)
+    st.subheader("\ud83d\udeaa Exitstrategieën per Coin")
 
-    st.markdown("### 🪙 WIF")
-    st.markdown("""
-    **Exitstrategie**  
-    🪙 WIF (Meme – piekt in Fase 4)
-    30% bij 2x → Fase 3 (early hype/euforie)  
-    40% bij 4x → Fase 4 (parabolisch momentum)  
-    30% bij 6x → Fase 4 top of trailing stop -15%  
-    Let op: explosief, maar snel terugval → trailing op laatste deel  
-    
-    **Uitleg**  
-    Meme-coins stijgen snel en corrigeren hard.  
-    Meestal mid-phase parabool.  
-    Laatste winsten veiligstellen.  
-    Meeliften op euforie of alles verkopen als hype piekt.
-    """)
+    def add_coin_section(coin, exit_strategy, herallocatie):
+        st.markdown(f"### \ud83e\ude99 {coin}")
+        st.markdown(f"""
+        **Exitstrategie**  
+        {exit_strategy}  
 
-    st.markdown("### 🪙 FET")
-    st.markdown("""
-    **Exitstrategie**  
-    25% bij 3x → Fase 2  
-    35% bij 5x → Fase 3  
-    40% bij 8x → trailing of Fase 4  
-    AI push komt vaak vroeg, maar tweede piek is ook mogelijk  
-    
-    **Uitleg**  
-    AI-coins pieken vaak vroeg. 3x is verstandig.  
-    FET kan in fase 4 nog fors doorstijgen.  
-    Laatste deel meelopen op AI-euforie of bij breakdown verkopen.
-    """)
-    
-    st.markdown("### 🪙 STRK")
-    st.markdown("""
-    **Exitstrategie**  
-    25% bij 3x → Fase 2  
-    35% bij 5x → Fase 3  
-    40% bij 8x → Fase 4 of trailing  
-    Momentumcoin, kan hard en snel gaan – snel winstnemen  
-    
-    **Uitleg**  
-    ZK hype kan plots opkomen – winst vroeg nemen.  
-    Piek meestal in één golf.  
-    Laatste deel volgen met trailing stop voor piekmaximalisatie.
-    """)
-   
-    st.markdown("### 🪙 RENDER")
-    st.markdown("""
-    **Exitstrategie**  
-    25% bij 3x → Fase 2 top  
-    35% bij 5x → Fase 3 begin  
-    40% bij 8x → Fase 3–4 overgang (trailing -15%)  
-    AI kan cyclisch exploderen – trailing cruciaal in hype  
-    
-    **Uitleg**  
-    RENDER volgt AI-leiders, maar is iets trager.  
-    AI tweede golf of hype push.  
-    Laat laatste deel meelopen, maar stop-loss goed zetten.
-    """)
-    
-    st.markdown("### 🪙 SUI")
-    st.markdown("""
-    **Exitstrategie**  
-    - 25% bij 2x → Fase 2–3 overgang  
-    35% bij 4x → Fase 3  
-    40% bij 6x → Fase 4  
-    Meestal trage stijging, maar sterk blow-off topmoment  
-    
-    **Uitleg**  
-    L1’s stijgen vaak stabiel – blow-off rond 5x.  
-    Daarna volledig uitstappen zodra hype over is.
-    """)
-    
-    st.markdown("### 🪙 ZK")
-    st.markdown("""
-    **Exitstrategie**  
-    25% bij 3x → Fase 2 (breakout)  
-    35% bij 5x → Fase 3  
-    40% bij 8x → Fase 4 top of trailing stop  
-    Structuur-play met late rotatie mogelijk – piekt vaak na AI  
-    
-    **Uitleg**  
-    Accumuleert vaak langer – kleine winst vroeg.  
-    ZK-fase begint dan door te breken.  
-    Grote hypepiek – kans op rotatie.  
-    Maximaliseer piek met stop (bv. -15% vanaf ATH).
-    """)
-       
-    st.markdown("### 🪙 AEVO")
-    st.markdown("""
-    **Exitstrategie**  
-    30% bij 3x → Fase 2  
-    40% bij 5x → Fase 3  
-    30% bij 7x → trailing of Fase 4  
-    Afhankelijk van derivatenbuzz – scherp volgen op X en volume  
-    
-    **Uitleg**  
-    AEVO speelt in op de groeiende Derivatives/Options-markt.  
-    Wordt vaak laat wakker in de cycle, maar kan sterk presteren bij hype rond leverage of pro-trading tools.  
-    Volg ontwikkelingen rond CEX-integraties en derivaten-volume op X.
-    """)
-    
-    st.markdown("### 🪙 INJ")
-    st.markdown("""
-    **Exitstrategie**  
-    25% bij 2x → Fase 2–3  
-    35% bij 4x → Fase 3  
-    40% bij 6x → Fase 4 top of trailing  
-    Geen hypecoin, dus stabieler – piekt vaak laat  
-    
-    **Uitleg**  
-    Undervalued asset, piekt vaak laat.  
-    Start van FOMO-fase voor underdogs.  
-    Laatste piek in altseason voor dit type coin.  
-    Laat meeliften als narratief oppakt.
-    """)
-    
-    st.markdown("### 🪙 DEGEN")
-    st.markdown("""
-    **Exitstrategie**  
-    30% bij 2x → Fase 2 (early hype)  
-    40% bij 3.5x → Fase 3  
-    20% bij 5x → Fase 4  
-    10% → moonbag of trailing bij extreme pump  
-    High risk, high reward – momentumgedreven  
-    
-    **Uitleg**  
-    Volatiele SocialFi/memecoin met explosief potentieel.  
-    Kan snel 10–20x gaan, maar net zo hard terugvallen.  
-    Zodra hype begint, fases strak afbouwen – timing is cruciaal.  
-    """)
+        **Herallocatie tijdens altseason**  
+        {herallocatie}
+        """)
 
-st.markdown("---")
-st.markdown("---")
-st.markdown("---")
-st.markdown("---")
-st.caption("Dashboard ontwikkeld door Milan")
+    exit_data = [
+        ("WIF", "30% bij 2x, 40% bij 4x, 10% bij 6x, 20% trailing vanaf 5x (-20%)",
+         "Herinvesteer Fase 2 winst in SUI of STRK als nog in Fase 1"),
+        ("FET", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer in ZK of AEVO als die nog in opbouw zitten"),
+        ("STRK", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer Fase 2 winst in SUI of AEVO als laat begint"),
+        ("ZK", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer in AEVO of late L1's (INJ) bij faseverschil"),
+        ("RENDER", "25% bij 3x, 35% bij 5x, 20% bij 6x, 20% trailing vanaf 6x (-15%)",
+         "Herinvesteer in ZK of Meme sector indien momentum"),
+        ("SUI", "25% bij 2x, 35% bij 4x, 30% bij 6x, 10% optional moonbag",
+         "Herinvesteer vroege winsten in STRK of DEGEN"),
+        ("DEGEN", "30% bij 2x, 40% bij 3.5x, 20% bij 5x, 10% trailing vanaf 5x (max 8x)",
+         "Herinvesteer na 2–3x in ZK of L1 (SUI) als die traag zijn"),
+        ("AEVO", "30% bij 3x, 40% bij 5x, 15% bij 6x, 15% trailing vanaf 6x",
+         "Herinvesteer alleen bij vroege verkoop in AI of Meme sector"),
+        ("INJ", "25% bij 2x, 35% bij 4x, 30% bij 6x, 10% optional moonbag",
+         "Herinvesteer vroege winst in Meme of ZK als die net beginnen")
+    ]
+
+    for coin, strategy, realloc in exit_data:
+        add_coin_section(coin, strategy, realloc)
+
+    st.markdown("---")
+    st.markdown("---")
+    st.markdown("---")
+    st.markdown("---")
+    st.caption("Dashboard ontwikkeld door Milan")
