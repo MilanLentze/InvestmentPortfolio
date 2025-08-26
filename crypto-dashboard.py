@@ -198,7 +198,7 @@ with tab1:
             return [], []
     
     # ===== USER FILTERS & CONTROLS =====
-    sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase"])
+    sort_option = st.selectbox("🔃 Sorteer op", ["Verandering 24u", "Verandering 7d", "Verandering 30d", "Coin", "Prijs", "Altseason Piek Fase","Totaal Rendement"])
     
     #====== ALTCOIN FASES =========
     
