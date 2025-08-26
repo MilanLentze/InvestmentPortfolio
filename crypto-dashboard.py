@@ -185,6 +185,7 @@ with tab1:
     #====== ALTCOIN FASES =========
     
     ALTCOIN_PHASES = {
+        "ETH": "Fase 0 – ETH",
         "WIF": "Fase 4 – FOMO & Memecoins",
         "ZK": "Fase 2 – Mid Caps & Narratieven",
         "RENDER": "Fase 2-3 – Mid Caps & Narratieven",
