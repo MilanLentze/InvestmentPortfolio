@@ -91,6 +91,7 @@ with tab1:
 
     # ===== COINGECKO IDs & Narratieven =====
     COINS = {
+        "ETH": {"id": "ethereum", "narrative": "L1 / ETH"},
         "WIF": {"id": "dogwifcoin", "narrative": "Meme"},
         "ZK": {"id": "zksync", "narrative": "ZK / L2"},
         "RENDER": {"id": "render-token", "narrative": "AI / GPU"},
@@ -104,6 +105,7 @@ with tab1:
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
+        "ETH": {"aantal": 0.02576657, "inkoopprijs": 3881.11},
         "WIF":  {"aantal": 531.49630172, "inkoopprijs": 0.74589},
         "ZK":   {"aantal": 6744.97142968, "inkoopprijs": 0.042935},
         "RENDER": {"aantal": 100.18592034,   "inkoopprijs": 2.9855},
@@ -114,7 +116,7 @@ with tab1:
         "INJ":  {"aantal": 38.60500032,    "inkoopprijs": 11.3916},
         "AEVO":  {"aantal": 3425.46799067,  "inkoopprijs": 0.090780}
     }
-    CASH_EURO = 0
+    CASH_EURO = 400
 
     # ===== FORMAT FUNCTIE VOOR PERCENTAGES =====
     def format_change(value):
