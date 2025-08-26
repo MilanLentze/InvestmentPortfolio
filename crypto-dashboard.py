@@ -275,8 +275,8 @@ with tab1:
     if st.button("🔄 Cache legen / force refresh", key="clear_cache_tab1"):
         st.cache_data.clear()
         st.rerun()  # i.p.v. experimental_rerun
-        coin_data = []
-    
+        
+    coin_data = []
     for symbol, info in COINS.items():
         cmc = prices.get(symbol)
     
