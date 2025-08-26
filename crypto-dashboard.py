@@ -217,7 +217,7 @@ with tab1:
     
     #======= Rendement X =======
     
-    def calculate_expected_x_score_model(current_price, ath_price, current_marketcap, narrative, price_change_30d):
+    def calculate_expected_x_score_model(current_price, ath_price, current_marketcap, narrative, price_change_30d,rendement_pct):
         # ====== Fallbacks voor missende data ======
         current_price = current_price or 0.0001  # voorkom deling door nul
         ath_price = ath_price or 0
@@ -340,6 +340,8 @@ with tab1:
         coin_data = sorted(coin_data, key=lambda x: x["change_30d"], reverse=True)
     elif sort_option == "Altseason Piek Fase":
         coin_data = sorted(coin_data, key=lambda x: x["altseason_phase"], reverse=False)
+    elif sort_option == "Totaal Rendement":
+        coin_data = sorted(coin_data, key=lambda x: x["rendement_pct"], reverse=False)    
         
         
     # ===== RENDER DE TABEL =====
