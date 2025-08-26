@@ -116,7 +116,13 @@ with tab1:
         "INJ":  {"aantal": 38.60500032,    "inkoopprijs": 11.3916},
         "AEVO":  {"aantal": 3425.46799067,  "inkoopprijs": 0.090780}
     }
-    CASH_EURO = 400
+    CASH_EURO = st.number_input(
+        "💶 Cash / Stable saldo (EUR)",
+        min_value=0.0,
+        step=50.0,
+        value=400.0
+    )
+
 
     # ===== FORMAT FUNCTIE VOOR PERCENTAGES =====
     def format_change(value):
@@ -129,34 +135,33 @@ with tab1:
     @st.cache_data(ttl=25)
     def get_multiple_cmc_data(api_key, symbols):
         url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-        headers = {
-            "Accepts": "application/json",
-            "X-CMC_PRO_API_KEY": api_key
-        }
-        params = {
-            "symbol": ",".join(symbols),
-            "convert": "EUR"
-        }
+        headers = {"Accepts": "application/json", "X-CMC_PRO_API_KEY": api_key}
+        params = {"symbol": ",".join([s.upper() for s in symbols]), "convert": "EUR"}
+    
         try:
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            response.raise_for_status()
-            raw_data = response.json().get("data", {})
+            r = requests.get(url, headers=headers, params=params, timeout=10)
+            r.raise_for_status()
+            raw = r.json().get("data", {})
     
             result = {}
             for sym in symbols:
-                if sym in raw_data:
-                    quote = raw_data[sym]["quote"]["EUR"]
+                key = sym.upper()  # CMC retourneert uppercase keys
+                if key in raw:
+                    q = raw[key]["quote"]["EUR"]
                     result[sym] = {
-                        "price": quote["price"],
-                        "market_cap": quote.get("market_cap"),
-                        "change_24h": quote.get("percent_change_24h", 0),
-                        "change_7d": quote.get("percent_change_7d", 0),
-                        "change_30d": quote.get("percent_change_30d", 0),
-                        "ath": None  # Optioneel: later invullen
+                        "price": q["price"],
+                        "market_cap": q.get("market_cap"),
+                        "change_24h": q.get("percent_change_24h", 0),
+                        "change_7d": q.get("percent_change_7d", 0),
+                        "change_30d": q.get("percent_change_30d", 0),
+                        "ath": None,
                     }
                 else:
-                    st.warning(f"⚠️ Geen data voor {sym} in CMC-response.")
+                    st.warning(f"⚠️ Geen CMC-data voor {sym} (key: {key}).")
             return result
+        except Exception as e:
+            st.error(f"Fout bij ophalen CMC-data: {e}")
+            return {}
     
         except Exception as e:
             st.error(f"Fout bij ophalen CMC-data: {e}")
@@ -381,7 +386,9 @@ with tab1:
     # Kleur voor winst/verlies en doel
     kleur_winst = "#10A37F" if total_winst >= 0 else "#FF4B4B"
     kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
-    kleur_doel = "#10A37F" if total_with_cash >= 19737.67 else "#FF4B4B"
+    doelwaarde = 13583.64  # zet dit boven beide berekeningen
+    kleur_doel = "#10A37F" if total_with_cash >= doelwaarde else "#FF4B4B"
+
     
     # HTML-rendering in één blok
     # 1. Eerste blok: Portfolio Samenvatting
