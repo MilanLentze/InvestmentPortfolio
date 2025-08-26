@@ -136,6 +136,7 @@ with tab1:
     def get_multiple_cmc_data(api_key, symbols):
         url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
         headers = {"Accepts": "application/json", "X-CMC_PRO_API_KEY": api_key}
+        # ⬇️ BELANGRIJK: uppercase tickers in de request
         params = {"symbol": ",".join([s.upper() for s in symbols]), "convert": "EUR"}
     
         try:
@@ -145,7 +146,7 @@ with tab1:
     
             result = {}
             for sym in symbols:
-                key = sym.upper()  # CMC retourneert uppercase keys
+                key = sym.upper()   # ⬅️ en ook uppercase keys uitlezen
                 if key in raw:
                     q = raw[key]["quote"]["EUR"]
                     result[sym] = {
@@ -162,10 +163,7 @@ with tab1:
         except Exception as e:
             st.error(f"Fout bij ophalen CMC-data: {e}")
             return {}
-    
-        except Exception as e:
-            st.error(f"Fout bij ophalen CMC-data: {e}")
-            return {}
+
 
   
     
