@@ -308,8 +308,9 @@ with tab1:
 
             })
     
-
-    
+    if st.button("🔄 Cache legen / force refresh"):
+    st.cache_data.clear()
+    st.experimental_rerun()   
     
     # Sorteren
     if sort_option == "Coin":
