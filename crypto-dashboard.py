@@ -341,7 +341,7 @@ with tab1:
     elif sort_option == "Altseason Piek Fase":
         coin_data = sorted(coin_data, key=lambda x: x["altseason_phase"], reverse=False)
     elif sort_option == "Totaal Rendement":
-        coin_data = sorted(coin_data, key=lambda x: x["rendement_pct"], reverse=False)    
+        coin_data = sorted(coin_data, key=lambda x: x["rendement_pct"], reverse=True)    
         
         
     # ===== RENDER DE TABEL =====
