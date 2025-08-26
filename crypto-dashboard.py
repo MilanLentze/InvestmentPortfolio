@@ -60,22 +60,22 @@ st.markdown("""
     h1, h2, h3, h4, h5, h6, p {
         color: white !important;
     }
+
+    /* Style fix voor number_input / text inputs in dark mode */
+    input[type=number], input[type=text], textarea {
+        background-color: #222 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #444 !important;
+        border-radius: 6px !important;
+        padding: 4px 8px !important;
+    }
+
+    input[type=number]:focus, input[type=text]:focus, textarea:focus {
+        border: 1px solid #10A37F !important; /* groen accent bij focus */
+        outline: none !important;
+    }
     </style>
 """, unsafe_allow_html=True)
-
-/* Style fix voor number_input / text inputs in dark mode */
-input[type=number], input[type=text], textarea {
-    background-color: #222 !important;
-    color: #FFFFFF !important;
-    border: 1px solid #444 !important;
-    border-radius: 6px !important;
-    padding: 4px 8px !important;
-}
-
-input[type=number]:focus, input[type=text]:focus, textarea:focus {
-    border: 1px solid #10A37F !important; /* groen accent bij focus */
-    outline: none !important;
-}
 
 
 with tab1:
