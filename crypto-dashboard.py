@@ -270,8 +270,12 @@ with tab1:
     # Ophalen van alle prijsdata via CMC
     symbols = list(COINS.keys())
     prices = get_multiple_cmc_data(CMC_API_KEY, symbols)
-    
-    coin_data = []
+
+    # 👇 ZET DE KNOP DIRECT NA DE FETCH, BINNEN with tab1:
+    if st.button("🔄 Cache legen / force refresh", key="clear_cache_tab1"):
+        st.cache_data.clear()
+        st.rerun()  # i.p.v. experimental_rerun
+        coin_data = []
     
     for symbol, info in COINS.items():
         cmc = prices.get(symbol)
@@ -308,9 +312,7 @@ with tab1:
 
             })
     
-    if st.button("🔄 Cache legen / force refresh"):
-    st.cache_data.clear()
-    st.experimental_rerun()   
+
     
     # Sorteren
     if sort_option == "Coin":
