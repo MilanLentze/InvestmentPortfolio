@@ -135,7 +135,7 @@ with tab1:
         "💶 Cash / Stable saldo (EUR)",
         min_value=0.0,
         step=50.0,
-        value=0
+        value=0.0
     )
 
 
