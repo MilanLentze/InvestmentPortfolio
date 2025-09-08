@@ -120,7 +120,7 @@ with tab1:
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
-        "ETH": {"aantal": 0.02576657, "inkoopprijs": 3881.11},
+        "ETH": {"aantal": 0.12884065, "inkoopprijs": 3863.59},
         "WIF":  {"aantal": 531.49630172, "inkoopprijs": 0.74589},
         "ZK":   {"aantal": 6744.97142968, "inkoopprijs": 0.042935},
         "RENDER": {"aantal": 100.18592034,   "inkoopprijs": 2.9855},
@@ -135,7 +135,7 @@ with tab1:
         "💶 Cash / Stable saldo (EUR)",
         min_value=0.0,
         step=50.0,
-        value=400.0
+        value=0
     )
 
 
