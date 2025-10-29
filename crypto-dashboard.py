@@ -120,16 +120,16 @@ with tab1:
     
     # ======= HARDGEKODEERDE PORTFOLIO =======
     PORTFOLIO = {
-        "ETH": {"aantal": 0.12884065, "inkoopprijs": 3863.59},
-        "WIF":  {"aantal": 531.49630172, "inkoopprijs": 0.74589},
-        "ZK":   {"aantal": 6744.97142968, "inkoopprijs": 0.042935},
-        "RENDER": {"aantal": 100.18592034,   "inkoopprijs": 2.9855},
-        "SUI":  {"aantal": 56.14946729,   "inkoopprijs": 2.5714},
-        "DEGEN": {"aantal": 133810.63419024,    "inkoopprijs": 0.0036460},
-        "STRK": {"aantal": 2727.5065212, "inkoopprijs": 0.10675},
-        "FET":  {"aantal": 502.35357828,  "inkoopprijs": 0.62436},
-        "INJ":  {"aantal": 38.60500032,    "inkoopprijs": 11.3916},
-        "AEVO":  {"aantal": 3425.46799067,  "inkoopprijs": 0.090780}
+        "ETH": {"aantal": 0.1419289, "inkoopprijs": 3848.83},
+        "WIF":  {"aantal": 701.75562339, "inkoopprijs": 0.71363},
+        "ZK":   {"aantal": 7747.29472085, "inkoopprijs": 0.041612},
+        "RENDER": {"aantal": 127.50511309,   "inkoopprijs": 2.8386},
+        "SUI":  {"aantal": 69.8353458,   "inkoopprijs": 2.5166},
+        "DEGEN": {"aantal": 142557.58787118,    "inkoopprijs": 0.0035610},
+        "STRK": {"aantal": 2727.5065212, "inkoopprijs": 0.10780},
+        "FET":  {"aantal": 839.21697735,  "inkoopprijs": 0.53588},
+        "INJ":  {"aantal": 42.69422291,    "inkoopprijs": 11.1369},
+        "AEVO":  {"aantal": 3960.66283701,  "inkoopprijs": 0.086847}
     }
     CASH_EURO = st.number_input(
         "💶 Cash / Stable saldo (EUR)",
