@@ -425,7 +425,7 @@ with tab1:
     """, unsafe_allow_html=True)
 
 # === DOEL PROGRESS CALCULATIE ===
-    doelwaarde = 15000
+    doelwaarde = 9000
     progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
     progress_percent = progress * 100
     euro_nodig = max(doelwaarde - total_with_cash, 0)
@@ -441,7 +441,7 @@ with tab1:
     st.markdown(f"""
     <div style='background-color:#222; padding:12px 20px; border-radius:10px; margin-top:10px;'>
         <div style='font-size:16px; color:white; margin-bottom:5px;'>
-            🚀 Voortgang naar doel (15k): <b>{progress_percent:.1f}%</b>
+            🚀 Voortgang naar doel (Base = 9k, Bull = 13,5K, Bear = 4.5K ): <b>{progress_percent:.1f}%</b>
         </div>
         <div style='width: 100%; background-color: #444; height: 20px; border-radius: 10px; overflow: hidden;'>
             <div style='width: {progress_percent:.1f}%; height: 100%; background-color: {kleur_balk};'></div>
