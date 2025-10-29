@@ -425,7 +425,7 @@ with tab1:
     """, unsafe_allow_html=True)
 
 # === DOEL PROGRESS CALCULATIE ===
-    doelwaarde = 13583.64
+    doelwaarde = 15000
     progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
     progress_percent = progress * 100
     euro_nodig = max(doelwaarde - total_with_cash, 0)
