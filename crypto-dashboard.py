@@ -405,7 +405,7 @@ with tab1:
     # Kleur voor winst/verlies en doel
     kleur_winst = "#10A37F" if total_winst >= 0 else "#FF4B4B"
     kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
-    doelwaarde = 13583.64
+    doelwaarde = 9000
     kleur_doel = "#10A37F" if total_with_cash >= doelwaarde else "#FF4B4B"
     
     # HTML-rendering
