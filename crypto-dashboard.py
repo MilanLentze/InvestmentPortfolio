@@ -375,13 +375,14 @@ with tab1:
 
     st.markdown("---")
     st.markdown("---")
+    
     # === PORTFOLIO BEREKENING OP BASIS VAN LIVE PRIJZEN ===
     st.markdown("---")
 
     total_current = 0
     total_invested = 0
     portfolio_rows = []
-
+    
     for coin in coin_data:
         sym = coin["symbol"]
         price_now = coin["price"]
@@ -392,10 +393,10 @@ with tab1:
             current = aantal * price_now
             winst = current - invested
             rendement_pct = (winst / invested) * 100 if invested > 0 else 0
-
+    
             total_current += current
             total_invested += invested
-
+    
     # Samenvatting
     total_with_cash = total_current + CASH_EURO
     total_winst = total_current - total_invested
@@ -404,12 +405,10 @@ with tab1:
     # Kleur voor winst/verlies en doel
     kleur_winst = "#10A37F" if total_winst >= 0 else "#FF4B4B"
     kleur_rendement = "#10A37F" if total_rendement >= 0 else "#FF4B4B"
-    doelwaarde = 13583.64  # zet dit boven beide berekeningen
+    doelwaarde = 13583.64
     kleur_doel = "#10A37F" if total_with_cash >= doelwaarde else "#FF4B4B"
-
     
-    # HTML-rendering in één blok
-    # 1. Eerste blok: Portfolio Samenvatting
+    # HTML-rendering
     st.markdown(f"""
     <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px;'>
         <h4 style='margin-bottom:15px;'>📦 Portfolio Samenvatting</h4>
@@ -418,49 +417,10 @@ with tab1:
             <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
             <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
             <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
+            <li><b>Totale inleg:</b> €{total_invested:,.2f}</li> <!-- 👈 deze regel toegevoegd -->
             <li><b>Totale winst/verlies:</b> <span style='color:{kleur_winst};'><b>€{total_winst:,.2f}</b></span></li>
             <li><b>Rendement:</b> <span style='color:{kleur_rendement};'><b>{total_rendement:.2f}%</b></span></li>
         </ul>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # 2. Tweede blok: Doel & Scenario’s
-    st.markdown(f"""
-    <div style='background-color:#111; padding:20px; border-radius:12px; color:white; font-size:18px; margin-top:10px;'>
-        <h5 style='margin-bottom:10px;'>🎯 <u>Doel & Scenario’s</u></h5>
-        <ul style='list-style-position: inside; line-height: 1.8;'>
-            <li><b>Doelwaarde:</b> <span style='color:{kleur_doel};'><b>€13.583,64</b></span></li>
-            <li><b>Best Case:</b> €24.493,39</li>
-            <li><b>Worst Case:</b> €8.566,03</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # === DOEL PROGRESS CALCULATIE ===
-    doelwaarde = 13583.64
-    progress = min(total_with_cash / doelwaarde, 1.0)  # capped op 100%
-    progress_percent = progress * 100
-    euro_nodig = max(doelwaarde - total_with_cash, 0)
-    
-    # Dynamische kleur (rood <50%, geel <100%, groen =100%)
-    if progress < 0.5:
-        kleur_balk = "#FF4B4B"  # rood
-    elif progress < 1:
-        kleur_balk = "#FFD700"  # geel
-    else:
-        kleur_balk = "#10A37F"  # groen
-    
-    st.markdown(f"""
-    <div style='background-color:#222; padding:12px 20px; border-radius:10px; margin-top:10px;'>
-        <div style='font-size:16px; color:white; margin-bottom:5px;'>
-            🚀 Voortgang naar doel: <b>{progress_percent:.1f}%</b>
-        </div>
-        <div style='width: 100%; background-color: #444; height: 20px; border-radius: 10px; overflow: hidden;'>
-            <div style='width: {progress_percent:.1f}%; height: 100%; background-color: {kleur_balk};'></div>
-        </div>
-        <div style='font-size:14px; color:#bbb; margin-top:8px;'>
-            Nog €{euro_nodig:,.2f} te gaan tot je doel.
-        </div>
     </div>
     """, unsafe_allow_html=True)
 
