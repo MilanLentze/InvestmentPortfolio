@@ -415,9 +415,10 @@ with tab1:
         <h5 style='margin-bottom:10px;'>📘 <u>Totaaloverzicht</u></h5>
         <ul style='list-style-position: inside; line-height: 1.8;'>
             <li><b>Totale inleg:</b> €{total_invested:,.2f}</li>
+            <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
             <li><b>Totaalwaarde portfolio:</b> €{total_with_cash:,.2f}</li>
             <li><b>Totale crypto waarde:</b> €{total_current:,.2f}</li>
-            <li><b>Cash saldo:</b> €{CASH_EURO:,.2f}</li>
+            
             <li><b>Totale winst/verlies:</b> <span style='color:{kleur_winst};'><b>€{total_winst:,.2f}</b></span></li>
             <li><b>Rendement:</b> <span style='color:{kleur_rendement};'><b>{total_rendement:.2f}%</b></span></li>
         </ul>
