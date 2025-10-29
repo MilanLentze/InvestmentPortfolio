@@ -441,7 +441,7 @@ with tab1:
     st.markdown(f"""
     <div style='background-color:#222; padding:12px 20px; border-radius:10px; margin-top:10px;'>
         <div style='font-size:16px; color:white; margin-bottom:5px;'>
-            🚀 Voortgang naar doel: <b>{progress_percent:.1f}%</b>
+            🚀 Voortgang naar doel (15k): <b>{progress_percent:.1f}%</b>
         </div>
         <div style='width: 100%; background-color: #444; height: 20px; border-radius: 10px; overflow: hidden;'>
             <div style='width: {progress_percent:.1f}%; height: 100%; background-color: {kleur_balk};'></div>
